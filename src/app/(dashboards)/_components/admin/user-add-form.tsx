@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,7 +15,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
@@ -22,100 +23,29 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 
-// Define the bank names from the enum
 const bankNames = [
-  'SBI',
-  'HDFC',
-  'ICICI',
-  'AXIS',
-  'KOTAK',
-  'PNB',
-  'BOB',
-  'CANARA',
-  'IDBI',
-  'UCO',
-  'BOI',
-  'IOB',
-  'CBI',
-  'SIB',
-  'FEDERAL',
-  'KVB',
-  'LVB',
-  'DBS',
-  'CITI',
-  'HSBC',
-  'SC',
-  'RBL',
-  'YES',
-  'INDUSIND',
-  'BANDHAN',
-  'AU',
-  'IDFC',
-  'EQUITAS',
-  'ESAF',
-  'UJJIVAN',
-  'SMALLFIN',
-  'PAYTM',
-  'FINCARE',
-  'JANA',
-  'NORTHEAST',
-  'GRAMEEN',
-  'UTKARSH',
-  'SURYODAY',
-  'JALGAON',
-  'AKOLA',
-  'KASHI',
-  'SAMARTH',
-  'KAIJS',
-  'KALUPUR',
-  'OTHER',
+  'SBI', 'HDFC', 'ICICI', 'AXIS', 'KOTAK', 'PNB', 'BOB', 'CANARA', 'IDBI', 'UCO', 'BOI',
+  'IOB', 'CBI', 'SIB', 'FEDERAL', 'KVB', 'LVB', 'DBS', 'CITI', 'HSBC', 'SC', 'RBL', 'YES',
+  'INDUSIND', 'BANDHAN', 'AU', 'IDFC', 'EQUITAS', 'ESAF', 'UJJIVAN', 'SMALLFIN', 'PAYTM',
+  'FINCARE', 'JANA', 'NORTHEAST', 'GRAMEEN', 'UTKARSH', 'SURYODAY', 'JALGAON', 'AKOLA',
+  'KASHI', 'SAMARTH', 'KAIJS', 'KALUPUR', 'OTHER'
 ] as const;
 
 const formSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: 'Name must be at least 2 characters.',
-    })
-    .optional(),
-  email: z.string().email({
-    message: 'Please enter a valid email address.',
-  }),
-  password: z
-    .string()
-    .min(8, {
-      message: 'Password must be at least 8 characters.',
-    })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-      message:
-        'Password must contain at least one uppercase letter, one lowercase letter, and one number.',
-    }),
-  role: z.enum(['BANK'], {
-    required_error: 'Please select a role.',
-  }),
-  bankName: z.enum(bankNames).optional(),
-  aadhaarNumber: z
-    .string()
-    .regex(/^\d{12}$/, {
-      message: 'Aadhaar number must be 12 digits.',
-    })
-    .optional()
-    .or(z.literal('')),
-  PAN: z
-    .string()
-    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
-      message: 'PAN must be in the format ABCDE1234F.',
-    })
-    .optional()
-    .or(z.literal('')),
+  name: z.string().min(2).optional(),
+  email: z.string().email(),
+  password: z.string().min(8).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
+  role: z.enum(['BANK']),
+  bankName: z.enum(bankNames).optional()
 });
 
 export function UserAddForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations('admin.UserAddForm');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -123,23 +53,18 @@ export function UserAddForm() {
       name: '',
       email: '',
       password: '',
-      role: 'BANK',
-      aadhaarNumber: '',
-      PAN: '',
-    },
+      role: 'BANK'
+    }
   });
 
-  // Watch the role field to conditionally show bank name
   const watchRole = form.watch('role');
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-
-    // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      toast('User created successfully', {
-        description: `${values.email} has been added with ${values.role} role.`,
+      toast(t('userCreatedSuccess'), {
+        description: t('userCreatedDescription', { email: values.email, role: values.role })
       });
       form.reset();
     }, 1500);
@@ -154,11 +79,11 @@ export function UserAddForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t('name')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} />
+                  <Input placeholder={t('namePlaceholder')} {...field} />
                 </FormControl>
-                <FormDescription>The user's full name.</FormDescription>
+                <FormDescription>{t('nameDescription')}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -169,16 +94,11 @@ export function UserAddForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t('email')}</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="user@example.com"
-                    type="email"
-                    required
-                    {...field}
-                  />
+                  <Input placeholder={t('emailPlaceholder')} type="email" required {...field} />
                 </FormControl>
-                <FormDescription>The user's email address.</FormDescription>
+                <FormDescription>{t('emailDescription')}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -189,19 +109,11 @@ export function UserAddForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t('password')}</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="••••••••"
-                    type="password"
-                    required
-                    {...field}
-                  />
+                  <Input placeholder={t('passwordPlaceholder')} type="password" required {...field} />
                 </FormControl>
-                <FormDescription>
-                  Must be at least 8 characters with uppercase, lowercase, and
-                  number.
-                </FormDescription>
+                <FormDescription>{t('passwordDescription')}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -212,21 +124,18 @@ export function UserAddForm() {
             name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Role</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <FormLabel>{t('role')}</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
+                      <SelectValue placeholder={t('rolePlaceholder')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="BANK">Bank</SelectItem>
+                    <SelectItem value="BANK">{t('role')}</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormDescription>The user's permission level.</FormDescription>
+                <FormDescription>{t('roleDescription')}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -238,11 +147,11 @@ export function UserAddForm() {
               name="bankName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Bank Name</FormLabel>
+                  <FormLabel>{t('bankName')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a bank" />
+                        <SelectValue placeholder={t('bankNamePlaceholder')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="max-h-[200px]">
@@ -253,23 +162,22 @@ export function UserAddForm() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>Required for bank users.</FormDescription>
+                  <FormDescription>{t('bankNameDescription')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           )}
-
         </div>
 
         <Button type="submit" disabled={isLoading} className="w-full md:w-auto">
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating User...
+              {t('creatingUser')}
             </>
           ) : (
-            'Create User'
+            t('createUser')
           )}
         </Button>
       </form>

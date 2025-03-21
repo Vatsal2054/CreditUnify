@@ -1,261 +1,246 @@
 {
-    "LandingPage":{
-        "header": {
-        "logo": "CreditUnify",
-        "nav": {
-            "features": "Features",
-            "howItWorks": "How It Works",
-            "security": "Security",
-            "testimonials": "Testimonials",
-            "faq": "FAQ"
-        },
-        "buttons": {
-            "login": "Log In",
-            "signup": "Sign Up"
-        }
-        },
-        "hero": {
-        "title": "One Score, Complete Clarity – Unified Credit Insights",
-        "subtitle": "Empowering individuals with multi-bureau credit insights & helping banks make smarter lending decisions.",
-        "buttons": {
-            "checkScore": "Check Your Score",
-            "startRisk": "Start Risk Assessment"
-        }
-        },
-        "stats": {
-        "satisfaction": {
-            "value": "90",
-            "label": "Customer Satisfaction"
-        },
-        "users": {
-            "value": "200",
-            "suffix": "K+",
-            "label": "Active Users"
-        },
-        "reports": {
-            "value": "15",
-            "suffix": "M+",
-            "label": "Credit Reports Generated"
-        },
-        "partners": {
-            "value": "50",
-            "suffix": "+",
-            "label": "Banking Partners"
-        }
-        },
-        "roleSection": {
-        "title": "Choose Your Role",
-        "subtitle": "Whether you're an individual looking to improve your credit score or a bank making lending decisions, CreditUnify has the tools you need.",
-        "tabs": {
-            "individuals": "For Individuals",
-            "banks": "For Banks"
-        },
-        "individuals": {
-            "features": [
-            {
-                "title": "Multi-Bureau Scores",
-                "description": "Check credit scores from multiple bureaus in one place"
-            },
-            {
-                "title": "AI-Driven Suggestions",
-                "description": "Get personalized tips to improve your credit score"
-            },
-            {
-                "title": "Fraud Alerts",
-                "description": "Receive instant alerts for suspicious activities"
-            }
-            ],
-            "button": "Get My Score"
-        },
-        "banks": {
-            "features": [
-            {
-                "title": "Risk Assessment",
-                "description": "Access real-time credit risk assessment tools"
-            },
-            {
-                "title": "Borrower Insights",
-                "description": "View comprehensive loan history and borrower patterns"
-            },
-            {
-                "title": "Default Predictions",
-                "description": "AI-driven loan default predictions and analytics"
-            }
-            ],
-            "button": "Start Lending Assessment"
-        }
-        },
-        "features": {
-        "title": "Key Features",
-        "subtitle": "Powerful tools for both individuals and financial institutions",
-        "items": [
-            {
-            "title": "Multi-Bureau Aggregation",
-            "description": "Combine scores from CIBIL, Experian, Equifax, CRIF and more for a complete picture"
-            },
-            {
-            "title": "AI-Powered Chatbot",
-            "description": "Get instant answers to credit questions and personalized advice"
-            },
-            {
-            "title": "Real-Time Risk Assessment",
-            "description": "Advanced algorithms to detect fraud and assess lending risk"
-            },
-            {
-            "title": "Multi-Language Support",
-            "description": "Access credit insights in your preferred language"
-            },
-            {
-            "title": "Credit Alert System",
-            "description": "Get notified of important changes to your credit report in real-time"
-            },
-            {
-            "title": "Score Optimizer",
-            "description": "AI algorithms suggest the fastest path to improving your score"
-            },
-            {
-            "title": "Dispute Management",
-            "description": "Easily identify and resolve credit report errors across all bureaus"
-            },
-            {
-            "title": "Score Prediction",
-            "description": "Forecast how financial decisions will impact your future credit score"
-            }
-        ]
-        },
-        "howItWorks": {
-        "title": "How It Works",
-        "subtitle": "Simple steps to get started with CreditUnify",
-        "tabs": {
-            "individuals": "For Individuals",
-            "banks": "For Banks"
-        },
-        "individuals": {
-            "steps": [
-            {
-                "number": "1",
-                "title": "Sign Up & Verify Identity",
-                "description": "Create an account and complete the secure verification process"
-            },
-            {
-                "number": "2",
-                "title": "Link Credit Bureaus",
-                "description": "Connect to multiple credit bureaus to get your unified score"
-            },
-            {
-                "number": "3",
-                "title": "Improve with AI Suggestions",
-                "description": "Follow personalized recommendations to boost your score"
-            }
-            ]
-        },
-        "banks": {
-            "steps": [
-            {
-                "number": "1",
-                "title": "Sign Up & Access Dashboard",
-                "description": "Create a bank account and access your dedicated dashboard"
-            },
-            {
-                "number": "2",
-                "title": "Search Borrower Profiles",
-                "description": "Look up comprehensive credit profiles for any borrower"
-            },
-            {
-                "number": "3",
-                "title": "Analyze Risks & Decide",
-                "description": "Use AI-powered insights to make informed lending decisions"
-            }
-            ]
-        }
-        },
-        "dashboardPreviews": {
-        "title": "Dashboard Previews",
-        "subtitle": "Intuitive interfaces designed for both individuals and banks",
-        "user": {
-            "title": "User Dashboard",
-            "description": "Track your credit score, view improvement tips, and monitor your progress"
-        },
-        "bank": {
-            "title": "Bank Dashboard",
-            "description": "Analyze borrower profiles, assess risks, and make data-driven lending decisions"
-        }
-        },
-        "security": {
-        "title": "Security & Compliance",
-        "subtitle": "Your data security is our top priority",
-        "features": [
-            {
-            "title": "End-to-End Encryption",
-            "description": "All your data is encrypted in transit and at rest"
-            },
-            {
-            "title": "Trusted by Institutions",
-            "description": "Used by leading banks and financial organizations"
-            },
-            {
-            "title": "Regulatory Compliance",
-            "description": "Compliant with global credit regulations and standards"
-            }
-        ]
-        },
-        "testimonials": {
-        "title": "Testimonials",
-        "subtitle": "See what our users and partners have to say",
-        "items": [
-            {
-            "quote": "CreditUnify helped me track my credit score across bureaus and improve it by 85 points in just 3 months!",
-            "author": "Rahul M.",
-            "role": "Individual User"
-            },
-            {
-            "quote": "Our lending decisions are now 40% faster and more accurate with CreditUnify's comprehensive risk assessment tools.",
-            "author": "Priya S.",
-            "role": "Credit Manager, ABC Bank"
-            }
-        ]
-        },
-        "cta": {
-        "title": "Ready to Get Started?",
-        "subtitle": "Choose your role and sign up today to access unified credit insights",
-        "buttons": {
-            "checkScore": "Check My Credit Score",
-            "startAnalysis": "Start Risk Analysis"
-        }
-        },
-        "footer": {
-        "description": "Unified credit insights for individuals and financial institutions.",
-        "product": {
-            "title": "Product",
-            "links": [
-            "Features",
-            "Pricing",
-            "API",
-            "Integrations"
-            ]
-        },
-        "resources": {
-            "title": "Resources",
-            "links": [
-            "Documentation",
-            "Blog",
-            "Support",
-            "FAQ"
-            ]
-        },
-        "company": {
-            "title": "Company",
-            "links": [
-            "About",
-            "Careers",
-            "Privacy Policy",
-            "Terms of Service"
-            ]
-        },
-        "copyright": "© {year} CreditUnify. All rights reserved."
-        }
+  "LandingPage": {
+    "header": {
+      "logo": "CreditUnify",
+      "nav": {
+        "features": "Features",
+        "howItWorks": "How It Works",
+        "security": "Security",
+        "testimonials": "Testimonials",
+        "faq": "FAQ"
+      },
+      "buttons": {
+        "login": "Log In",
+        "signup": "Sign Up"
+      }
     },
-    "auth": {
+    "hero": {
+      "title": "One Score, Complete Clarity – Unified Credit Insights",
+      "subtitle": "Empowering individuals with multi-bureau credit insights & helping banks make smarter lending decisions.",
+      "buttons": {
+        "checkScore": "Check Your Score",
+        "startRisk": "Start Risk Assessment"
+      }
+    },
+    "stats": {
+      "satisfaction": {
+        "value": "90",
+        "label": "Customer Satisfaction"
+      },
+      "users": {
+        "value": "200",
+        "suffix": "K+",
+        "label": "Active Users"
+      },
+      "reports": {
+        "value": "15",
+        "suffix": "M+",
+        "label": "Credit Reports Generated"
+      },
+      "partners": {
+        "value": "50",
+        "suffix": "+",
+        "label": "Banking Partners"
+      }
+    },
+    "roleSection": {
+      "title": "Choose Your Role",
+      "subtitle": "Whether you're an individual looking to improve your credit score or a bank making lending decisions, CreditUnify has the tools you need.",
+      "tabs": {
+        "individuals": "For Individuals",
+        "banks": "For Banks"
+      },
+      "individuals": {
+        "features": [
+          {
+            "title": "Multi-Bureau Scores",
+            "description": "Check credit scores from multiple bureaus in one place"
+          },
+          {
+            "title": "AI-Driven Suggestions",
+            "description": "Get personalized tips to improve your credit score"
+          },
+          {
+            "title": "Fraud Alerts",
+            "description": "Receive instant alerts for suspicious activities"
+          }
+        ],
+        "button": "Get My Score"
+      },
+      "banks": {
+        "features": [
+          {
+            "title": "Risk Assessment",
+            "description": "Access real-time credit risk assessment tools"
+          },
+          {
+            "title": "Borrower Insights",
+            "description": "View comprehensive loan history and borrower patterns"
+          },
+          {
+            "title": "Default Predictions",
+            "description": "AI-driven loan default predictions and analytics"
+          }
+        ],
+        "button": "Start Lending Assessment"
+      }
+    },
+    "features": {
+      "title": "Key Features",
+      "subtitle": "Powerful tools for both individuals and financial institutions",
+      "items": [
+        {
+          "title": "Multi-Bureau Aggregation",
+          "description": "Combine scores from CIBIL, Experian, Equifax, CRIF and more for a complete picture"
+        },
+        {
+          "title": "AI-Powered Chatbot",
+          "description": "Get instant answers to credit questions and personalized advice"
+        },
+        {
+          "title": "Real-Time Risk Assessment",
+          "description": "Advanced algorithms to detect fraud and assess lending risk"
+        },
+        {
+          "title": "Multi-Language Support",
+          "description": "Access credit insights in your preferred language"
+        },
+        {
+          "title": "Credit Alert System",
+          "description": "Get notified of important changes to your credit report in real-time"
+        },
+        {
+          "title": "Score Optimizer",
+          "description": "AI algorithms suggest the fastest path to improving your score"
+        },
+        {
+          "title": "Dispute Management",
+          "description": "Easily identify and resolve credit report errors across all bureaus"
+        },
+        {
+          "title": "Score Prediction",
+          "description": "Forecast how financial decisions will impact your future credit score"
+        }
+      ]
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Simple steps to get started with CreditUnify",
+      "tabs": {
+        "individuals": "For Individuals",
+        "banks": "For Banks"
+      },
+      "individuals": {
+        "steps": [
+          {
+            "number": "1",
+            "title": "Sign Up & Verify Identity",
+            "description": "Create an account and complete the secure verification process"
+          },
+          {
+            "number": "2",
+            "title": "Link Credit Bureaus",
+            "description": "Connect to multiple credit bureaus to get your unified score"
+          },
+          {
+            "number": "3",
+            "title": "Improve with AI Suggestions",
+            "description": "Follow personalized recommendations to boost your score"
+          }
+        ]
+      },
+      "banks": {
+        "steps": [
+          {
+            "number": "1",
+            "title": "Sign Up & Access Dashboard",
+            "description": "Create a bank account and access your dedicated dashboard"
+          },
+          {
+            "number": "2",
+            "title": "Search Borrower Profiles",
+            "description": "Look up comprehensive credit profiles for any borrower"
+          },
+          {
+            "number": "3",
+            "title": "Analyze Risks & Decide",
+            "description": "Use AI-powered insights to make informed lending decisions"
+          }
+        ]
+      }
+    },
+    "dashboardPreviews": {
+      "title": "Dashboard Previews",
+      "subtitle": "Intuitive interfaces designed for both individuals and banks",
+      "user": {
+        "title": "User Dashboard",
+        "description": "Track your credit score, view improvement tips, and monitor your progress"
+      },
+      "bank": {
+        "title": "Bank Dashboard",
+        "description": "Analyze borrower profiles, assess risks, and make data-driven lending decisions"
+      }
+    },
+    "security": {
+      "title": "Security & Compliance",
+      "subtitle": "Your data security is our top priority",
+      "features": [
+        {
+          "title": "End-to-End Encryption",
+          "description": "All your data is encrypted in transit and at rest"
+        },
+        {
+          "title": "Trusted by Institutions",
+          "description": "Used by leading banks and financial organizations"
+        },
+        {
+          "title": "Regulatory Compliance",
+          "description": "Compliant with global credit regulations and standards"
+        }
+      ]
+    },
+    "testimonials": {
+      "title": "Testimonials",
+      "subtitle": "See what our users and partners have to say",
+      "items": [
+        {
+          "quote": "CreditUnify helped me track my credit score across bureaus and improve it by 85 points in just 3 months!",
+          "author": "Rahul M.",
+          "role": "Individual User"
+        },
+        {
+          "quote": "Our lending decisions are now 40% faster and more accurate with CreditUnify's comprehensive risk assessment tools.",
+          "author": "Priya S.",
+          "role": "Credit Manager, ABC Bank"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "subtitle": "Choose your role and sign up today to access unified credit insights",
+      "buttons": {
+        "checkScore": "Check My Credit Score",
+        "startAnalysis": "Start Risk Analysis"
+      }
+    },
+    "footer": {
+      "description": "Unified credit insights for individuals and financial institutions.",
+      "product": {
+        "title": "Product",
+        "links": ["Features", "Pricing", "API", "Integrations"]
+      },
+      "resources": {
+        "title": "Resources",
+        "links": ["Documentation", "Blog", "Support", "FAQ"]
+      },
+      "company": {
+        "title": "Company",
+        "links": ["About", "Careers", "Privacy Policy", "Terms of Service"]
+      },
+      "copyright": "© {year} CreditUnify. All rights reserved."
+    }
+  },
+  "auth": {
     "create-account": "Create an account",
     "already-have-account": "Already have an account?",
     "name": "Name",
@@ -368,5 +353,100 @@
     "switchLanguage": "Switch language",
     "brand": "Credit",
     "brandHighlight": "unify"
+  },
+  "admin": {
+    "AdminDashboardPage": {
+      "title": "Admin Dashboard",
+      "description": "Manage banks and view system analytics",
+      "tabs": {
+        "banks": "Bank Management",
+        "activity": "System Activity",
+        "add": "Add New Bank"
+      },
+      "bankManagement": {
+        "title": "Bank Management",
+        "description": "View and manage all registered bank accounts in the system."
+      },
+      "systemActivity": {
+        "title": "Recent System Activity",
+        "description": "Recent credit score checks across all banks in the system."
+      },
+      "addBank": {
+        "title": "Add New Bank",
+        "description": "Create a new bank account in the system."
+      }
+    },
+
+    "DashboardStats": {
+      "totalBanks": "Total Banks",
+      "totalBanksDescription": "Registered financial institutions",
+      "registeredUsers": "Registered Users",
+      "registeredUsersGrowth": "{growth}% from last month",
+      "creditChecksToday": "Credit Checks Today",
+      "creditChecksDescription": "Total inquiries in the last 24 hours",
+      "averageCreditScore": "Average Credit Score",
+      "averageCreditScoreDescription": "Across all users in the system"
+    },
+    "BankActivityTable": {
+      "title": "Recent Activity",
+      "titleWithBank": "Recent Activity for {bankName}",
+      "description": "Last 5 credit score checks performed by this bank",
+      "aadhar": "Aadhar Number",
+      "pan": "PAN",
+      "creditScore": "Credit Score",
+      "dateTime": "Date & Time"
+    },
+    "RecentActivity": {
+      "justNow": "Just now",
+      "hoursAgo": "{hours} hour(s) ago",
+      "loadMore": "Load More",
+      "userCreated": "New user account created",
+      "creditCheck": "Credit score checked for {targetUser}",
+      "alert": "Multiple credit score checks detected for user ID {id}",
+      "creditUpdate": "Credit score updated from {oldScore} to {newScore}",
+      "failedLogin": "Failed login attempts detected for admin account",
+      "userLogin": "Admin user logged in"
+    },
+    "UserAddForm": {
+      "name": "Name",
+      "namePlaceholder": "John Doe",
+      "nameDescription": "The user's full name.",
+      "email": "Email",
+      "emailPlaceholder": "user@example.com",
+      "emailDescription": "The user's email address.",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "passwordDescription": "Must be at least 8 characters with uppercase, lowercase, and number.",
+      "role": "Role",
+      "rolePlaceholder": "Select a role",
+      "roleDescription": "The user's permission level.",
+      "bankName": "Bank Name",
+      "bankNamePlaceholder": "Select a bank",
+      "bankNameDescription": "Required for bank users.",
+      "createUser": "Create User",
+      "creatingUser": "Creating User...",
+      "userCreatedSuccess": "User created successfully",
+      "userCreatedDescription": "{email} has been added with {role} role."
+    },
+    "UserTable": {
+      "bankName": "Bank Name",
+      "email": "Email",
+      "bankCode": "Bank Code",
+      "created": "Created",
+      "lastActive": "Last Active",
+      "actions": "Actions",
+      "viewBankDetails": "View Bank Details",
+      "editBankInfo": "Edit Bank Information",
+      "viewRecentActivity": "View Recent Activity",
+      "viewBankBranches": "View Bank Branches",
+      "deleteBank": "Delete Bank",
+      "confirmDeletion": "Confirm Deletion",
+      "deleteConfirmationMessage": "Are you sure you want to delete {name}? This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "recentActivity": "{name} - Recent Activity",
+      "recentActivityDescription": "Recent credit score checks performed by this bank",
+      "close": "Close"
+    }
   }
 }
