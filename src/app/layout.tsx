@@ -2,6 +2,10 @@ import { ThemeProvider } from 'next-themes';
 import './globals.css';
 import { NextIntlClientProviderwrapper } from './components/providers/NextIntlClientProvider';
 import { getMessages } from "next-intl/server";
+import { Inter, DM_Sans } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
+const dmSans = DM_Sans({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Next.js',
@@ -16,7 +20,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang="en">
+    <html lang="en" className={dmSans.className}>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextIntlClientProviderwrapper messages={{messages}}>

@@ -219,7 +219,7 @@ export default function Home() {
                   alt="Illustration"
                   width={45}
                   height={45}
-                  className="object-cover w-full h-full rounded-lg"
+                  className="object-cover w-full h-full rounded-lg bg-transparent"
                 />
               </motion.div>
             </div>
