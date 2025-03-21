@@ -189,7 +189,7 @@ export default function Home() {
                 {/* Removed the dark background div */}
                 {/* Removed the animated overlay div */}
                 <Image
-                  src="/Untitled.svg"
+                  src="/illustration.svg"
                   alt="Illustration"
                   width={45}
                   height={45}
