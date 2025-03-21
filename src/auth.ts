@@ -5,6 +5,7 @@ import { db } from "./lib/db";
 import { getUserById } from "./data/user";
 import { getTwoFactorConformationByUserId } from "./data/two-factor-conformation";
 import { getAccountByUserId } from "./data/account";
+import { NextResponse } from "next/server";
  
 export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   events:{
@@ -17,7 +18,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
   },
   callbacks:{
     // Modify the jwt token / Action to take while generation of token
-    async jwt({token}){
+    async jwt({token,user}){
       // token.sub has user id (USER table id ) 
       if(!token.sub)
         return token;
@@ -32,7 +33,10 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
 
       token.name = existingUser.name;
       token.email = existingUser.email;
-      token.role = existingUser.role;
+      if (user) {
+        token.role = user.role || "USER" // Default to USER if not set
+      }
+    
       token.isTwoFactorEnable = existingUser.isTwoFactorEnable;
       if(token.role==="USER" ){
         token.aadhaarNumber = existingUser.aadhaarNumber ?? "";
@@ -45,6 +49,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
     async session({token,session}){
       // console.log({Sessiontoken:token,session});
       // id of our user is in token.sub 
+
       if(token.sub && session.user) 
         session.user.id = token.sub;
 
@@ -115,6 +120,10 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
             },
           })
         }
+        const response = NextResponse.next();
+        response.cookies.set("user_role", existingUser.role);
+        console.log("USER LOGED IN:",existingUser);
+        
         return true
       } catch (error) {
         console.error("Error in signIn callback:", error)

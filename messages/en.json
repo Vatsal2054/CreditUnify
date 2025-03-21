@@ -362,5 +362,11 @@
       "successMessage": "Your password has been successfully updated!",
       "errorMessage": "An error occurred while updating the password."
     }
+  },
+  "Common": {
+    "getStarted": "Get Started",
+    "switchLanguage": "Switch language",
+    "brand": "Credit",
+    "brandHighlight": "unify"
   }
 }

@@ -6,6 +6,7 @@ import { ThemeProvider } from 'next-themes';
 import { NextIntlClientProviderwrapper } from './components/providers/NextIntlClientProvider';
 import { getMessages } from "next-intl/server";
 import { Inter, DM_Sans } from 'next/font/google';
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ['latin'] });
 const dmSans = DM_Sans({ subsets: ['latin'] });
@@ -32,6 +33,7 @@ export default async function RootLayout({
           <NextIntlClientProviderwrapper messages={messages}>
             <SessionProvider session={session}>
               {children}
+              <Toaster richColors />
             </SessionProvider>
           </NextIntlClientProviderwrapper>
         </ThemeProvider>

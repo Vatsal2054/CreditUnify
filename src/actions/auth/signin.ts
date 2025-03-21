@@ -11,6 +11,8 @@ import { getTwoFactorConformationByUserId } from "@/data/two-factor-conformation
 import { AuthError } from "next-auth"
 import nodemailer from "nodemailer"
 import { SigninSchema } from "@/lib"
+import { cookies } from "next/headers"
+import { NextResponse } from "next/server"
 
 // import { getSchemas } from "@/lib/index"
 // import { getTranslations } from "next-intl/server";
@@ -21,7 +23,9 @@ import { SigninSchema } from "@/lib"
 // })();
 
 
-async function sendVerificationEmail(email: string, token: string,name: string) {
+
+
+async function sendVerificationEmail(email: string, token: string, name: string) {
   const VerificationLink = `${process.env.BASE_URL}/auth/new-verification?token=${token}`;
   // console.log("Varification Link",VerificationLink);
   const transporter = nodemailer.createTransport({
@@ -35,13 +39,13 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
-    subject: "Email Verification For Kharchaguru",
+    subject: "Email Verification For CreditUnify",
     html: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Kharchaguru Account</title>
+    <title>Verify Your CreditUnify Account</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -65,7 +69,7 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
             background-color: #ffffff;
             padding: 30px 20px;
             text-align: center;
-            border-bottom: 3px solid #4CAF50;
+            border-bottom: 3px solid #1976D2;
         }
         .logo-container {
             display: inline-flex;
@@ -80,7 +84,7 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
         .logo-text {
             font-size: 32px;
             font-weight: bold;
-            color: #2E7D32;
+            color: #1976D2;
             margin: auto 0;
         }
         .content {
@@ -88,7 +92,7 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
             background-color: #ffffff;
         }
         h1 {
-            color: #2E7D32;
+            color: #1976D2;
             margin-top: 0;
             font-size: 24px;
             text-align: center;
@@ -96,7 +100,7 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
         .btn {
             display: inline-block;
             padding: 12px 32px;
-            background-color: #2E7D32;
+            background-color: #1976D2;
             color: white;
             text-decoration: none;
             border-radius: 25px;
@@ -118,17 +122,17 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
             margin: 20px 0;
         }
         .link {
-            color: #2E7D32;
+            color: #1976D2;
             word-break: break-all;
             font-size: 14px;
         }
         .security-notice {
-            background-color: #F1F8E9;
+            background-color: #E3F2FD;
             padding: 15px;
             border-radius: 4px;
             margin: 20px 0;
             font-size: 14px;
-            color: #33691E;
+            color: #0D47A1;
         }
     </style>
 </head>
@@ -136,14 +140,14 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="https://trackwithCreditunify.vercel.app/Kharchaguru-5.svg" alt="CredityUnify logo" class="logo">
-                <span class="logo-text">Kharchaguru</span>
+                <img src="https://trackwithCreditunify.vercel.app/CreditUnify-logo.svg" alt="CreditUnify logo" class="logo">
+                <span class="logo-text">CreditUnify</span>
             </div>
         </div>
         <div class="content">
             <h1>Verify Your Email Address</h1>
-            <p>Hello,${name}</p>
-            <p>Welcome to Kharchaguru! We're excited to have you on board. To get started, please verify your email address by clicking the button below:</p>
+            <p>Hello, ${name}</p>
+            <p>Welcome to CreditUnify! We're excited to have you on board. To get started, please verify your email address by clicking the button below:</p>
             <p style="text-align: center;">
                 <a href="${VerificationLink}" class="btn" style="color: white;">Verify Email</a>
             </p>
@@ -153,11 +157,11 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
             <div class="divider"></div>
             <p style="font-size: 14px;">If you're having trouble with the button, copy and paste this link into your browser:</p>
             <p class="link">${VerificationLink}</p>
-            <p style="font-size: 14px; color: #666;">If you didn't create an account with Kharchaguru, please ignore this email or contact our support team.</p>
+            <p style="font-size: 14px; color: #666;">If you didn't create an account with CreditUnify, please ignore this email or contact our support team.</p>
         </div>
         <div class="footer">
             <p>Need help? Contact us at etracker690@gmail.com</p>
-            <p>&copy; 2023 Kharchaguru. All rights reserved.</p>
+            <p>&copy; 2023 CreditUnify. All rights reserved.</p>
         </div>
     </div>
 </body>
@@ -175,7 +179,7 @@ async function sendVerificationEmail(email: string, token: string,name: string) 
   }
 }
 
-const sendTwoFactorTokenEmail = async (email: string, token: string,name:string) => {
+const sendTwoFactorTokenEmail = async (email: string, token: string, name: string) => {
 
   console.log(`Attempting to send 2FA email to: ${email} , token:${token}`);
   const transporter = nodemailer.createTransport({
@@ -189,13 +193,13 @@ const sendTwoFactorTokenEmail = async (email: string, token: string,name:string)
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
-    subject: "Your Kharchaguru Two-Factor Authentication Code",
+    subject: "Your CreditUnify Two-Factor Authentication Code",
     html: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Kharchaguru Two-Factor Authentication Code</title>
+    <title>Your CreditUnify Two-Factor Authentication Code</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -219,7 +223,7 @@ const sendTwoFactorTokenEmail = async (email: string, token: string,name:string)
             background-color: #ffffff;
             padding: 30px 20px;
             text-align: center;
-            border-bottom: 3px solid #4CAF50;
+            border-bottom: 3px solid #1976D2;
         }
         .logo-container {
             display: inline-flex;
@@ -234,7 +238,7 @@ const sendTwoFactorTokenEmail = async (email: string, token: string,name:string)
         .logo-text {
             font-size: 32px;
             font-weight: bold;
-            color: #2E7D32;
+            color: #1976D2;
             margin: auto 0;
         }
         .content {
@@ -242,7 +246,7 @@ const sendTwoFactorTokenEmail = async (email: string, token: string,name:string)
             background-color: #ffffff;
         }
         h1 {
-            color: #2E7D32;
+            color: #1976D2;
             margin-top: 0;
             font-size: 24px;
             text-align: center;
@@ -250,12 +254,12 @@ const sendTwoFactorTokenEmail = async (email: string, token: string,name:string)
         .code {
             font-size: 36px;
             font-weight: bold;
-            color: #2E7D32;
+            color: #1976D2;
             letter-spacing: 5px;
             text-align: center;
             margin: 20px 0;
             padding: 15px;
-            background-color: #F1F8E9;
+            background-color: #E3F2FD;
             border-radius: 4px;
         }
         .footer {
@@ -267,12 +271,12 @@ const sendTwoFactorTokenEmail = async (email: string, token: string,name:string)
             border-top: 1px solid #eaeaea;
         }
         .security-notice {
-            background-color: #FFF3E0;
+            background-color: #FFF8E1;
             padding: 15px;
             border-radius: 4px;
             margin: 20px 0;
             font-size: 14px;
-            color: #E65100;
+            color: #FF6F00;
         }
         @media (max-width: 600px) {
             .container {
@@ -288,24 +292,24 @@ const sendTwoFactorTokenEmail = async (email: string, token: string,name:string)
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="https://trackwithCreditunify.vercel.app/Kharchaguru-5.svg" alt="CredityUnify logo" class="logo">
-                <span class="logo-text">Kharchaguru</span>
+                <img src="https://trackwithCreditunify.vercel.app/CreditUnify-logo.svg" alt="CreditUnify logo" class="logo">
+                <span class="logo-text">CreditUnify</span>
             </div>
         </div>
         <div class="content">
             <h1>Your Two-Factor Authentication Code</h1>
-            <p>Hello,${name}</p>
-            <p>To complete your login to Kharchaguru, please use the following code:</p>
+            <p>Hello, ${name}</p>
+            <p>To complete your login to CreditUnify, please use the following code:</p>
             <p class="code" id="authCode">${token}</p>
             <p>Please enter this code on the login page to verify your identity and access your account.</p>
             <div class="security-notice">
                 ⏱️ This code will expire in 10 minutes for your security.
             </div>
-            <p>If you didn't attempt to log in to Kharchaguru, please contact our support team immediately at etracker690@gmail.com.</p>
+            <p>If you didn't attempt to log in to CreditUnify, please contact our support team immediately at etracker690@gmail.com.</p>
         </div>
         <div class="footer">
             <p>Need help? Contact us at etracker690@gmail.com</p>
-            <p>&copy; 2023 Kharchaguru. All rights reserved.</p>
+            <p>&copy; 2023 CreditUnify. All rights reserved.</p>
         </div>
     </div>
 </body>
@@ -321,7 +325,6 @@ const sendTwoFactorTokenEmail = async (email: string, token: string,name:string)
     console.error('Error sending 2FA email:', error);
     throw error;
   }
-
 }
 
 export const Signin = async (
@@ -415,11 +418,17 @@ export const Signin = async (
       redirecturl=DEFAULT_LOGIN_REDIRECT_BANK;
     }
 
+    
+    
     await signIn("credentials", {
       email,
       password,
       redirectTo: redirecturl,
     })
+    
+    const response = NextResponse.next();
+    response.cookies.set("user_role", existingUser.role);
+    console.log("USER LOGED IN:",existingUser);
   } catch (e: any) {
     console.error("Error during signIn:", e)
     if (e instanceof AuthError) {

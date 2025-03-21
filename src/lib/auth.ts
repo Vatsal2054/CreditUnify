@@ -9,7 +9,6 @@ type User = {
   isTwoFactorEnable: boolean
   isOAuth: boolean
   role: "ADMIN" | "USER" | "BANK"
-  
 }
 
 /**
