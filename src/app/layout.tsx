@@ -23,7 +23,7 @@ export default async function RootLayout({
     <html lang="en" className={dmSans.className}>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NextIntlClientProviderwrapper messages={{messages}}>
+          <NextIntlClientProviderwrapper messages={messages}>
             {children}
           </NextIntlClientProviderwrapper>
         </ThemeProvider>
