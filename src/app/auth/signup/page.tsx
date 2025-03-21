@@ -7,7 +7,7 @@ const Home = () => {
   
   return (
     <>
-      <h1 className="hidden">{t("auth.spendwise-register")}</h1>
+      <h1 className="hidden">{t("auth.Creditunify-register")}</h1>
       <RegisterForm />
     </>
   )

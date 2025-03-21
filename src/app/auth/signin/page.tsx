@@ -6,7 +6,7 @@ const SigninPage = () => {
   const t = useTranslations();
   return (
     <>
-      <h1 className="hidden">{t("auth.spendwise-login")}</h1>
+      <h1 className="hidden">{t("auth.Creditunify-login")}</h1>
       <LoginForm />
     </>
   )

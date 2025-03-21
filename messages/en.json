@@ -267,8 +267,8 @@
     "register": "Register",
     "registering": "Registering user...",
     "weak-password": "Please set a stronger password",
-    "spendwise-register": "Spendwise - Register",
-    "spendwise-login": "Spendwise - Login",
+    "Creditunify-register": "Creditunify - Register",
+    "Creditunify-login": "Creditunify - Login",
     "validation": {
       "email-empty": "Email field is empty!",
       "name-empty": "Name field is empty!",
@@ -294,8 +294,8 @@
       "budgeting": "Budgeting Made Brilliant",
       "finances-optimized": "Your Finances, Fully Optimized",
       "effortless": "Effortless Tracking, Smarter Spending",
-      "track-with": "track with spendwise",
-      "spendwise": "SpendWise"
+      "track-with": "track with Creditunify",
+      "Creditunify": "Creditunify"
     },
     "Login": {
       "header": "Sign in to your Account",

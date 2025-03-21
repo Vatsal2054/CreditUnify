@@ -46,7 +46,7 @@ export const Social = ({disabled,setDisabled}:{disabled:boolean,setDisabled:any}
           <span className="w-full border-t"></span>
         </div>
         <div className="relative flex w-full justify-center text-xs uppercase">
-          <span className="px-2 text-muted-foreground ligth: bg-sarthak_L dark:bg-sarthak_d">
+          <span className="px-2 text-muted-foreground bg-white dark:bg-black ">
             Or continue with
           </span>
         </div>

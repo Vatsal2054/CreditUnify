@@ -129,7 +129,7 @@ async function sendVerificationEmail(email: string, token: string, name: string)
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="https://trackwithspendwise.vercel.app/Kharchaguru-5.svg" alt="Kharchaguru Logo" class="logo">
+                <img src="https://trackwithCreditunify.vercel.app/Kharchaguru-5.svg" alt="CredityUnify logo" class="logo">
                 <span class="logo-text">Kharchaguru</span>
             </div>
         </div>
