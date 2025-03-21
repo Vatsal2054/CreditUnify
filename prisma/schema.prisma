@@ -74,6 +74,7 @@ model User {
   bankName      BankName?
   creditScores  CreditScore[]
   accounts      Account[]
+  creditScoresBank  CreditScoreBank[]
   isTwoFactorEnable Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
   @@map("users")
@@ -138,13 +139,27 @@ model TwoFactorConfirmation{
 model CreditScore {
   id        String   @id @default(cuid())
   userId    String   @map("user_id")
-  score     Int
+  score     Float
   recordedAt DateTime @default(now()) @map("recorded_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("credit_score_history")
+}
+
+model CreditScoreBank {
+    id        String   @id @default(cuid())
+    userId    String   @map("user_id")
+    aadharNumber String
+    PAN String
+    score Float
+    recordedAt DateTime @default(now()) @map("recorded_at")
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@map("bank_checked_score_history")
 }
 
 model Tokens {
