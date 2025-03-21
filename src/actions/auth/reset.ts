@@ -12,7 +12,7 @@ import { z } from "zod"
 //   return getSchemas(t);
 // })();
 
-const sendPasswordResetEmail = async(email: string, token: string,name:string) => {
+const sendPasswordResetEmail = async(email: string, token: string, name: string) => {
   const resetLink = `${process.env.BASE_URL}/auth/new-password?token=${token}`
 
   const transporter = nodemailer.createTransport({
@@ -26,13 +26,13 @@ const sendPasswordResetEmail = async(email: string, token: string,name:string) =
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
-    subject: "Reset Your Kharchaguru Password",
+    subject: "Reset Your CreditUnify Password",
     html: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Your Kharchaguru Password</title>
+    <title>Reset Your CreditUnify Password</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -56,7 +56,7 @@ const sendPasswordResetEmail = async(email: string, token: string,name:string) =
             background-color: #ffffff;
             padding: 30px 20px;
             text-align: center;
-            border-bottom: 3px solid #4CAF50;
+            border-bottom: 3px solid #1976D2;
         }
         .logo-container {
             display: inline-flex;
@@ -71,7 +71,7 @@ const sendPasswordResetEmail = async(email: string, token: string,name:string) =
         .logo-text {
             font-size: 32px;
             font-weight: bold;
-            color: #2E7D32;
+            color: #1976D2;
             margin: auto 0;
         }
         .content {
@@ -79,14 +79,14 @@ const sendPasswordResetEmail = async(email: string, token: string,name:string) =
             background-color: #ffffff;
         }
         h1 {
-            color: #2E7D32;
+            color: #1976D2;
             margin-top: 0;
             font-size: 24px;
         }
         .btn {
             display: inline-block;
             padding: 12px 32px;
-            background-color: #2E7D32;
+            background-color: #1976D2;
             color: white;
             text-decoration: none;
             border-radius: 25px;
@@ -108,17 +108,17 @@ const sendPasswordResetEmail = async(email: string, token: string,name:string) =
             margin: 20px 0;
         }
         .link {
-            color: #2E7D32;
+            color: #1976D2;
             word-break: break-all;
             font-size: 14px;
         }
         .security-notice {
-            background-color: #F1F8E9;
+            background-color: #E3F2FD;
             padding: 15px;
             border-radius: 4px;
             margin: 20px 0;
             font-size: 14px;
-            color: #33691E;
+            color: #0D47A1;
         }
     </style>
 </head>
@@ -126,14 +126,14 @@ const sendPasswordResetEmail = async(email: string, token: string,name:string) =
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="https://trackwithCreditunify.vercel.app/Kharchaguru-5.svg" alt="CredityUnify logo" class="logo">
-                <span class="logo-text">Kharchaguru</span>
+                <img src="https://trackwithCreditunify.vercel.app/CreditUnify-logo.svg" alt="CreditUnify logo" class="logo">
+                <span class="logo-text">CreditUnify</span>
             </div>
         </div>
         <div class="content">
             <h1>Reset Your Password</h1>
-            <p>Hello,${name}</p>
-            <p>We received a request to reset your Kharchaguru password. Don't worry, we've got you covered!</p>
+            <p>Hello, ${name}</p>
+            <p>We received a request to reset your CreditUnify password. Don't worry, we've got you covered!</p>
             <p style="text-align: center;">
                 <a href="${resetLink}" class="btn" style="color: white;">Reset My Password</a>
             </p>
@@ -147,7 +147,7 @@ const sendPasswordResetEmail = async(email: string, token: string,name:string) =
         </div>
         <div class="footer">
             <p>Need help? Contact us at etracker690@gmail.com</p>
-            <p>&copy; 2023 Kharchaguru. All rights reserved.</p>
+            <p>&copy; 2023 CreditUnify. All rights reserved.</p>
         </div>
     </div>
 </body>
