@@ -141,7 +141,7 @@ export function RecentActivity() {
                   </Avatar>
                   <span className="font-medium">{activity.user.name}</span>
                   {activity.type === "alert" && (
-                    <Badge variant={activity.severity === "critical" ? "destructive" : "warning"}>
+                    <Badge variant={activity.severity === "critical" ? "destructive" : "secondary"}>
                       {activity.severity}
                     </Badge>
                   )}
