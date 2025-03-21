@@ -22,7 +22,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const session = await auth();
   const messages = await getMessages();
   
   return (
@@ -30,7 +29,9 @@ export default async function RootLayout({
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextIntlClientProviderwrapper messages={messages}>
-            {children}
+            <SessionProvider>
+              {children}
+            </SessionProvider>
           </NextIntlClientProviderwrapper>
         </ThemeProvider>
       </body>
