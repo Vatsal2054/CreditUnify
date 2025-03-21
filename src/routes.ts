@@ -34,15 +34,26 @@ export const authRoutes = [
 
 export const apiAuthPrefix = "/api/auth"
 
+export const privateUSER=[
+  "/user-dashboard",
+]
+
+export const privateADMIN=[
+  "/admin-dashboard",
+]
+
+export const privateBANK=[
+  "/bank-dashboard",
+]
 /**
  *  The default redirect path after loggong in
  * @type{string}
  *
  */
 
-export const DEFAULT_LOGIN_REDIRECT_USER = "/dashboard-user"
-export const DEFAULT_LOGIN_REDIRECT_BANK = "/dashboard-bank"
-export const DEFAULT_LOGIN_REDIRECT_ADMIN = "/dashboard-admin"
+export const DEFAULT_LOGIN_REDIRECT_USER = "/user-dashboard"
+export const DEFAULT_LOGIN_REDIRECT_BANK = "/bank-dashboard"
+export const DEFAULT_LOGIN_REDIRECT_ADMIN = "/admin-dashboard"
 
 export const apiRoutes = [
   "/api/*"

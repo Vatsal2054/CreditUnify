@@ -133,13 +133,13 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="outline" size="sm" onClick={()=> window.location.assign(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin`)}>
+              <Button variant="outline" size="sm" onClick={()=> {window.location.href="/auth/signin";}}>
                 {t('header.buttons.login')}
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button size="sm" className="bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600"
-                onClick={()=> window.location.assign(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/signup`)}
+                onClick={()=> {window.location.href="/auth/signup";}}
               >
                 {t('header.buttons.signup')}
               </Button>
