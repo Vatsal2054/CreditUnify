@@ -19,7 +19,7 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NextIntlClientProviderwrapper messages={{messages}}>
+          <NextIntlClientProviderwrapper messages={messages}>
             {children}
           </NextIntlClientProviderwrapper>
         </ThemeProvider>
