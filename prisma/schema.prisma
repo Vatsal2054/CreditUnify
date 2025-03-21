@@ -23,7 +23,7 @@ model User {
   role           UserRole @default(USER)
   aadhaarNumber String?
   PAN           String?
-  
+  creditScores  CreditScore[]
   accounts      Account[]
   isTwoFactorEnable Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
@@ -84,4 +84,16 @@ model TwoFactorConfirmation{
   user User @relation(fields: [userId],references: [id],onDelete: Cascade)
 
   @@unique([userId])
+}
+
+model CreditScore {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  score     Int
+  recordedAt DateTime @default(now()) @map("recorded_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("credit_score_history")
 }
