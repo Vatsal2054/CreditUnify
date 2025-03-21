@@ -16,6 +16,7 @@ export const NextIntlClientProviderwrapper = ({
   // Load stored locale from localStorage on client side
   useEffect(() => {
     const savedLocale = localStorage.getItem('locale');
+    console.log('savedLocale', savedLocale);
     if (savedLocale && messages[savedLocale]) {
       setLocale(savedLocale);
     }

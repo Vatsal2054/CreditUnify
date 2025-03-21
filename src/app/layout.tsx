@@ -25,7 +25,7 @@ export default async function RootLayout({
     <html lang="en">
       <body >
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <NextIntlClientProviderwrapper messages={{messages}}>
+        <NextIntlClientProviderwrapper messages={messages}>
             <SessionProvider session={session}>
               {children}
             </SessionProvider>
