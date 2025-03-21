@@ -3,6 +3,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { ModeToggle } from "@/components/ModeToggle";
 import { UserButton } from "@/components/user-button";
 import { useCurrentRole } from "@/hooks/use-current-role";
+import { useCurrentUserClient } from "@/hooks/use-current-user";
 import { motion } from 'framer-motion';
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -10,12 +11,11 @@ import Link from "next/link";
 import { useEffect } from "react";
 export default function Navbar({children}:{children:React.ReactNode}) {
   const t = useTranslations("LandingPage");
-
-  const userrole = useCurrentRole();
-  console.log("ROLE: ",userrole);
-
+  const user = useCurrentUserClient();
+  
   useEffect(()=>{
-    document.cookie = `role=${userrole}; path=/; max-age=86400`; // expires in 24 hours
+    console.log("ROLE: ",{user});
+    document.cookie = `role=${user?.role}; path=/; max-age=86400`; // expires in 24 hours
   },[]);
   
   return(

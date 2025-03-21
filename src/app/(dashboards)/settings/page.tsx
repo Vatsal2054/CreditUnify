@@ -78,8 +78,8 @@ const ExtendedSettingsSchema = z.object({
 
 const SettingsPage = () => {
   const searchParams = useSearchParams();
-  const role = useCurrentRole();
   const user = useCurrentUserClient();
+  const role = user?.role;
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
   const [isDocPending, startDocTransition] = useTransition();
@@ -126,11 +126,7 @@ const SettingsPage = () => {
   useEffect(() => {
     const missing = searchParams.get("missing");
 
-    if (missing === "upi") {
-      toast.warning("Please add your UPI ID to continue", {
-        description: "A UPI ID is required to use this feature",
-      });
-    } else if (missing === "aadhaar") {
+   if (missing === "aadhaar") {
       toast.warning("Please add your Aadhaar details to continue", {
         description: "Aadhaar verification is required for this feature",
       });
@@ -298,7 +294,7 @@ const SettingsPage = () => {
   return (
     <MaxWidthWrapper>
       <div className="mx-auto flex w-full max-w-screen-xl flex-wrap items-center justify-between p-4">
-        <div className="mt-20 flex w-full flex-col gap-5 px-4">
+        <div className="flex w-full flex-col gap-5 px-4">
           <div className="z-10 mb-4 flex items-center justify-between bg-white py-4 dark:bg-zinc-950">
             <h1 className="text-3xl font-bold">Settings</h1>
             <Button

@@ -62,5 +62,6 @@ export const apiRoutes = [
 export const privateRoutes = [
   "/admin-dashboard",
   "/bank-dashboard",
-  "/user-dashboard"
+  "/user-dashboard",
+  "/settings"
 ]
