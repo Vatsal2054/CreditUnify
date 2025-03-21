@@ -188,7 +188,15 @@ export default function Home() {
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <Image src="/Untitled.svg" alt="Illustration" width={45} height={45} className="object-cover w-full h-full rounded-lg" />
+                {/* Removed the dark background div */}
+                {/* Removed the animated overlay div */}
+                <Image
+                  src="/Untitled.svg"
+                  alt="Illustration"
+                  width={45}
+                  height={45}
+                  className="object-cover w-full h-full rounded-lg bg-transparent"
+                />
               </motion.div>
             </div>
           </div>

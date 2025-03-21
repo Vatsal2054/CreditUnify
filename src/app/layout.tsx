@@ -5,6 +5,10 @@ import { auth } from "@/auth";
 import { ThemeProvider } from 'next-themes';
 import { NextIntlClientProviderwrapper } from './components/providers/NextIntlClientProvider';
 import { getMessages } from "next-intl/server";
+import { Inter, DM_Sans } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
+const dmSans = DM_Sans({ subsets: ['latin'] });
 
 
 export const metadata: Metadata = {
@@ -22,13 +26,11 @@ export default async function RootLayout({
   const messages = await getMessages();
   
   return (
-    <html lang="en">
-      <body >
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <NextIntlClientProviderwrapper messages={messages}>
-            <SessionProvider session={session}>
-              {children}
-            </SessionProvider>
+    <html lang="en" className={dmSans.className}>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <NextIntlClientProviderwrapper messages={messages}>
+            {children}
           </NextIntlClientProviderwrapper>
         </ThemeProvider>
       </body>
