@@ -1,7 +1,7 @@
 "use server"
 import { signIn } from "@/auth"
 import * as z from "zod"
-import { DEFAULT_LOGIN_REDIRECT, DEFAULT_LOGIN_REDIRECT_ADMIN, DEFAULT_LOGIN_REDIRECT_BANK, DEFAULT_LOGIN_REDIRECT_USER } from "@/routes"
+import { DEFAULT_LOGIN_REDIRECT_ADMIN, DEFAULT_LOGIN_REDIRECT_BANK, DEFAULT_LOGIN_REDIRECT_USER } from "@/routes"
 import { getUserByEmail } from "@/data/user"
 import { generateTwoFactorToken, generateVerificationToken } from "@/lib/tokens"
 import { getTwoFactorTokenByEmail } from "@/data/two-factor-token"

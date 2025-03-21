@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import { ThemeProvider } from 'next-themes';
+import { NextIntlClientProviderwrapper } from './components/providers/NextIntlClientProvider';
+import { getMessages } from "next-intl/server";
 
 
 export const metadata: Metadata = {
@@ -16,14 +19,21 @@ export default async function RootLayout({
 }>) {
 
   const session = await auth();
+  const messages = await getMessages();
   
   return (
     <html lang="en">
       <body >
-        <SessionProvider session={session}>
-          {children}
-        </SessionProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <NextIntlClientProviderwrapper messages={{messages}}>
+            <SessionProvider session={session}>
+              {children}
+            </SessionProvider>
+          </NextIntlClientProviderwrapper>
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+
+
