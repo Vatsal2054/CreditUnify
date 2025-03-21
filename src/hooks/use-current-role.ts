@@ -1,7 +1,7 @@
 // client cmp
 import { useSession } from "next-auth/react";
 
-export  function  useCurrentRole() {
+export  function  useCurrentUserClient() {
   const session =  useSession();
   return session.data?.user?.role;
 }

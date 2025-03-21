@@ -11,6 +11,8 @@ import { getTwoFactorConformationByUserId } from "@/data/two-factor-conformation
 import { AuthError } from "next-auth"
 import nodemailer from "nodemailer"
 import { SigninSchema } from "@/lib"
+import { cookies } from "next/headers"
+import { NextResponse } from "next/server"
 
 // import { getSchemas } from "@/lib/index"
 // import { getTranslations } from "next-intl/server";
@@ -416,11 +418,17 @@ export const Signin = async (
       redirecturl=DEFAULT_LOGIN_REDIRECT_BANK;
     }
 
+    
+    
     await signIn("credentials", {
       email,
       password,
       redirectTo: redirecturl,
     })
+    
+    const response = NextResponse.next();
+    response.cookies.set("user_role", existingUser.role);
+    console.log("USER LOGED IN:",existingUser);
   } catch (e: any) {
     console.error("Error during signIn:", e)
     if (e instanceof AuthError) {

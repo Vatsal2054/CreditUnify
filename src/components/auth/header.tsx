@@ -9,7 +9,7 @@ const font = Poppins({
 export const Header = ({ lable }: { lable: string }) => (
   <div className="flex w-full flex-col items-center justify-center gap-y-2">
     <h1 className={cn("text-3xl font-semibold", font.className)}>
-      credit<span className="text-green-500">unify</span>
+      credit<span className="text-blue-500">unify</span>
     </h1>
     <p className="text-sm text-muted-foreground">{lable}</p>
   </div>

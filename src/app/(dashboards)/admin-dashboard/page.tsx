@@ -1,6 +1,6 @@
 export default function ADMIN(){
   return (
-    <div className="flex h-schreen w-screen bg-black text-red-500">
+    <div className="flex h-screen w-screen bg-black text-red-500 text-center  justify-center items-center">
       ADMIN DASHBOARD
     </div>
   )

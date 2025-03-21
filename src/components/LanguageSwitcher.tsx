@@ -1,11 +1,10 @@
-"use client";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { languages } from "@/src/i18n/config";
+import { languages } from "@/i18n/config";
 
 // Language options
 const LanguageSwitcher = () => {
@@ -16,7 +15,7 @@ const LanguageSwitcher = () => {
   // Function to change the language
   const handleLanguageChange = (localeCode : any) => {
     // Store the selected language in cookies
-    document.cookie = locale=${localeCode}; path=/; max-age=31536000; // 1 year expiration
+    document.cookie = `locale=${localeCode}; path=/; max-age=31536000`; // 1 year expiration
 
     // Update state
     setCurrentLocale(localeCode);
@@ -30,7 +29,7 @@ const LanguageSwitcher = () => {
     const getCookie = (name :any) => {
       return document.cookie
         .split("; ")
-        .find((row) => row.startsWith(${name}=))
+        .find((row) => row.startsWith(`${name}=`))
         ?.split("=")[1];
     };
 
