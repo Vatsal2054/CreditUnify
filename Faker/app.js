@@ -238,10 +238,10 @@ app.get("/api/loans", async (req, res) => {
   }
 
   // Standardize the data structure
-  data = data.map(item => {
+  data = data.map((item) => {
     // Create a new standardized object
     const standardized = {};
-    
+
     // For two_wheeler_loan type
     if (loanType === "two_wheeler_loan") {
       standardized.bank_name = item["TWL Banks"];
@@ -261,22 +261,24 @@ app.get("/api/loans", async (req, res) => {
     else {
       // Find the bank name field (assuming it contains "bank" or is the first property)
       const keys = Object.keys(item);
-      const bankKey = keys.find(k => k.toLowerCase().includes('bank')) || keys[0];
-      const interestKey = keys.find(k => k.toLowerCase().includes('interest')) || keys[1];
-      
+      const bankKey =
+        keys.find((k) => k.toLowerCase().includes("bank")) || keys[0];
+      const interestKey =
+        keys.find((k) => k.toLowerCase().includes("interest")) || keys[1];
+
       standardized.bank_name = item[bankKey];
       standardized.interest_rate = item[interestKey];
-      
+
       // Copy remaining fields
-      keys.forEach(key => {
+      keys.forEach((key) => {
         if (key !== bankKey && key !== interestKey) {
           // Convert field names to snake_case
-          const snakeCaseKey = key.toLowerCase().replace(/\s+/g, '_');
+          const snakeCaseKey = key.toLowerCase().replace(/\s+/g, "_");
           standardized[snakeCaseKey] = item[key];
         }
       });
     }
-    
+
     return standardized;
   });
 
@@ -338,7 +340,7 @@ app.get("/get-scores", (req, res) => {
     { name: "poor", minScore: 300, maxScore: 579 },
     { name: "fair", minScore: 580, maxScore: 669 },
     { name: "good", minScore: 670, maxScore: 749 },
-    { name: "excellent", minScore: 750, maxScore: 850 }
+    { name: "excellent", minScore: 750, maxScore: 850 },
   ];
 
   // Determine base credit profile
@@ -359,34 +361,35 @@ app.get("/get-scores", (req, res) => {
 
   // Calculate key credit factors based on profile
   let creditFactors = {};
-  
+
   // 1. Payment history (most influential factor ~35%)
   if (baseProfile.name === "excellent") {
     creditFactors.paymentHistory = {
       onTimePayments: getRandomInt(95, 100), // percentage
       latePayments: getRandomInt(0, 1),
-      totalPayments: getRandomInt(40, 60)
+      totalPayments: getRandomInt(40, 60),
     };
   } else if (baseProfile.name === "good") {
     creditFactors.paymentHistory = {
       onTimePayments: getRandomInt(85, 94),
       latePayments: getRandomInt(1, 3),
-      totalPayments: getRandomInt(30, 45)
+      totalPayments: getRandomInt(30, 45),
     };
   } else if (baseProfile.name === "fair") {
     creditFactors.paymentHistory = {
       onTimePayments: getRandomInt(75, 84),
       latePayments: getRandomInt(3, 5),
-      totalPayments: getRandomInt(20, 35)
+      totalPayments: getRandomInt(20, 35),
     };
-  } else { // poor
+  } else {
+    // poor
     creditFactors.paymentHistory = {
       onTimePayments: getRandomInt(50, 74),
       latePayments: getRandomInt(5, 10),
-      totalPayments: getRandomInt(10, 25)
+      totalPayments: getRandomInt(10, 25),
     };
   }
-  
+
   // 2. Credit utilization (~30%)
   if (baseProfile.name === "excellent") {
     creditFactors.utilization = getRandomInt(1, 20);
@@ -394,10 +397,11 @@ app.get("/get-scores", (req, res) => {
     creditFactors.utilization = getRandomInt(21, 40);
   } else if (baseProfile.name === "fair") {
     creditFactors.utilization = getRandomInt(41, 70);
-  } else { // poor
+  } else {
+    // poor
     creditFactors.utilization = getRandomInt(71, 100);
   }
-  
+
   // 3. Credit history length (~15%)
   if (baseProfile.name === "excellent") {
     creditFactors.historyLength = getRandomInt(7, 15); // years
@@ -405,10 +409,11 @@ app.get("/get-scores", (req, res) => {
     creditFactors.historyLength = getRandomInt(4, 8);
   } else if (baseProfile.name === "fair") {
     creditFactors.historyLength = getRandomInt(2, 5);
-  } else { // poor
+  } else {
+    // poor
     creditFactors.historyLength = getRandomInt(0, 3);
   }
-  
+
   // 4. Credit mix (~10%)
   if (baseProfile.name === "excellent") {
     creditFactors.loanMix = getRandomInt(4, 5); // number of different loan types
@@ -416,10 +421,11 @@ app.get("/get-scores", (req, res) => {
     creditFactors.loanMix = getRandomInt(3, 4);
   } else if (baseProfile.name === "fair") {
     creditFactors.loanMix = getRandomInt(2, 3);
-  } else { // poor
+  } else {
+    // poor
     creditFactors.loanMix = getRandomInt(1, 2);
   }
-  
+
   // 5. Recent inquiries (~10%)
   if (baseProfile.name === "excellent") {
     creditFactors.inquiries = getRandomInt(0, 1);
@@ -427,14 +433,15 @@ app.get("/get-scores", (req, res) => {
     creditFactors.inquiries = getRandomInt(1, 2);
   } else if (baseProfile.name === "fair") {
     creditFactors.inquiries = getRandomInt(2, 4);
-  } else { // poor
+  } else {
+    // poor
     creditFactors.inquiries = getRandomInt(4, 6);
   }
-  
+
   // Generate credit report data
   const creditReport = {
     personalInfo: {
-      name: "Alex Johnson", // Static name
+      name: "Rutu Bhimani", // Static name
       age: getRandomInt(21, 65),
       address: `${faker.location.streetAddress()}, ${faker.location.city()}, ${faker.location.state()}`,
     },
@@ -445,7 +452,10 @@ app.get("/get-scores", (req, res) => {
       rejected: [],
     },
     paymentHistory: {
-      onTime: Math.floor(creditFactors.paymentHistory.totalPayments * (creditFactors.paymentHistory.onTimePayments / 100)),
+      onTime: Math.floor(
+        creditFactors.paymentHistory.totalPayments *
+          (creditFactors.paymentHistory.onTimePayments / 100)
+      ),
       late: creditFactors.paymentHistory.latePayments,
       totalAccounts: 0, // Will calculate below
     },
@@ -459,20 +469,29 @@ app.get("/get-scores", (req, res) => {
 
   // Set oldest account type - higher tier profiles more likely to have mortgage as oldest
   const accountTypesByProfile = {
-    "excellent": ["Mortgage", "Auto Loan", "Credit Card", "Personal Loan"],
-    "good": ["Credit Card", "Auto Loan", "Mortgage", "Personal Loan"],
-    "fair": ["Credit Card", "Personal Loan", "Auto Loan"],
-    "poor": ["Credit Card", "Personal Loan"]
+    excellent: ["Mortgage", "Auto Loan", "Credit Card", "Personal Loan"],
+    good: ["Credit Card", "Auto Loan", "Mortgage", "Personal Loan"],
+    fair: ["Credit Card", "Personal Loan", "Auto Loan"],
+    poor: ["Credit Card", "Personal Loan"],
   };
-  
-  creditReport.oldestAccount.type = getRandomElement(accountTypesByProfile[baseProfile.name]);
+
+  creditReport.oldestAccount.type = getRandomElement(
+    accountTypesByProfile[baseProfile.name]
+  );
 
   // Create score history trend based on credit profile
   // Each bureau gets a consistent history that aligns with the profile
   const generateScoreHistory = (currentScore, bureau, profile) => {
-    const months = ["Feb 2025", "Jan 2025", "Dec 2024", "Nov 2024", "Oct 2024", "Sep 2024"];
+    const months = [
+      "Feb 2025",
+      "Jan 2025",
+      "Dec 2024",
+      "Nov 2024",
+      "Oct 2024",
+      "Sep 2024",
+    ];
     const history = [];
-    
+
     // Determine trend pattern based on profile
     let pattern;
     if (profile.name === "excellent") {
@@ -490,20 +509,21 @@ app.get("/get-scores", (req, res) => {
       pattern = getRandomElement([
         "fluctuating-improvement", // Improvement with setbacks
         "recovery", // Recovering from previous issues
-        "recent-dip" // Generally good but recent problems
+        "recent-dip", // Generally good but recent problems
       ]);
-    } else { // poor
+    } else {
+      // poor
       pattern = getRandomElement([
         "declining", // Getting worse
         "early-recovery", // Just starting to recover
-        "volatile" // Unstable with big swings
+        "volatile", // Unstable with big swings
       ]);
     }
-    
+
     // Set starting score (current score)
     let currentPoint = currentScore;
     history.push({ date: months[0], score: currentPoint });
-    
+
     // Apply the pattern to generate history
     for (let i = 1; i < months.length; i++) {
       switch (pattern) {
@@ -514,7 +534,7 @@ app.get("/get-scores", (req, res) => {
             Math.min(bureau.rangeEnd, currentPoint + getRandomInt(-5, 5))
           );
           break;
-          
+
         case "gradual-improvement":
           // Consistent small decreases as we go back in time (-5 to -15)
           currentPoint = Math.max(
@@ -522,10 +542,11 @@ app.get("/get-scores", (req, res) => {
             currentPoint - getRandomInt(5, 15)
           );
           break;
-          
+
         case "fluctuating-improvement":
           // Generally decreasing with occasional small increases
-          if (Math.random() < 0.25) { // 25% chance of a small increase
+          if (Math.random() < 0.25) {
+            // 25% chance of a small increase
             currentPoint = Math.min(
               bureau.rangeEnd,
               currentPoint + getRandomInt(3, 8)
@@ -537,7 +558,7 @@ app.get("/get-scores", (req, res) => {
             );
           }
           break;
-          
+
         case "recovery":
           // Larger decreases as we go back in time (steeper recovery)
           currentPoint = Math.max(
@@ -545,7 +566,7 @@ app.get("/get-scores", (req, res) => {
             currentPoint - getRandomInt(15, 25)
           );
           break;
-          
+
         case "recent-dip":
           // First big drop, then gradually better in the past
           if (i === 1) {
@@ -560,7 +581,7 @@ app.get("/get-scores", (req, res) => {
             );
           }
           break;
-          
+
         case "declining":
           // Generally increasing as we go back in time (was better before)
           currentPoint = Math.min(
@@ -568,7 +589,7 @@ app.get("/get-scores", (req, res) => {
             currentPoint + getRandomInt(10, 20)
           );
           break;
-          
+
         case "early-recovery":
           // Small decreases for recent months, then larger drops
           if (i <= 2) {
@@ -583,7 +604,7 @@ app.get("/get-scores", (req, res) => {
             );
           }
           break;
-          
+
         case "volatile":
           // Significant random changes
           const volatileChange = getRandomInt(-30, 30);
@@ -593,10 +614,10 @@ app.get("/get-scores", (req, res) => {
           );
           break;
       }
-      
+
       history.push({ date: months[i], score: currentPoint });
     }
-    
+
     return history;
   };
 
@@ -616,7 +637,7 @@ app.get("/get-scores", (req, res) => {
     // Add variance to base score for this bureau (±20 points)
     const scoreVariance = getRandomInt(-20, 20);
     const adjustedScore = Math.max(
-      bureau.rangeStart, 
+      bureau.rangeStart,
       Math.min(bureau.rangeEnd, baseScore + scoreVariance)
     );
 
@@ -633,9 +654,23 @@ app.get("/get-scores", (req, res) => {
   });
 
   // Generate loans that match the credit profile
-  const loanTypes = ["Mortgage", "Personal Loan", "Auto Loan", "Education Loan", "Credit Card"];
-  const lenders = ["CitiBank", "Wells Fargo", "Bank of America", "Chase", "HDFC", "ICICI", "SBI"];
-  
+  const loanTypes = [
+    "Mortgage",
+    "Personal Loan",
+    "Auto Loan",
+    "Education Loan",
+    "Credit Card",
+  ];
+  const lenders = [
+    "CitiBank",
+    "Wells Fargo",
+    "Bank of America",
+    "Chase",
+    "HDFC",
+    "ICICI",
+    "SBI",
+  ];
+
   // Select loan types based on profile's loan mix
   const availableLoanTypes = [];
   for (let i = 0; i < creditFactors.loanMix; i++) {
@@ -647,7 +682,7 @@ app.get("/get-scores", (req, res) => {
       availableLoanTypes.push(newType);
     }
   }
-  
+
   // Generate active loans
   // Number depends on credit profile but is constrained by loan mix
   const activeLoansCount = Math.min(
@@ -657,13 +692,13 @@ app.get("/get-scores", (req, res) => {
     ),
     availableLoanTypes.length
   );
-  
+
   for (let i = 0; i < activeLoansCount; i++) {
     const loanType = availableLoanTypes[i];
     let loanAmount, emi, remainingTenure;
-    
+
     // Set realistic loan amounts and terms based on type and credit profile
-    switch(loanType) {
+    switch (loanType) {
       case "Mortgage":
         // Better credit profiles get larger loans with longer terms
         if (baseProfile.name === "excellent") {
@@ -677,7 +712,7 @@ app.get("/get-scores", (req, res) => {
           remainingTenure = getRandomInt(60, 120);
         }
         break;
-        
+
       case "Auto Loan":
         if (baseProfile.name === "excellent") {
           loanAmount = getRandomInt(40000, 80000);
@@ -690,7 +725,7 @@ app.get("/get-scores", (req, res) => {
           remainingTenure = getRandomInt(12, 36);
         }
         break;
-        
+
       case "Personal Loan":
         if (baseProfile.name === "excellent") {
           loanAmount = getRandomInt(25000, 50000);
@@ -703,7 +738,7 @@ app.get("/get-scores", (req, res) => {
           remainingTenure = getRandomInt(12, 24);
         }
         break;
-        
+
       case "Education Loan":
         if (baseProfile.name === "excellent") {
           loanAmount = getRandomInt(50000, 100000);
@@ -716,7 +751,7 @@ app.get("/get-scores", (req, res) => {
           remainingTenure = getRandomInt(36, 60);
         }
         break;
-        
+
       case "Credit Card":
         if (baseProfile.name === "excellent") {
           loanAmount = getRandomInt(5000, 15000);
@@ -730,35 +765,37 @@ app.get("/get-scores", (req, res) => {
         }
         break;
     }
-    
+
     // Calculate realistic EMI based on loan amount, tenure and credit profile
     // Interest rates are higher for lower credit scores
     const interestRates = {
-      "excellent": { min: 0.05, max: 0.08 }, // 5-8%
-      "good": { min: 0.08, max: 0.12 }, // 8-12%
-      "fair": { min: 0.12, max: 0.18 }, // 12-18%
-      "poor": { min: 0.18, max: 0.24 }  // 18-24%
+      excellent: { min: 0.05, max: 0.08 }, // 5-8%
+      good: { min: 0.08, max: 0.12 }, // 8-12%
+      fair: { min: 0.12, max: 0.18 }, // 12-18%
+      poor: { min: 0.18, max: 0.24 }, // 18-24%
     };
-    
-    const interestRate = getRandomInt(
-      interestRates[baseProfile.name].min * 100, 
-      interestRates[baseProfile.name].max * 100
-    ) / 100;
-    
+
+    const interestRate =
+      getRandomInt(
+        interestRates[baseProfile.name].min * 100,
+        interestRates[baseProfile.name].max * 100
+      ) / 100;
+
     // Simple EMI calculation: P × r × (1 + r)^n / ((1 + r)^n - 1)
     // where P is principal, r is monthly interest rate, n is tenure in months
     const monthlyRate = interestRate / 12;
-    const emiCalculation = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, remainingTenure)) / 
-                           (Math.pow(1 + monthlyRate, remainingTenure) - 1);
+    const emiCalculation =
+      (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, remainingTenure)) /
+      (Math.pow(1 + monthlyRate, remainingTenure) - 1);
     emi = Math.round(emiCalculation);
-    
+
     creditReport.loans.active.push({
       type: loanType,
       lender: getRandomElement(lenders),
       amount: loanAmount,
       emi: emi,
       remainingTenure: remainingTenure,
-      interestRate: (interestRate * 100).toFixed(2) + "%"
+      interestRate: (interestRate * 100).toFixed(2) + "%",
     });
   }
 
@@ -767,27 +804,37 @@ app.get("/get-scores", (req, res) => {
     getRandomInt(0, Math.floor(creditFactors.historyLength / 2)),
     3
   );
-  
+
   const pastMonths = [
-    "Jan 2025", "Dec 2024", "Nov 2024", "Oct 2024", "Sep 2024",
-    "Aug 2024", "Jul 2024", "Jun 2024", "May 2024", "Apr 2024"
+    "Jan 2025",
+    "Dec 2024",
+    "Nov 2024",
+    "Oct 2024",
+    "Sep 2024",
+    "Aug 2024",
+    "Jul 2024",
+    "Jun 2024",
+    "May 2024",
+    "Apr 2024",
   ];
-  
+
   for (let i = 0; i < closedLoansCount; i++) {
     // Pick a loan type that's not already active if possible
     let loanType;
-    const unusedTypes = loanTypes.filter(type => !availableLoanTypes.includes(type));
+    const unusedTypes = loanTypes.filter(
+      (type) => !availableLoanTypes.includes(type)
+    );
     if (unusedTypes.length > 0) {
       loanType = getRandomElement(unusedTypes);
       availableLoanTypes.push(loanType); // Add to available types for tracking
     } else {
       loanType = getRandomElement(loanTypes);
     }
-    
+
     let loanAmount;
-    
+
     // Set realistic loan amounts based on type and credit profile
-    switch(loanType) {
+    switch (loanType) {
       case "Mortgage":
         loanAmount = getRandomInt(
           baseProfile.name === "excellent" ? 200000 : 100000,
@@ -819,7 +866,7 @@ app.get("/get-scores", (req, res) => {
         );
         break;
     }
-    
+
     creditReport.loans.closed.push({
       type: loanType,
       lender: getRandomElement(lenders),
@@ -831,41 +878,60 @@ app.get("/get-scores", (req, res) => {
   // Generate rejected loans - more likely with lower credit scores
   // Probability directly correlates with credit profile
   const rejectionProbabilities = {
-    "excellent": 0.05, // 5% chance
-    "good": 0.20,      // 20% chance
-    "fair": 0.60,      // 60% chance
-    "poor": 0.90       // 90% chance
+    excellent: 0.05, // 5% chance
+    good: 0.2, // 20% chance
+    fair: 0.6, // 60% chance
+    poor: 0.9, // 90% chance
   };
-  
+
   // Check if any rejections should be shown
   let rejectedLoansCount = 0;
   if (Math.random() < rejectionProbabilities[baseProfile.name]) {
-    rejectedLoansCount = baseProfile.name === "excellent" ? 1 : 
-                        baseProfile.name === "good" ? getRandomInt(1, 1) : 
-                        baseProfile.name === "fair" ? getRandomInt(1, 2) : 
-                        getRandomInt(1, 3);
+    rejectedLoansCount =
+      baseProfile.name === "excellent"
+        ? 1
+        : baseProfile.name === "good"
+        ? getRandomInt(1, 1)
+        : baseProfile.name === "fair"
+        ? getRandomInt(1, 2)
+        : getRandomInt(1, 3);
   }
-  
+
   // Map rejection reasons to credit profiles
   const rejectionReasonsByProfile = {
-    "excellent": ["Income verification needed", "Documentation missing"],
-    "good": ["Income insufficient", "Higher debt-to-income ratio than required"],
-    "fair": ["Higher debt-to-income ratio than required", "Credit score below threshold", "Recent credit inquiries"],
-    "poor": ["Low credit score", "Recent defaults", "Existing high debt", "Employment history issues"]
+    excellent: ["Income verification needed", "Documentation missing"],
+    good: ["Income insufficient", "Higher debt-to-income ratio than required"],
+    fair: [
+      "Higher debt-to-income ratio than required",
+      "Credit score below threshold",
+      "Recent credit inquiries",
+    ],
+    poor: [
+      "Low credit score",
+      "Recent defaults",
+      "Existing high debt",
+      "Employment history issues",
+    ],
   };
-  
+
   for (let i = 0; i < rejectedLoansCount; i++) {
     // Rejected loan types - higher value loans more likely to be rejected for lower scores
     let rejectedLoanTypes;
     if (baseProfile.name === "excellent" || baseProfile.name === "good") {
       rejectedLoanTypes = ["Business Loan", "Mortgage", "Personal Loan"];
     } else {
-      rejectedLoanTypes = ["Business Loan", "Mortgage", "Personal Loan", "Credit Card", "Auto Loan"];
+      rejectedLoanTypes = [
+        "Business Loan",
+        "Mortgage",
+        "Personal Loan",
+        "Credit Card",
+        "Auto Loan",
+      ];
     }
-    
+
     const loanType = getRandomElement(rejectedLoanTypes);
     let loanAmount;
-    
+
     // Higher amounts for better profiles (they try for bigger loans)
     if (loanType === "Business Loan") {
       loanAmount = getRandomInt(100000, 500000);
@@ -875,10 +941,11 @@ app.get("/get-scores", (req, res) => {
       loanAmount = getRandomInt(25000, 100000);
     } else if (loanType === "Credit Card") {
       loanAmount = getRandomInt(5000, 20000); // Credit limit
-    } else { // Auto Loan
+    } else {
+      // Auto Loan
       loanAmount = getRandomInt(30000, 80000);
     }
-    
+
     creditReport.loans.rejected.push({
       type: loanType,
       lender: getRandomElement(lenders),
@@ -889,7 +956,8 @@ app.get("/get-scores", (req, res) => {
   }
 
   // Calculate total accounts
-  creditReport.paymentHistory.totalAccounts = activeLoansCount + closedLoansCount;
+  creditReport.paymentHistory.totalAccounts =
+    activeLoansCount + closedLoansCount;
 
   res.status(200).json(creditReport);
 });
@@ -908,41 +976,47 @@ app.post("/unified-score", (req, res) => {
   // Bureau priority reasons - explains why each bureau is prioritized for different loan types
   const bureauPriorityReasons = {
     "Home Loan": {
-      "CIBIL": "Provides comprehensive history of secured loans and mortgage repayment patterns",
-      "CRIF": "Strong coverage of rural and semi-urban lending data important for home loans",
-      "Experian": "Good coverage of banking relationships and deposit account history",
-      "Equifax": "Additional insights on long-term credit behavior"
+      CIBIL:
+        "Provides comprehensive history of secured loans and mortgage repayment patterns",
+      CRIF: "Strong coverage of rural and semi-urban lending data important for home loans",
+      Experian:
+        "Good coverage of banking relationships and deposit account history",
+      Equifax: "Additional insights on long-term credit behavior",
     },
     "Personal Loan": {
-      "Experian": "Best coverage of unsecured loan history and repayment patterns",
-      "Equifax": "Provides detailed consumer spending behavior relevant to personal loans",
-      "CIBIL": "Offers standard credit history with wide banking coverage",
-      "CRIF": "Supplementary data on alternative lending patterns"
+      Experian:
+        "Best coverage of unsecured loan history and repayment patterns",
+      Equifax:
+        "Provides detailed consumer spending behavior relevant to personal loans",
+      CIBIL: "Offers standard credit history with wide banking coverage",
+      CRIF: "Supplementary data on alternative lending patterns",
     },
     "Auto Loan": {
-      "CRIF": "Specialized in vehicle financing history and auto loan performance",
-      "CIBIL": "Good coverage of secured loan repayment history",
-      "Experian": "Provides additional insights on consumer debt management",
-      "Equifax": "Supplementary data on credit utilization patterns"
+      CRIF: "Specialized in vehicle financing history and auto loan performance",
+      CIBIL: "Good coverage of secured loan repayment history",
+      Experian: "Provides additional insights on consumer debt management",
+      Equifax: "Supplementary data on credit utilization patterns",
     },
     "Credit Card": {
-      "Experian": "Best coverage of revolving credit behavior and card utilization",
-      "Equifax": "Detailed transaction patterns and spending behavior analysis",
-      "CRIF": "Good coverage of card approval and rejection history",
-      "CIBIL": "Standard credit information with banking relationship data"
+      Experian:
+        "Best coverage of revolving credit behavior and card utilization",
+      Equifax: "Detailed transaction patterns and spending behavior analysis",
+      CRIF: "Good coverage of card approval and rejection history",
+      CIBIL: "Standard credit information with banking relationship data",
     },
     "Education Loan": {
-      "CIBIL": "Strong coverage of student loan history and educational institution data",
-      "CRIF": "Better coverage of regional educational loan programs",
-      "Experian": "Good insights on income potential and repayment capacity",
-      "Equifax": "Additional data on related financial behaviors"
+      CIBIL:
+        "Strong coverage of student loan history and educational institution data",
+      CRIF: "Better coverage of regional educational loan programs",
+      Experian: "Good insights on income potential and repayment capacity",
+      Equifax: "Additional data on related financial behaviors",
     },
     "Business Loan": {
-      "Equifax": "Best commercial credit data and business financial metrics",
-      "CRIF": "Strong coverage of SME and business loan performance",
-      "CIBIL": "Provides proprietor personal credit history relevant to business",
-      "Experian": "Additional commercial credit risk insights"
-    }
+      Equifax: "Best commercial credit data and business financial metrics",
+      CRIF: "Strong coverage of SME and business loan performance",
+      CIBIL: "Provides proprietor personal credit history relevant to business",
+      Experian: "Additional commercial credit risk insights",
+    },
   };
 
   // Min-Max Scaling between 300 and 900
@@ -951,7 +1025,9 @@ app.post("/unified-score", (req, res) => {
 
   // Helper function to calculate the unified score
   function calculateUnifiedScore(scores, weights) {
-    const availableScores = scores.filter((score) => score !== null && score !== undefined);
+    const availableScores = scores.filter(
+      (score) => score !== null && score !== undefined
+    );
     const availableWeights = weights.slice(0, availableScores.length);
     const weightSum = availableWeights.reduce((acc, w) => acc + w, 0);
 
@@ -959,10 +1035,14 @@ app.post("/unified-score", (req, res) => {
     const normalizedWeights = availableWeights.map((w) => w / weightSum);
 
     // Calculate weighted average
-    const unifiedScore = availableScores.reduce((acc, score, index) => acc + score * normalizedWeights[index], 0);
+    const unifiedScore = availableScores.reduce(
+      (acc, score, index) => acc + score * normalizedWeights[index],
+      0
+    );
 
     // Apply Min-Max scaling
-    const scaledScore = min + ((unifiedScore - min) / (max - min)) * (max - min);
+    const scaledScore =
+      min + ((unifiedScore - min) / (max - min)) * (max - min);
     return Math.round(scaledScore);
   }
 
@@ -986,30 +1066,40 @@ app.post("/unified-score", (req, res) => {
 
   // Create detailed breakdown of scores with weights
   const scoreBreakdown = [];
-  
+
   // Assign weights dynamically based on preference order with higher weight for first bureau
-  const weights = orderedScores[0] === scores["CIBIL"] ? [0.6, 0.2, 0.15, 0.05] : [0.4, 0.3, 0.2, 0.1];
-  
+  const weights =
+    orderedScores[0] === scores["CIBIL"]
+      ? [0.6, 0.2, 0.15, 0.05]
+      : [0.4, 0.3, 0.2, 0.1];
+
   // Calculate unified score
   const unifiedScore = calculateUnifiedScore(orderedScores, weights);
-  
+
   // Create detailed breakdown with individual bureau contributions
   let totalWeightUsed = 0;
-  
+
   for (let i = 0; i < loanBureaus.length; i++) {
     const bureau = loanBureaus[i];
     const score = scores[bureau];
-    
+
     if (score !== null && score !== undefined) {
-      const normalizedWeight = weights[i] / weights.slice(0, orderedScores.filter(s => s !== null && s !== undefined).length).reduce((a, b) => a + b, 0);
+      const normalizedWeight =
+        weights[i] /
+        weights
+          .slice(
+            0,
+            orderedScores.filter((s) => s !== null && s !== undefined).length
+          )
+          .reduce((a, b) => a + b, 0);
       totalWeightUsed += normalizedWeight;
-      
+
       scoreBreakdown.push({
         bureau: bureau,
         score: score,
         weight: normalizedWeight.toFixed(2),
         weightedContribution: Math.round(score * normalizedWeight),
-        priorityReason: bureauPriorityReasons[loanType][bureau]
+        priorityReason: bureauPriorityReasons[loanType][bureau],
       });
     }
   }
@@ -1019,11 +1109,11 @@ app.post("/unified-score", (req, res) => {
     unifiedScore: unifiedScore,
     scoreBreakdown: scoreBreakdown,
     bureauPriorityOrder: loanBureaus,
-    missingBureaus: loanBureaus.filter(bureau => scores[bureau] === null || scores[bureau] === undefined)
+    missingBureaus: loanBureaus.filter(
+      (bureau) => scores[bureau] === null || scores[bureau] === undefined
+    ),
   });
 });
-
-
 
 // Get loan interest rates from moneycontrol
 app.get("/loan-interest-rates", async (req, res) => {
