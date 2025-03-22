@@ -427,9 +427,9 @@ const BankDashboard = () => {
                 <div className="space-y-6">
                   {/* Credit Score Notification */}
                   {!(unifiedScore && !isLoadingUnifiedScore) && (
-                    <div className="bg-blue-50 p-3 rounded-md flex items-start space-x-2">
-                      <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-blue-700">
+                    <div className="bg-blue-50 dark:bg-slate-700 p-3 rounded-md flex items-start space-x-2">
+                      <Info className="h-5 w-5 text-blue-500 dark:text-blue-300 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-blue-700 dark:text-blue-300">
                         The displayed score is normalized using Min-max scaling.
                         To get a specialized unified score for your needs,
                         please select a loan type below.
@@ -611,7 +611,7 @@ const BankDashboard = () => {
                           .map((loan, index) => (
                             <div
                               key={index}
-                              className="p-2 bg-gray-50 rounded-md flex justify-between"
+                              className="p-2 bg-gray-50 dark:bg-transparent rounded-md flex justify-between"
                             >
                               <div>
                                 <div className="font-medium">{loan.type}</div>

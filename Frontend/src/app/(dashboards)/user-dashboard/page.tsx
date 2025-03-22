@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -33,7 +33,6 @@ import CreditScoreChart from '../_components/User/CreditScoreChart';
 import { useCurrentUserClient } from '@/hooks/use-current-user';
 import AIInsight from './components/ai-insight';
 import LoanInterestRates from './components/loan-interest-rates';
-import { useRouter } from 'next/navigation';
 
 // Mock API function to simulate data fetching
 const fetchUserCreditData = async () => {
@@ -42,11 +41,13 @@ const fetchUserCreditData = async () => {
 };
 
 export default function CreditDashboard() {
-  const [idType, setIdType] = useState<'aadhar' | 'pan'>('aadhar');
-  const [idNumber, setIdNumber] = useState('');
+  const [pan, setPan] = useState<string>('');
+  const [aadhaar, setAadhaar] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState<CreditReport | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+
   interface CreditReport {
     personalInfo: {
       name: string;
@@ -99,24 +100,24 @@ export default function CreditDashboard() {
   }
 
   const handleFetchData = async () => {
-    // Validate input
-    if (!idNumber.trim()) {
-      setError('Please enter a valid ID number');
+    if (!pan || !aadhaar) {
+      toast.error('Both PAN and Aadhaar are required');
       return;
     }
 
-    if (idType === 'aadhar' && !/^\d{12}$/.test(idNumber)) {
-      setError('Aadhar number must be 12 digits');
+    // Validate PAN and Aadhaar
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan)) {
+      toast.error('Invalid PAN number');
       return;
     }
 
-    if (idType === 'pan' && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(idNumber)) {
-      setError('PAN must be in the format ABCDE1234F');
+    if (!/^\d{12}$/.test(aadhaar)) {
+      toast.error('Invalid Aadhaar number');
       return;
     }
 
+    setIsSearching(true);
     setError(null);
-    setIsLoading(true);
 
     try {
       const data: CreditReport = await fetchUserCreditData();
@@ -165,9 +166,9 @@ export default function CreditDashboard() {
   // Get all bureau history combined for the chart
   const getAllBureauHistory = () => {
     if (!userData) return [];
-  
+
     const allData = [];
-  
+
     // Get unique dates across all bureaus
     const allDates = new Set();
     userData.bureauScores.forEach((bureau) => {
@@ -175,90 +176,50 @@ export default function CreditDashboard() {
         allDates.add(item.date);
       });
     });
-  
+
     // Convert dates to a proper format (e.g., "Feb 2025" to "2025-02-01")
     const parseDate = (dateStr) => {
       const [month, year] = dateStr.split(' ');
       const monthMap = {
-        Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
-        Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
+        Jan: '01',
+        Feb: '02',
+        Mar: '03',
+        Apr: '04',
+        May: '05',
+        Jun: '06',
+        Jul: '07',
+        Aug: '08',
+        Sep: '09',
+        Oct: '10',
+        Nov: '11',
+        Dec: '12',
       };
       return `${year}-${monthMap[month]}-01`; // Use the first day of the month for consistency
     };
-  
+
     // Sort dates chronologically
     const sortedDates = Array.from(allDates)
       .map((date) => parseDate(date)) // Convert to YYYY-MM-DD format
       .sort((a, b) => new Date(a).getTime() - new Date(b).getTime()); // Sort by date
-  
+
     // Create the combined dataset
     sortedDates.forEach((date) => {
       const dataPoint = { date };
-  
+
       userData.bureauScores.forEach((bureau) => {
-        const historyItem = bureau.history.find((item) => parseDate(item.date) === date);
+        const historyItem = bureau.history.find(
+          (item) => parseDate(item.date) === date,
+        );
         dataPoint[bureau.bureau] = historyItem ? historyItem.score : null;
       });
-  
+
       //@ts-ignore
       allData.push(dataPoint);
     });
-  
+
     return allData;
   };
-  const router = useRouter();
-  const currentUser  = useCurrentUserClient();
-  
-  useEffect(() => {
-    if (currentUser) {
-      if (idType === 'aadhar' && currentUser.aadhaarNumber) {
-        setIdNumber(currentUser.aadhaarNumber);
-      } else if (idType === 'pan' && currentUser.PAN) {
-        setIdNumber(currentUser.PAN);
-      }
-    }
-  }, [currentUser, idType]);
-
-  const handleIdTypeChange = (value) => {
-    setIdType(value);
-    // if(currentUser?.aadhaarNumber){
-    //   setIdNumber(currentUser.aadhaarNumber);
-    // }
-    // if(currentUser?.PAN){
-    //   setIdNumber(currentUser.PAN);
-    // }
-    // Check if the selected field is empty based on user data
-    if (value === 'aadhar' && !currentUser?.aadhaarNumber) {
-      router.push('/settings?missing=aadhaar');
-    } else if (value === 'pan' && !currentUser?.PAN) {
-      router.push('/settings?missing=PAN');
-    }else if(value==='aadhar' && currentUser?.aadhaarNumber){
-      setIdNumber(currentUser.aadhaarNumber);
-    }else{
-      setIdNumber(currentUser?.PAN || "");
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const value = idType === 'pan' ? e.target.value.toUpperCase() : e.target.value;
-    setIdNumber(value);
-  };
-
-  // Check if the required field is empty and navigate if needed
-  const validateAndNavigate = () => {
-    if(currentUser?.aadhaarNumber && idType==='aadhar'){
-      setIdNumber(currentUser.aadhaarNumber);
-    }else if(currentUser?.PAN && idType==='pan'){
-      setIdNumber(currentUser.PAN);
-    }
-
-    if (!idNumber) {
-      router.push(`/settings?missing=${idType === 'aadhar' ? 'aadhar' : 'PAN'}`);
-      return false;
-    }
-    return true;
-  };
-
+  const user = useCurrentUserClient();
 
   return (
     <>
@@ -282,88 +243,28 @@ export default function CreditDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {/* <Tabs defaultValue="aadhar" onValueChange={handleIdTypeChange}>
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="aadhar">Aadhar Number</TabsTrigger>
-                    <TabsTrigger value="pan">PAN Number</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="aadhar" className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="aadhar">
-                        Enter your 12-digit Aadhar Number
-                      </Label>
-                      <Input
-                        id="aadhar"
-                        placeholder="XXXX XXXX XXXX"
-                        value={idNumber}
-                        onChange={(e) => setIdNumber(e.target.value)}
-                      />
-                    </div>
-                  </TabsContent>
-                  <TabsContent value="pan" className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="pan">Enter your PAN</Label>
-                      <Input
-                        id="pan"
-                        placeholder="ABCDE1234F"
-                        value={idNumber}
-                        onChange={(e) =>
-                          setIdNumber(e.target.value.toUpperCase())
-                        }
-                      />
-                    </div>
-                  </TabsContent>
-                </Tabs> */}
-                     <Tabs defaultValue="aadhar" onValueChange={handleIdTypeChange}>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="aadhar">Aadhar Number</TabsTrigger>
-          <TabsTrigger value="pan">PAN Number</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="aadhar" className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="aadhar">
-              Enter your 12-digit Aadhar Number
-            </Label>
-            <Input
-              id="aadhar"
-              placeholder="XXXX XXXX XXXX"
-              value={idNumber}
-              onChange={handleInputChange}
-              onBlur={validateAndNavigate}
-            />
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="pan" className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="pan">Enter your PAN</Label>
-            <Input
-              id="pan"
-              placeholder="ABCDE1234F"
-              value={idNumber}
-              onChange={handleInputChange}
-              onBlur={validateAndNavigate}
-            />
-          </div>
-        </TabsContent>
-      </Tabs>
-
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Error</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-
+              <div className="flex flex-col space-y-4">
+                <div className="flex flex-col md:flex-row md:gap-4 md:space-y-0 gap-0 space-y-4">
+                  <Input
+                    placeholder="Enter PAN"
+                    value={pan}
+                    onChange={(e) => setPan(e.target.value)}
+                    autoComplete="true"
+                    className="w-full"
+                  />
+                  <Input
+                    placeholder="Enter Aadhaar"
+                    value={aadhaar}
+                    autoComplete="true"
+                    onChange={(e) => setAadhaar(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
                 <Button
-                  className="w-full"
                   onClick={handleFetchData}
-                  disabled={isLoading}
+                  disabled={isSearching || !pan || !aadhaar}
                 >
-                  {isLoading ? 'Loading...' : 'Fetch Credit Data'}
+                  {isSearching ? "Searching" : 'Search'}
                 </Button>
               </div>
             </CardContent>
@@ -376,7 +277,7 @@ export default function CreditDashboard() {
                 <div className="flex justify-between items-center">
                   <div>
                     <h2 className="text-2xl font-bold">
-                      {currentUser ? currentUser.name : 'Vatsal Bharakhda'}
+                      {user ? user.name : 'Vatsal Bharakhda'}
                     </h2>
                     <p className="text-muted-foreground">
                       {userData.personalInfo.age} years •{' '}
