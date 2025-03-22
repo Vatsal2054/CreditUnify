@@ -119,7 +119,7 @@ export function UserAddForm() {
             )}
           />
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="role"
             render={({ field }) => (
@@ -139,7 +139,7 @@ export function UserAddForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {watchRole === 'BANK' && (
             <FormField

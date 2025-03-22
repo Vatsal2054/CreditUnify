@@ -29,6 +29,7 @@ import { useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import BlurText from '@/components/animations/BlurText';
 
 // Animated component that fades in when in view
 const FadeInWhenVisible = ({ children, delay = 0, className = '' }) => {
@@ -53,7 +54,7 @@ const AnimatedCounter = ({ targetValue, duration = 2, className = '' }) => {
   const [count, setCount] = useState(0);
   const counterRef = useRef(null);
   const isInView = useInView(counterRef, { once: true });
-  
+
   useEffect(() => {
     if (isInView) {
       let startTime;
@@ -61,26 +62,32 @@ const AnimatedCounter = ({ targetValue, duration = 2, className = '' }) => {
 
       const countUp = (timestamp) => {
         if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+        const progress = Math.min(
+          (timestamp - startTime) / (duration * 1000),
+          1,
+        );
         const currentCount = Math.floor(progress * targetValue);
         setCount(currentCount);
         if (progress < 1) {
           animationFrame = requestAnimationFrame(countUp);
         }
       };
-      
+
       animationFrame = requestAnimationFrame(countUp);
       return () => cancelAnimationFrame(animationFrame);
     }
   }, [isInView, targetValue, duration]);
 
-  return <div ref={counterRef} className={className}>{count}</div>;
+  return (
+    <div ref={counterRef} className={className}>
+      {count}
+    </div>
+  );
 };
 
 export default function Home() {
-  const  t  = useTranslations("LandingPage");
+  const t = useTranslations('LandingPage');
   const [activeTab, setActiveTab] = useState('user');
-
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -92,54 +99,122 @@ export default function Home() {
         className="fixed top-0 z-[100] w-full border-b bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60"
       >
         <div className="container flex h-16 items-center justify-between">
-          <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.05 }}>
-            <Image alt="logo" src="/logo/creditunify-logo.svg" width={35} height={35} />
+          <motion.div
+            className="flex items-center gap-2"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Image
+              alt="logo"
+              src="/logo/creditunify-logo.svg"
+              width={35}
+              height={35}
+            />
             <span className="text-xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
               {t('header.logo')}
             </span>
           </motion.div>
           <nav className="hidden md:flex items-center gap-6">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-              <Link href="#features" className="text-sm font-medium hover:text-primary relative group">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Link
+                href="#features"
+                className="text-sm font-medium hover:text-primary relative group"
+              >
                 {t('header.nav.features')}
-                <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full" transition={{ duration: 0.3 }} />
+                <motion.span
+                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full"
+                  transition={{ duration: 0.3 }}
+                />
               </Link>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-              <Link href="#howitworks" className="text-sm font-medium hover:text-primary relative group">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Link
+                href="#howitworks"
+                className="text-sm font-medium hover:text-primary relative group"
+              >
                 {t('header.nav.howItWorks')}
-                <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full" transition={{ duration: 0.3 }} />
+                <motion.span
+                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full"
+                  transition={{ duration: 0.3 }}
+                />
               </Link>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-              <Link href="#security" className="text-sm font-medium hover:text-primary relative group">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Link
+                href="#security"
+                className="text-sm font-medium hover:text-primary relative group"
+              >
                 {t('header.nav.security')}
-                <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full" transition={{ duration: 0.3 }} />
+                <motion.span
+                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full"
+                  transition={{ duration: 0.3 }}
+                />
               </Link>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-              <Link href="#testimonials" className="text-sm font-medium hover:text-primary relative group">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Link
+                href="#testimonials"
+                className="text-sm font-medium hover:text-primary relative group"
+              >
                 {t('header.nav.testimonials')}
-                <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full" transition={{ duration: 0.3 }} />
+                <motion.span
+                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full"
+                  transition={{ duration: 0.3 }}
+                />
               </Link>
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-              <Link href="#faq" className="text-sm font-medium hover:text-primary relative group">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Link
+                href="#faq"
+                className="text-sm font-medium hover:text-primary relative group"
+              >
                 {t('header.nav.faq')}
-                <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full" transition={{ duration: 0.3 }} />
+                <motion.span
+                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full"
+                  transition={{ duration: 0.3 }}
+                />
               </Link>
             </motion.div>
           </nav>
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="outline" size="sm" onClick={()=> {window.location.href="/auth/signin";}}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  window.location.href = '/auth/signin';
+                }}
+              >
                 {t('header.buttons.login')}
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="sm" className="bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600"
-                onClick={()=> {window.location.href="/auth/signup";}}
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600"
+                onClick={() => {
+                  window.location.href = '/auth/signup';
+                }}
               >
                 {t('header.buttons.signup')}
               </Button>
@@ -165,19 +240,39 @@ export default function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent py-2">
-                  {t('hero.title')}
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-primary py-2">
+                  {/* {t('hero.title')} */}
+                  <BlurText
+                    text={t('hero.title')}
+                    delay={100}
+                    animateBy="words"
+                    direction="top"
+                    // className="text-2xl mb-8"
+                  />
                 </h1>
-                <p className="text-xl text-muted-foreground">{t('hero.subtitle')}</p>
+                <p className="text-xl text-muted-foreground">
+                  {t('hero.subtitle')}
+                </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600">
-                      {t('hero.buttons.checkScore')} <ArrowRight className="h-4 w-4" />
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      size="lg"
+                      className="gap-2 bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600"
+                    >
+                      {t('hero.buttons.checkScore')}{' '}
+                      <ArrowRight className="h-4 w-4" />
                     </Button>
                   </motion.div>
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <Button size="lg" variant="outline" className="gap-2">
-                      {t('hero.buttons.startRisk')} <ArrowRight className="h-4 w-4" />
+                      {t('hero.buttons.startRisk')}{' '}
+                      <ArrowRight className="h-4 w-4" />
                     </Button>
                   </motion.div>
                 </div>
@@ -249,9 +344,14 @@ export default function Home() {
                   <CardContent className="pt-6 flex flex-col items-center text-center">
                     <Star className="h-8 w-8 text-yellow-500 mb-3" />
                     <div className="text-3xl font-bold text-primary">
-                      <AnimatedCounter targetValue={parseInt(t('stats.satisfaction.value'))} />%
+                      <AnimatedCounter
+                        targetValue={parseInt(t('stats.satisfaction.value'))}
+                      />
+                      %
                     </div>
-                    <p className="text-sm text-muted-foreground mt-2">{t('stats.satisfaction.label')}</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {t('stats.satisfaction.label')}
+                    </p>
                   </CardContent>
                 </Card>
               </FadeInWhenVisible>
@@ -260,10 +360,14 @@ export default function Home() {
                   <CardContent className="pt-6 flex flex-col items-center text-center">
                     <Users className="h-8 w-8 text-blue-500 mb-3" />
                     <div className="text-3xl font-bold text-primary">
-                      <AnimatedCounter targetValue={parseInt(t('stats.users.value'))} />
+                      <AnimatedCounter
+                        targetValue={parseInt(t('stats.users.value'))}
+                      />
                       {t('stats.users.suffix')}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-2">{t('stats.users.label')}</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {t('stats.users.label')}
+                    </p>
                   </CardContent>
                 </Card>
               </FadeInWhenVisible>
@@ -272,10 +376,14 @@ export default function Home() {
                   <CardContent className="pt-6 flex flex-col items-center text-center">
                     <BarChart3 className="h-8 w-8 text-green-500 mb-3" />
                     <div className="text-3xl font-bold text-primary">
-                      <AnimatedCounter targetValue={parseInt(t('stats.reports.value'))} />
+                      <AnimatedCounter
+                        targetValue={parseInt(t('stats.reports.value'))}
+                      />
                       {t('stats.reports.suffix')}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-2">{t('stats.reports.label')}</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {t('stats.reports.label')}
+                    </p>
                   </CardContent>
                 </Card>
               </FadeInWhenVisible>
@@ -284,10 +392,14 @@ export default function Home() {
                   <CardContent className="pt-6 flex flex-col items-center text-center">
                     <Award className="h-8 w-8 text-purple-500 mb-3" />
                     <div className="text-3xl font-bold text-primary">
-                      <AnimatedCounter targetValue={parseInt(t('stats.partners.value'))} />
+                      <AnimatedCounter
+                        targetValue={parseInt(t('stats.partners.value'))}
+                      />
                       {t('stats.partners.suffix')}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-2">{t('stats.partners.label')}</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {t('stats.partners.label')}
+                    </p>
                   </CardContent>
                 </Card>
               </FadeInWhenVisible>
@@ -303,14 +415,24 @@ export default function Home() {
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent inline-block">
                   {t('roleSection.title')}
                 </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">{t('roleSection.subtitle')}</p>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  {t('roleSection.subtitle')}
+                </p>
               </div>
             </FadeInWhenVisible>
 
-            <Tabs defaultValue="user" className="max-w-4xl mx-auto" onValueChange={setActiveTab}>
+            <Tabs
+              defaultValue="user"
+              className="max-w-4xl mx-auto"
+              onValueChange={setActiveTab}
+            >
               <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="user">{t('roleSection.tabs.individuals')}</TabsTrigger>
-                <TabsTrigger value="bank">{t('roleSection.tabs.banks')}</TabsTrigger>
+                <TabsTrigger value="user">
+                  {t('roleSection.tabs.individuals')}
+                </TabsTrigger>
+                <TabsTrigger value="bank">
+                  {t('roleSection.tabs.banks')}
+                </TabsTrigger>
               </TabsList>
 
               <AnimatePresence mode="wait">
@@ -323,44 +445,78 @@ export default function Home() {
                 >
                   <TabsContent value="user" className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-3">
-                      <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                      <motion.div
+                        whileHover={{ y: -5 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
                         <Card className="h-full border-primary/20 hover:border-primary/70 hover:shadow-md transition-all">
                           <CardContent className="pt-6">
                             <div className="flex flex-col items-center text-center space-y-3">
                               <BarChart3 className="h-8 w-8 text-primary" />
-                              <h3 className="font-medium">{t('roleSection.individuals.features.0.title')}</h3>
-                              <p className="text-sm text-muted-foreground">{t('roleSection.individuals.features.0.description')}</p>
+                              <h3 className="font-medium">
+                                {t('roleSection.individuals.features.0.title')}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {t(
+                                  'roleSection.individuals.features.0.description',
+                                )}
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
                       </motion.div>
-                      <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                      <motion.div
+                        whileHover={{ y: -5 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
                         <Card className="h-full border-primary/20 hover:border-primary/70 hover:shadow-md transition-all">
                           <CardContent className="pt-6">
                             <div className="flex flex-col items-center text-center space-y-3">
                               <Sparkles className="h-8 w-8 text-primary" />
-                              <h3 className="font-medium">{t('roleSection.individuals.features.1.title')}</h3>
-                              <p className="text-sm text-muted-foreground">{t('roleSection.individuals.features.1.description')}</p>
+                              <h3 className="font-medium">
+                                {t('roleSection.individuals.features.1.title')}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {t(
+                                  'roleSection.individuals.features.1.description',
+                                )}
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
                       </motion.div>
-                      <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                      <motion.div
+                        whileHover={{ y: -5 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
                         <Card className="h-full border-primary/20 hover:border-primary/70 hover:shadow-md transition-all">
                           <CardContent className="pt-6">
                             <div className="flex flex-col items-center text-center space-y-3">
                               <Shield className="h-8 w-8 text-primary" />
-                              <h3 className="font-medium">{t('roleSection.individuals.features.2.title')}</h3>
-                              <p className="text-sm text-muted-foreground">{t('roleSection.individuals.features.2.description')}</p>
+                              <h3 className="font-medium">
+                                {t('roleSection.individuals.features.2.title')}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {t(
+                                  'roleSection.individuals.features.2.description',
+                                )}
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
                       </motion.div>
                     </div>
                     <div className="flex justify-center mt-8">
-                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600">
-                          {t('roleSection.individuals.button')} <ChevronRight className="h-4 w-4" />
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button
+                          size="lg"
+                          className="gap-2 bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600"
+                        >
+                          {t('roleSection.individuals.button')}{' '}
+                          <ChevronRight className="h-4 w-4" />
                         </Button>
                       </motion.div>
                     </div>
@@ -368,44 +524,72 @@ export default function Home() {
 
                   <TabsContent value="bank" className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-3">
-                      <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                      <motion.div
+                        whileHover={{ y: -5 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
                         <Card className="h-full border-primary/20 hover:border-primary/70 hover:shadow-md transition-all">
                           <CardContent className="pt-6">
                             <div className="flex flex-col items-center text-center space-y-3">
                               <PieChart className="h-8 w-8 text-primary" />
-                              <h3 className="font-medium">{t('roleSection.banks.features.0.title')}</h3>
-                              <p className="text-sm text-muted-foreground">{t('roleSection.banks.features.0.description')}</p>
+                              <h3 className="font-medium">
+                                {t('roleSection.banks.features.0.title')}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {t('roleSection.banks.features.0.description')}
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
                       </motion.div>
-                      <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                      <motion.div
+                        whileHover={{ y: -5 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
                         <Card className="h-full border-primary/20 hover:border-primary/70 hover:shadow-md transition-all">
                           <CardContent className="pt-6">
                             <div className="flex flex-col items-center text-center space-y-3">
                               <Database className="h-8 w-8 text-primary" />
-                              <h3 className="font-medium">{t('roleSection.banks.features.1.title')}</h3>
-                              <p className="text-sm text-muted-foreground">{t('roleSection.banks.features.1.description')}</p>
+                              <h3 className="font-medium">
+                                {t('roleSection.banks.features.1.title')}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {t('roleSection.banks.features.1.description')}
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
                       </motion.div>
-                      <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                      <motion.div
+                        whileHover={{ y: -5 }}
+                        transition={{ type: 'spring', stiffness: 300 }}
+                      >
                         <Card className="h-full border-primary/20 hover:border-primary/70 hover:shadow-md transition-all">
                           <CardContent className="pt-6">
                             <div className="flex flex-col items-center text-center space-y-3">
                               <TrendingUp className="h-8 w-8 text-primary" />
-                              <h3 className="font-medium">{t('roleSection.banks.features.2.title')}</h3>
-                              <p className="text-sm text-muted-foreground">{t('roleSection.banks.features.2.description')}</p>
+                              <h3 className="font-medium">
+                                {t('roleSection.banks.features.2.title')}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {t('roleSection.banks.features.2.description')}
+                              </p>
                             </div>
                           </CardContent>
                         </Card>
                       </motion.div>
                     </div>
                     <div className="flex justify-center mt-8">
-                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600">
-                          {t('roleSection.banks.button')} <ChevronRight className="h-4 w-4" />
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button
+                          size="lg"
+                          className="gap-2 bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600"
+                        >
+                          {t('roleSection.banks.button')}{' '}
+                          <ChevronRight className="h-4 w-4" />
                         </Button>
                       </motion.div>
                     </div>
@@ -417,7 +601,10 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-20 bg-muted/50 relative overflow-hidden">
+        <section
+          id="features"
+          className="py-20 bg-muted/50 relative overflow-hidden"
+        >
           <motion.div
             className="absolute inset-0 bg-grid-white/10"
             initial={{ opacity: 0 }}
@@ -430,7 +617,9 @@ export default function Home() {
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent inline-block">
                   {t('features.title')}
                 </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">{t('features.subtitle')}</p>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  {t('features.subtitle')}
+                </p>
               </div>
             </FadeInWhenVisible>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -502,13 +691,19 @@ export default function Home() {
                 <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent inline-block">
                   {t('howItWorks.title')}
                 </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">{t('howItWorks.subtitle')}</p>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  {t('howItWorks.subtitle')}
+                </p>
               </div>
             </FadeInWhenVisible>
             <Tabs defaultValue="user-flow" className="max-w-4xl mx-auto">
               <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="user-flow">{t('howItWorks.tabs.individuals')}</TabsTrigger>
-                <TabsTrigger value="bank-flow">{t('howItWorks.tabs.banks')}</TabsTrigger>
+                <TabsTrigger value="user-flow">
+                  {t('howItWorks.tabs.individuals')}
+                </TabsTrigger>
+                <TabsTrigger value="bank-flow">
+                  {t('howItWorks.tabs.banks')}
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="user-flow">
                 <div className="grid gap-8 md:grid-cols-3">
@@ -516,21 +711,27 @@ export default function Home() {
                     <StepCard
                       number={t('howItWorks.individuals.steps.0.number')}
                       title={t('howItWorks.individuals.steps.0.title')}
-                      description={t('howItWorks.individuals.steps.0.description')}
+                      description={t(
+                        'howItWorks.individuals.steps.0.description',
+                      )}
                     />
                   </FadeInWhenVisible>
                   <FadeInWhenVisible delay={0.4}>
                     <StepCard
                       number={t('howItWorks.individuals.steps.1.number')}
                       title={t('howItWorks.individuals.steps.1.title')}
-                      description={t('howItWorks.individuals.steps.1.description')}
+                      description={t(
+                        'howItWorks.individuals.steps.1.description',
+                      )}
                     />
                   </FadeInWhenVisible>
                   <FadeInWhenVisible delay={0.6}>
                     <StepCard
                       number={t('howItWorks.individuals.steps.2.number')}
                       title={t('howItWorks.individuals.steps.2.title')}
-                      description={t('howItWorks.individuals.steps.2.description')}
+                      description={t(
+                        'howItWorks.individuals.steps.2.description',
+                      )}
                     />
                   </FadeInWhenVisible>
                 </div>
@@ -568,23 +769,43 @@ export default function Home() {
         <section className="py-20 bg-muted/50">
           <div className="container">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">{t('dashboardPreviews.title')}</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">{t('dashboardPreviews.subtitle')}</p>
+              <h2 className="text-3xl font-bold mb-4">
+                {t('dashboardPreviews.title')}
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                {t('dashboardPreviews.subtitle')}
+              </p>
             </div>
             <div className="grid gap-8 md:grid-cols-2">
               <div className="space-y-4">
                 <div className="relative h-[300px] rounded-lg overflow-hidden shadow-lg">
-                  <img src="/placeholder.svg?height=300&width=600" alt="User Dashboard Preview" className="object-cover w-full h-full" />
+                  <img
+                    src="/placeholder.svg?height=300&width=600"
+                    alt="User Dashboard Preview"
+                    className="object-cover w-full h-full"
+                  />
                 </div>
-                <h3 className="text-xl font-medium text-center">{t('dashboardPreviews.user.title')}</h3>
-                <p className="text-center text-muted-foreground">{t('dashboardPreviews.user.description')}</p>
+                <h3 className="text-xl font-medium text-center">
+                  {t('dashboardPreviews.user.title')}
+                </h3>
+                <p className="text-center text-muted-foreground">
+                  {t('dashboardPreviews.user.description')}
+                </p>
               </div>
               <div className="space-y-4">
                 <div className="relative h-[300px] rounded-lg overflow-hidden shadow-lg">
-                  <img src="/placeholder.svg?height=300&width=600" alt="Bank Dashboard Preview" className="object-cover w-full h-full" />
+                  <img
+                    src="/placeholder.svg?height=300&width=600"
+                    alt="Bank Dashboard Preview"
+                    className="object-cover w-full h-full"
+                  />
                 </div>
-                <h3 className="text-xl font-medium text-center">{t('dashboardPreviews.bank.title')}</h3>
-                <p className="text-center text-muted-foreground">{t('dashboardPreviews.bank.description')}</p>
+                <h3 className="text-xl font-medium text-center">
+                  {t('dashboardPreviews.bank.title')}
+                </h3>
+                <p className="text-center text-muted-foreground">
+                  {t('dashboardPreviews.bank.description')}
+                </p>
               </div>
             </div>
           </div>
@@ -595,7 +816,9 @@ export default function Home() {
           <div className="container">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">{t('security.title')}</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">{t('security.subtitle')}</p>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                {t('security.subtitle')}
+              </p>
             </div>
             <div className="grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
               <SecurityCard
@@ -621,8 +844,12 @@ export default function Home() {
         <section id="testimonials" className="py-20 bg-muted/50">
           <div className="container">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">{t('testimonials.title')}</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">{t('testimonials.subtitle')}</p>
+              <h2 className="text-3xl font-bold mb-4">
+                {t('testimonials.title')}
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                {t('testimonials.subtitle')}
+              </p>
             </div>
             <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
               <TestimonialCard
@@ -647,10 +874,16 @@ export default function Home() {
               <p className="text-xl opacity-90">{t('cta.subtitle')}</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" variant="secondary" className="gap-2">
-                  {t('cta.buttons.checkScore')} <ArrowRight className="h-4 w-4" />
+                  {t('cta.buttons.checkScore')}{' '}
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2 bg-transparent border-primary-foreground hover:bg-primary-foreground/10">
-                  {t('cta.buttons.startAnalysis')} <ArrowRight className="h-4 w-4" />
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="gap-2 bg-transparent border-primary-foreground hover:bg-primary-foreground/10"
+                >
+                  {t('cta.buttons.startAnalysis')}{' '}
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -667,39 +900,83 @@ export default function Home() {
                 <TrendingUp className="h-6 w-6 text-primary" />
                 <span className="text-xl font-bold">{t('header.logo')}</span>
               </div>
-              <p className="text-sm text-muted-foreground">{t('footer.description')}</p>
+              <p className="text-sm text-muted-foreground">
+                {t('footer.description')}
+              </p>
             </div>
             <div>
               <h3 className="font-medium mb-4">{t('footer.product.title')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.product.links.0')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.product.links.0')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.product.links.1')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.product.links.1')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.product.links.2')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.product.links.2')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.product.links.3')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.product.links.3')}
+                  </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium mb-4">{t('footer.resources.title')}</h3>
+              <h3 className="font-medium mb-4">
+                {t('footer.resources.title')}
+              </h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.resources.links.0')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.resources.links.0')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.resources.links.1')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.resources.links.1')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.resources.links.2')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.resources.links.2')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.resources.links.3')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.resources.links.3')}
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -707,16 +984,36 @@ export default function Home() {
               <h3 className="font-medium mb-4">{t('footer.company.title')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.company.links.0')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.company.links.0')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.company.links.1')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.company.links.1')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.company.links.2')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.company.links.2')}
+                  </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-muted-foreground hover:text-foreground">{t('footer.company.links.3')}</Link>
+                  <Link
+                    href="#"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {t('footer.company.links.3')}
+                  </Link>
                 </li>
               </ul>
             </div>
