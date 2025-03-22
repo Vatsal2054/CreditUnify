@@ -856,7 +856,7 @@ export default function CreditDashboard() {
             </div>
           </div>
         )}
-        <LoanInterestRates />
+        {userData && <LoanInterestRates />}
       </div>
       <AIInsight />
     </>

@@ -28,8 +28,8 @@ import {
 } from '@/components/ui/select';
 
 interface LoanInterestRate {
-  bank: string; // Changed from bankName to bank
-  interest: string; // Changed from interestRate to interest
+  bank_name: string; // Changed from bankName to bank
+  interest_rate: string; // Changed from interestRate to interest
 }
 
 export default function LoanInterestRates() {
@@ -60,17 +60,7 @@ export default function LoanInterestRates() {
 
       const responseData = await response.json();
 
-      // Extract the data array from the response and transform to required format
-      if (responseData.data && Array.isArray(responseData.data)) {
-        // Transform data to match the {bank:String, interest:String} format
-        const transformedData = responseData.data.map((item: any) => ({
-          bank: item.bankName,
-          interest: item.interestRate,
-        }));
-        setInterestRates(transformedData);
-      } else {
-        throw new Error('Unexpected data format received from server');
-      }
+      setInterestRates(responseData.data);
     } catch (err) {
       console.error('Failed to fetch interest rates:', err);
       setError('Failed to load interest rates. Please try again.');
@@ -153,8 +143,12 @@ export default function LoanInterestRates() {
             <TableBody>
               {interestRates.map((rate, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">{rate.bank}</TableCell>
-                  <TableCell className="text-right">{rate.interest}</TableCell>
+                  <TableCell className="font-medium">
+                    {rate.bank_name}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {rate.interest_rate}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
