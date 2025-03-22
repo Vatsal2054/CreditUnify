@@ -1,7 +1,6 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 import {
   Card,
@@ -22,9 +21,12 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
+import { AlertCircle, CheckCircle, AlertTriangle, ArrowRight, Shield, FileWarning, FileCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { giveSuggestions } from './action';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 // Schema for loan request validation
 const LoanRequestSchema = z.object({
@@ -53,6 +55,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<RiskAssessmentResult | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const handleInputChange = (field: keyof LoanRequest, value: string) => {
     if (field === 'employmentType') {
@@ -111,6 +114,13 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  useEffect(() => {
+    // Scroll to results when they become available
+    if (result && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [result]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -143,13 +153,13 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
   const getDecisionColor = (decision?: string) => {
     switch (decision) {
       case 'APPROVE':
-        return 'text-green-600';
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100';
       case 'MODIFY':
-        return 'text-yellow-600';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100';
       case 'REJECT':
-        return 'text-red-600';
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100';
       default:
-        return 'text-gray-600';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100';
     }
   };
 
@@ -168,10 +178,10 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="shadow-md dark:border-gray-700 dark:bg-gray-800">
         <CardHeader>
-          <CardTitle>Loan Risk Assessment</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-xl font-bold">Loan Risk Assessment</CardTitle>
+          <CardDescription className="dark:text-gray-300">
             Enter loan request details to get an AI-powered risk assessment
           </CardDescription>
         </CardHeader>
@@ -179,7 +189,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="requestedAmount">Loan Amount (₹)</Label>
+                <Label htmlFor="requestedAmount" className="dark:text-gray-200">Loan Amount (₹)</Label>
                 <Input
                   id="requestedAmount"
                   type="number"
@@ -188,7 +198,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
                   onChange={(e) =>
                     handleInputChange('requestedAmount', e.target.value)
                   }
-                  className={errors.requestedAmount ? 'border-red-500' : ''}
+                  className={`${errors.requestedAmount ? 'border-red-500' : ''} dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
                 />
                 {errors.requestedAmount && (
                   <p className="text-red-500 text-xs">
@@ -198,7 +208,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="requestedTenure">Loan Tenure (months)</Label>
+                <Label htmlFor="requestedTenure" className="dark:text-gray-200">Loan Tenure (months)</Label>
                 <Input
                   id="requestedTenure"
                   type="number"
@@ -207,7 +217,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
                   onChange={(e) =>
                     handleInputChange('requestedTenure', e.target.value)
                   }
-                  className={errors.requestedTenure ? 'border-red-500' : ''}
+                  className={`${errors.requestedTenure ? 'border-red-500' : ''} dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
                 />
                 {errors.requestedTenure && (
                   <p className="text-red-500 text-xs">
@@ -218,13 +228,13 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="purpose">Loan Purpose</Label>
+              <Label htmlFor="purpose" className="dark:text-gray-200">Loan Purpose</Label>
               <Textarea
                 id="purpose"
                 placeholder="Describe the purpose of the loan"
                 value={loanRequest.purpose || ''}
                 onChange={(e) => handleInputChange('purpose', e.target.value)}
-                className={errors.purpose ? 'border-red-500' : ''}
+                className={`${errors.purpose ? 'border-red-500' : ''} dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
               />
               {errors.purpose && (
                 <p className="text-red-500 text-xs">{errors.purpose}</p>
@@ -233,7 +243,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="monthlyIncome">Monthly Income (₹)</Label>
+                <Label htmlFor="monthlyIncome" className="dark:text-gray-200">Monthly Income (₹)</Label>
                 <Input
                   id="monthlyIncome"
                   type="number"
@@ -242,7 +252,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
                   onChange={(e) =>
                     handleInputChange('monthlyIncome', e.target.value)
                   }
-                  className={errors.monthlyIncome ? 'border-red-500' : ''}
+                  className={`${errors.monthlyIncome ? 'border-red-500' : ''} dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
                 />
                 {errors.monthlyIncome && (
                   <p className="text-red-500 text-xs">{errors.monthlyIncome}</p>
@@ -250,17 +260,17 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="employmentType">Employment Type</Label>
+                <Label htmlFor="employmentType" className="dark:text-gray-200">Employment Type</Label>
                 <Select
                   value={loanRequest.employmentType}
                   onValueChange={(value) =>
                     handleInputChange('employmentType', value)
                   }
                 >
-                  <SelectTrigger id="employmentType">
+                  <SelectTrigger id="employmentType" className="dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     <SelectValue placeholder="Select employment type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
                     <SelectItem value="SALARIED">Salaried</SelectItem>
                     <SelectItem value="SELF_EMPLOYED">Self-Employed</SelectItem>
                     <SelectItem value="BUSINESS">Business Owner</SelectItem>
@@ -271,7 +281,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="employmentTenure">
+              <Label htmlFor="employmentTenure" className="dark:text-gray-200">
                 Employment Tenure (years)
               </Label>
               <Input
@@ -282,7 +292,7 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
                 onChange={(e) =>
                   handleInputChange('employmentTenure', e.target.value)
                 }
-                className={errors.employmentTenure ? 'border-red-500' : ''}
+                className={`${errors.employmentTenure ? 'border-red-500' : ''} dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
               />
               {errors.employmentTenure && (
                 <p className="text-red-500 text-xs">
@@ -291,70 +301,140 @@ export default function LoanRiskForm({ creditReport }: { creditReport: any }) {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Analyzing...' : 'Assess Risk'}
+            <Button 
+              type="submit" 
+              className="w-full transition-all duration-300 hover:shadow-lg" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Analyzing...
+                </span>
+              ) : (
+                <span className="flex items-center">
+                  Assess Risk
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </span>
+              )}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {result && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Risk Assessment Result</CardTitle>
-              <div
-                className={`flex items-center ${getDecisionColor(
-                  result.decision,
-                )}`}
-              >
-                {getDecisionIcon(result.decision)}
-                <span className="ml-2 font-bold">{result.decision}</span>
-              </div>
-            </div>
-            <CardDescription>
-              AI-powered analysis of the loan application
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="font-medium mb-2">Analysis</h3>
-              <p className="text-gray-700">{result.reasoning}</p>
-            </div>
+      <AnimatePresence>
+        {result && (
+          <motion.div 
+            ref={resultRef}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="overflow-hidden shadow-lg border dark:border-gray-700 dark:bg-gray-800">
+              <CardHeader className="pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex items-center">
+                    <Shield className="h-6 w-6 mr-2 text-blue-500" />
+                    <CardTitle className="text-xl font-bold dark:text-white">Risk Assessment Result</CardTitle>
+                  </div>
+                  <motion.div 
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  >
+                    <Badge className={`text-sm font-semibold px-3 py-1 rounded-full ${getDecisionColor(result.decision)}`}>
+                      <span className="flex items-center">
+                        {getDecisionIcon(result.decision)}
+                        <span className="ml-2">{result.decision}</span>
+                      </span>
+                    </Badge>
+                  </motion.div>
+                </div>
+                <CardDescription className="dark:text-gray-300">
+                  AI-powered analysis of the loan application
+                </CardDescription>
+              </CardHeader>
+              
+              <CardContent className="space-y-6">
+                <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-700 border-l-4 border-blue-500">
+                  <div className="flex items-center mb-2">
+                    <FileCheck className="h-5 w-5 text-blue-500 mr-2" />
+                    <h3 className="font-semibold text-lg dark:text-white">Analysis Summary</h3>
+                  </div>
+                  <p className="text-gray-700 dark:text-gray-200">{result.reasoning}</p>
+                </div>
 
-            <div>
-              <h3 className="font-medium mb-2">Risk Factors</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {result.riskFactors.map((factor, index) => (
-                  <li key={index} className="text-gray-700">
-                    {factor}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                <Separator className="dark:bg-gray-600" />
 
-            <div>
-              <h3 className="font-medium mb-2">
-                {result.decision === 'MODIFY' && 'Recommendations'}
-              </h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {result.recommendations.map((recommendation, index) => (
-                  <li key={index} className="text-gray-700">
-                    {recommendation}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </CardContent>
-          <CardFooter className="bg-gray-50 border-t">
-            <p className="text-sm text-gray-500">
-              This assessment is based on the provided information and credit
-              history. Final lending decisions may require additional
-              verification.
-            </p>
-          </CardFooter>
-        </Card>
-      )}
+                <div>
+                  <div className="flex items-center mb-4">
+                    <FileWarning className="h-5 w-5 text-red-500 mr-2" />
+                    <h3 className="font-semibold text-lg dark:text-white">Risk Factors</h3>
+                  </div>
+                  
+                  <div className="bg-red-50 bg-opacity-80 dark:bg-red-900 dark:bg-opacity-30 rounded-lg p-4 border-l-4 border-red-500">
+                    <ul className="space-y-3">
+                      {result.riskFactors.map((factor, index) => (
+                        <motion.li 
+                          key={index}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.15 }}
+                          className="text-red-800 dark:text-red-200 flex items-start"
+                        >
+                          <AlertCircle className="h-5 w-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <span>{factor}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {result.recommendations.length > 0 && (
+                  <>
+                    <Separator className="dark:bg-gray-600" />
+                    
+                    <div>
+                      <div className="flex items-center mb-4">
+                        <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                        <h3 className="font-semibold text-lg dark:text-white">Recommendations</h3>
+                      </div>
+                      
+                      <div className="bg-green-50 dark:bg-green-900 dark:bg-opacity-30 rounded-lg p-4 border-l-4 border-green-500">
+                        <ul className="space-y-3">
+                          {result.recommendations.map((recommendation, index) => (
+                            <motion.li 
+                              key={index}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.15 }}
+                              className="text-green-800 dark:text-green-200 flex items-start"
+                            >
+                              <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                              <span>{recommendation}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+              
+              <CardFooter className="bg-gray-50 border-t p-4 dark:bg-gray-700 dark:border-gray-600">
+                <p className="text-sm text-blue-500 dark:text-gray-300">
+                  This assessment is based on the provided information and credit history. 
+                  Final lending decisions may require additional verification.
+                </p>
+              </CardFooter>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
