@@ -771,7 +771,7 @@ const BankDashboard = () => {
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Age</h3>
-                      <p>20</p>
+                      <p>{creditReport.personalInfo.age}</p>
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">
