@@ -184,3 +184,23 @@ export async function getCreditScoreHistory(userId: string) {
     return { error: "Failed to retrieve credit score history" };
   }
 }
+
+const LoanRequestSchema = z.object({
+  requestedAmount: z.number().positive(),
+  purpose: z.string(),
+  requestedTenure: z.number().int().positive(),
+  monthlyIncome: z.number().positive(),
+  employmentType: z.enum(['SALARIED', 'SELF_EMPLOYED', 'BUSINESS', 'RETIRED']),
+  employmentTenure: z.number().min(0),
+});
+
+//GIve suggestions BAsed on Requested Loan and Credit Score
+export async function giveSuggestions(loanDetails: number, Details: JSON) {
+  try {
+    const validatedFields = LoanRequestSchema.safeParse(loanDetails);
+    
+  } catch (error) {
+    console.error("Failed to get suggestions:", error);
+    return { error: "Failed to retrieve suggestions" };
+  }
+}
