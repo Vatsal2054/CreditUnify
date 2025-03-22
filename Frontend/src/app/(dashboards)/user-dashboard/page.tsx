@@ -167,33 +167,46 @@ export default function CreditDashboard() {
 
   // Get all bureau history combined for the chart
   const getAllBureauHistory = () => {
-    if (!userData) return [];
-
+    if (!creditReport) return [];
+  
     const allData = [];
-
+  
     // Get unique dates across all bureaus
     const allDates = new Set();
-    userData.bureauScores.forEach((bureau) => {
+    creditReport.bureauScores.forEach((bureau) => {
       bureau.history.forEach((item) => {
         allDates.add(item.date);
       });
     });
-
+  
+    // Convert dates to a proper format (e.g., "Feb 2025" to "2025-02-01")
+    const parseDate = (dateStr) => {
+      const [month, year] = dateStr.split(' ');
+      const monthMap = {
+        Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+        Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
+      };
+      return `${year}-${monthMap[month]}-01`; // Use the first day of the month for consistency
+    };
+  
+    // Sort dates chronologically
+    const sortedDates = Array.from(allDates)
+      .map((date) => parseDate(date)) // Convert to YYYY-MM-DD format
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime()); // Sort by date
+  
     // Create the combined dataset
-    Array.from(allDates)
-      .sort()
-      .forEach((date) => {
-        const dataPoint = { date };
-
-        userData.bureauScores.forEach((bureau) => {
-          const historyItem = bureau.history.find((item) => item.date === date);
-          dataPoint[bureau.bureau] = historyItem ? historyItem.score : null;
-        });
-
-        //@ts-ignore
-        allData.push(dataPoint);
+    sortedDates.forEach((date) => {
+      const dataPoint = { date };
+  
+      creditReport.bureauScores.forEach((bureau) => {
+        const historyItem = bureau.history.find((item) => parseDate(item.date) === date);
+        dataPoint[bureau.bureau] = historyItem ? historyItem.score : null;
       });
-
+  
+      //@ts-ignore
+      allData.push(dataPoint);
+    });
+  
     return allData;
   };
   const user = useCurrentUserClient();

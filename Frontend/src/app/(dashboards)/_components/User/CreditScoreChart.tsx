@@ -1,5 +1,3 @@
-'use client';
-
 import {
   LineChart,
   Line,
@@ -8,7 +6,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
+  ResponsiveContainer, // Add this import
   ReferenceLine,
 } from 'recharts';
 
@@ -94,6 +92,14 @@ const CreditScoreChart = ({ data }) => {
     );
   };
 
+  // Function to convert YYYY-MM-DD back to the original format (e.g., "Feb 2025")
+  const formatDateToOriginal = (dateStr) => {
+    const date = new Date(dateStr);
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear();
+    return `${month} ${year}`;
+  };
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
@@ -104,6 +110,7 @@ const CreditScoreChart = ({ data }) => {
 
         <XAxis
           dataKey="date"
+          tickFormatter={formatDateToOriginal} // Use the formatter to display the original format
           tick={{ fontSize: 12, fill: '#6B7280' }}
           tickLine={{ stroke: '#E5E7EB' }}
           axisLine={{ stroke: '#E5E7EB' }}
