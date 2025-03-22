@@ -45,54 +45,41 @@ export async function processPrompt(prompt: string) {
           const creditData = await response.json();
 
           // Calculate unified score using min-max scaling
-          const bureauScores = [];
-          let unifiedScore = 'Not available';
+          const bureauScores: { bureau: string; score: number }[] = [];
+          let unifiedScore: number | 'Not available' = 'Not available';
 
-          // Collect valid numeric scores
+          // Define valid score ranges for each bureau
+          const scoreRanges: Record<string, { min: number; max: number }> = {
+            CIBIL: { min: 300, max: 900 },
+            Experian: { min: 300, max: 900 },
+            CRIF: { min: 1, max: 999 },
+            Equifax: { min: 300, max: 900 },
+          };
+
+          // Collect valid numeric scores and scale them
           Object.entries(creditData.creditScores).forEach(([bureau, score]) => {
-            if (typeof score === 'number') {
-              const range = {
-                CIBIL: { min: 300, max: 900 },
-                Experian: { min: 300, max: 900 },
-                CRIF: { min: 1, max: 999 },
-                Equifax: { min: 300, max: 900 },
-              }[bureau];
-
+            if (typeof score === 'number' && !isNaN(score)) {
+              const range = scoreRanges[bureau];
               if (range) {
-                // Store the original score and its range for scaling
-                //@ts-ignore
-                bureauScores.push({
-                  bureau,
-                  score,
-                  originalMin: range.min,
-                  originalMax: range.max,
-                });
+                bureauScores.push({ bureau, score });
               }
             }
           });
 
-          // Calculate unified score if we have at least one valid score
+          // Calculate unified score if there are valid scores
           if (bureauScores.length > 0) {
-            // Calculate normalized scores (300-900 range)
-            const normalizedScores = bureauScores.map((item) => {
-              const normalized =
-                //@ts-ignore
-                ((item.score - item.originalMin) /
-                  //@ts-ignore
-                  (item.originalMax - item.originalMin)) *
-                  (900 - 300) +
-                300;
-              return normalized;
+            // Normalize scores to a 300-900 range
+            const normalizedScores = bureauScores.map(({ bureau, score }) => {
+              const { min, max } = scoreRanges[bureau];
+              return ((score - min) / (max - min)) * (900 - 300) + 300;
             });
 
-            // Average the normalized scores for the unified score
-            //@ts-ignore
+            // Compute the average of normalized scores
             unifiedScore = Math.round(
               normalizedScores.reduce((sum, score) => sum + score, 0) /
                 normalizedScores.length,
             );
           }
-
           // Format the credit score response
           let formattedResponse = `
 ## Your Credit Score Report
