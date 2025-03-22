@@ -237,6 +237,7 @@ const BankDashboard = () => {
 
     try {
       const scores = creditReport?.bureauScores.reduce((acc, bureau) => {
+        //@ts-ignore
         acc[bureau.bureau] = bureau.score;
         return acc;
       }, {} as Record<string, number>);
@@ -262,6 +263,7 @@ const BankDashboard = () => {
     // Get unique dates across all bureaus
     const allDates = new Set();
     creditReport.bureauScores.forEach((bureau) => {
+      //@ts-ignore
       bureau.history.forEach((item) => {
         allDates.add(item.date);
       });
@@ -297,9 +299,11 @@ const BankDashboard = () => {
       const dataPoint = { date };
 
       creditReport.bureauScores.forEach((bureau) => {
+        //@ts-ignore
         const historyItem = bureau.history.find(
           (item) => parseDate(item.date) === date,
         );
+        //@ts-ignore
         dataPoint[bureau.bureau] = historyItem ? historyItem.score : null;
       });
 
@@ -378,13 +382,13 @@ const BankDashboard = () => {
                 placeholder="Enter PAN"
                 value={pan}
                 onChange={(e) => setPan(e.target.value)}
-                autoComplete='true'
+                autoComplete="true"
                 className="w-full"
-                />
+              />
               <Input
                 placeholder="Enter Aadhaar"
                 value={aadhaar}
-                autoComplete='true'
+                autoComplete="true"
                 onChange={(e) => setAadhaar(e.target.value)}
                 className="w-full"
               />
@@ -1241,7 +1245,9 @@ const BankDashboard = () => {
           </Tabs>
         </div>
       )}
-      <div className="mt-4">{creditReport && <LoanRiskForm creditReport={creditReport}/>}</div>
+      <div className="mt-4">
+        {creditReport && <LoanRiskForm creditReport={creditReport} />}
+      </div>
     </div>
   );
 };

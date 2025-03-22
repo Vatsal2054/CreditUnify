@@ -33,6 +33,7 @@ import CreditScoreChart from '../_components/User/CreditScoreChart';
 import { useCurrentUserClient } from '@/hooks/use-current-user';
 import AIInsight from './components/ai-insight';
 import LoanInterestRates from './components/loan-interest-rates';
+import { toast } from 'sonner';
 
 // Mock API function to simulate data fetching
 const fetchUserCreditData = async () => {
@@ -264,7 +265,7 @@ export default function CreditDashboard() {
                   onClick={handleFetchData}
                   disabled={isSearching || !pan || !aadhaar}
                 >
-                  {isSearching ? "Searching" : 'Search'}
+                  {isSearching ? 'Searching' : 'Search'}
                 </Button>
               </div>
             </CardContent>
