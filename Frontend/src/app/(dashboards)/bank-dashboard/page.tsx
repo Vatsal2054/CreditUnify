@@ -1,10 +1,9 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -22,17 +21,17 @@ import {
   AlertCircle,
   CheckCircle,
   TrendingUp,
-  BarChart3,
   FileText,
   CreditCard,
   Clock,
-  DollarSign,
   Info,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import EnhancedSpeedometer from '@/app/components/Dashboard/Speedometer';
 import axios from 'axios';
+import LoanRiskForm from './loan-form';
+import CreditScoreChart from '../_components/User/CreditScoreChart';
 
 // Type definitions
 interface PersonalInfo {
@@ -124,60 +123,44 @@ const loanPreferences = {
 // API service functions
 const apiService = {
   searchCustomer: async (
-    searchMode: 'aadhaar' | 'pan',
-    searchValue: string,
+    aadhaar: string,
+    pan: string,
   ): Promise<CreditReport> => {
     console.log(
-      `Making API call to search for customer with ${searchMode}: ${searchValue}`,
+      `Making API call to search for customer with Aadhaar: ${aadhaar} and PAN: ${pan}`,
     );
     try {
-      const response = await fetch('http://localhost:5000/get-scores');
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-      return await response.json();
+      const response = await axios.get('http://localhost:5000/get-scores', {
+        params: { aadhaar, pan },
+      });
+      return response.data;
     } catch (error) {
       console.error('Error fetching credit data:', error);
       throw error;
     }
   },
 
-  //@ts-ignore
-  getUnifiedScore: async (loanType: string): Promise<UnifiedScoreResponse> => {
+  getUnifiedScore: async (
+    loanType: string,
+    scores: Record<string, number>,
+  ): Promise<UnifiedScoreResponse> => {
     console.log(`Making API call to get unified score for ${loanType}`);
-    // const response = await fetch('http://localhost:5000/unified-score', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ loanType }),
-    // });
-
-    await axios
-      .post('http://localhost:5000/unified-score', {
+    try {
+      const response = await axios.post('http://localhost:5000/unified-score', {
         loanType,
-        scores: {
-          CIBIL: 700,
-          CRIF: 750,
-          Experian: 650,
-          Equifax: 600,
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        return response.data;
-      })
-      // if (!response.ok) {
-      //   throw new Error('Failed to fetch unified score data');
-      // }
-      .catch((error) => {
-        console.error('Error fetching unified score data:', error);
-        throw error;
+        scores,
       });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching unified score data:', error);
+      throw error;
+    }
   },
 };
 
 const BankDashboard = () => {
-  const [searchMode, setSearchMode] = useState<'aadhaar' | 'pan'>('aadhaar');
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [pan, setPan] = useState<string>('');
+  const [aadhaar, setAadhaar] = useState<string>('');
   const [creditReport, setCreditReport] = useState<CreditReport | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -213,19 +196,19 @@ const BankDashboard = () => {
 
   // Search using the API service
   const handleSearch = async () => {
-    if (!searchValue) return;
-
-    // Validate input
-    if (searchMode === 'aadhaar' && !/^\d{12}$/.test(searchValue)) {
-      toast.error('Invalid Adhaar number');
+    if (!pan || !aadhaar) {
+      toast.error('Both PAN and Aadhaar are required');
       return;
     }
 
-    if (
-      searchMode === 'pan' &&
-      !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(searchValue)
-    ) {
+    // Validate PAN and Aadhaar
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan)) {
       toast.error('Invalid PAN number');
+      return;
+    }
+
+    if (!/^\d{12}$/.test(aadhaar)) {
+      toast.error('Invalid Aadhaar number');
       return;
     }
 
@@ -233,7 +216,7 @@ const BankDashboard = () => {
     setError(null);
 
     try {
-      const data = await apiService.searchCustomer(searchMode, searchValue);
+      const data = await apiService.searchCustomer(aadhaar, pan);
       setCreditReport(data);
       // Reset any previous unified score data
       setUnifiedScore(null);
@@ -253,19 +236,15 @@ const BankDashboard = () => {
     setIsLoadingUnifiedScore(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/unified-score', {
-        loanType,
-        scores: {
-          CIBIL: 700,
-          CRIF: 750,
-          Experian: 650,
-          Equifax: 600,
-        },
-      });
+      const scores = creditReport?.bureauScores.reduce((acc, bureau) => {
+        acc[bureau.bureau] = bureau.score;
+        return acc;
+      }, {} as Record<string, number>);
 
-      // Ensure the response data is correctly structured
-      const unifiedScoreData = response.data;
-      setUnifiedScore(unifiedScoreData);
+      if (scores) {
+        const data = await apiService.getUnifiedScore(loanType, scores);
+        setUnifiedScore(data);
+      }
     } catch (err) {
       console.error('Error fetching unified score:', err);
       toast.error('Failed to fetch unified score');
@@ -275,12 +254,67 @@ const BankDashboard = () => {
     }
   };
 
+  const getAllBureauHistory = () => {
+    if (!creditReport) return [];
+
+    const allData = [];
+
+    // Get unique dates across all bureaus
+    const allDates = new Set();
+    creditReport.bureauScores.forEach((bureau) => {
+      bureau.history.forEach((item) => {
+        allDates.add(item.date);
+      });
+    });
+
+    // Convert dates to a proper format (e.g., "Feb 2025" to "2025-02-01")
+    const parseDate = (dateStr) => {
+      const [month, year] = dateStr.split(' ');
+      const monthMap = {
+        Jan: '01',
+        Feb: '02',
+        Mar: '03',
+        Apr: '04',
+        May: '05',
+        Jun: '06',
+        Jul: '07',
+        Aug: '08',
+        Sep: '09',
+        Oct: '10',
+        Nov: '11',
+        Dec: '12',
+      };
+      return `${year}-${monthMap[month]}-01`; // Use the first day of the month for consistency
+    };
+
+    // Sort dates chronologically
+    const sortedDates = Array.from(allDates)
+      .map((date) => parseDate(date)) // Convert to YYYY-MM-DD format
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime()); // Sort by date
+
+    // Create the combined dataset
+    sortedDates.forEach((date) => {
+      const dataPoint = { date };
+
+      creditReport.bureauScores.forEach((bureau) => {
+        const historyItem = bureau.history.find(
+          (item) => parseDate(item.date) === date,
+        );
+        dataPoint[bureau.bureau] = historyItem ? historyItem.score : null;
+      });
+
+      //@ts-ignore
+      allData.push(dataPoint);
+    });
+
+    return allData;
+  };
+
   // Get the average bureau score
   const getAverageScore = () => {
     if (!creditReport?.bureauScores || creditReport.bureauScores.length === 0)
       return 0;
 
-    console.log(creditReport.bureauScores);
     const totalScore = creditReport.bureauScores.reduce(
       (sum, bureau) => sum + bureau.score,
       0,
@@ -299,7 +333,7 @@ const BankDashboard = () => {
     // Just use the first bureau for now
     const bureauScore = creditReport.bureauScores[0];
     return {
-      bureau: bureauScore.bureau || 'CIBIL',
+      bureau: 'Normalized',
       score: bureauScore.score,
       rangeStart: bureauScore.rangeStart || 300,
       rangeEnd: bureauScore.rangeEnd || 900,
@@ -338,34 +372,26 @@ const BankDashboard = () => {
           <CardDescription>{t('customerLookup.description')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
-            <div className="flex items-center space-x-2">
-              <Button
-                variant={searchMode === 'aadhaar' ? 'default' : 'outline'}
-                onClick={() => setSearchMode('aadhaar')}
-              >
-                {t('searchModes.aadhaar')}
-              </Button>
-              <Button
-                variant={searchMode === 'pan' ? 'default' : 'outline'}
-                onClick={() => setSearchMode('pan')}
-              >
-                {t('searchModes.pan')}
-              </Button>
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-col md:flex-row md:gap-4 md:space-y-0 gap-0 space-y-4">
+              <Input
+                placeholder="Enter PAN"
+                value={pan}
+                onChange={(e) => setPan(e.target.value)}
+                autoComplete='true'
+                className="w-full"
+                />
+              <Input
+                placeholder="Enter Aadhaar"
+                value={aadhaar}
+                autoComplete='true'
+                onChange={(e) => setAadhaar(e.target.value)}
+                className="w-full"
+              />
             </div>
-            <Input
-              placeholder={
-                searchMode === 'aadhaar'
-                  ? t('placeholders.aadhaar')
-                  : t('placeholders.pan')
-              }
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="md:flex-grow"
-            />
             <Button
               onClick={handleSearch}
-              disabled={isSearching || !searchValue}
+              disabled={isSearching || !pan || !aadhaar}
             >
               {isSearching ? t('buttons.searching') : t('buttons.search')}
             </Button>
@@ -508,7 +534,12 @@ const BankDashboard = () => {
                               </div>
                               <div className="text-right">
                                 <span className="text-sm">
-                                  weight: {item.weight * 100}%
+                                  weight:{' '}
+                                  {
+                                    //@ts-ignore
+                                    item.weight * 100
+                                  }
+                                  %
                                 </span>
                                 <span className="text-xs text-gray-500 ml-2">
                                   Contribution: {item.weightedContribution}
@@ -827,12 +858,9 @@ const BankDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   {/* TODO: Replace with a real chart component in production */}
-                  <div className="relative h-72">
+                  <div className="relative h-[50vh]">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <BarChart3 className="h-16 w-16 text-gray-300" />
-                      <p className="absolute text-gray-500">
-                        {t('sections.creditHistory.chart')}
-                      </p>
+                      <CreditScoreChart data={getAllBureauHistory()} />
                     </div>
                   </div>
 
@@ -1213,6 +1241,7 @@ const BankDashboard = () => {
           </Tabs>
         </div>
       )}
+      <div className="mt-4">{creditReport && <LoanRiskForm creditReport={creditReport}/>}</div>
     </div>
   );
 };
