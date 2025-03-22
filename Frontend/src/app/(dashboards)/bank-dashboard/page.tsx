@@ -508,7 +508,7 @@ const BankDashboard = () => {
                               </div>
                               <div className="text-right">
                                 <span className="text-sm">
-                                  Weight: {item.weight}
+                                  weight: {item.weight * 100}%
                                 </span>
                                 <span className="text-xs text-gray-500 ml-2">
                                   Contribution: {item.weightedContribution}

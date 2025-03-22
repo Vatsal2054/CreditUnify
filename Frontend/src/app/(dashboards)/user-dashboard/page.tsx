@@ -311,13 +311,13 @@ export default function CreditDashboard() {
                           getCreditHealthStatus().message
                         }
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <Badge className="bg-emerald-100 text-emerald-700 text-md font-[700]">
                         Average score:{' '}
                         {
                           //@ts-ignore
                           Math.round(getCreditHealthStatus().avgScore)
                         }
-                      </p>
+                      </Badge>
                     </div>
                     <Badge
                       //@ts-ignore
