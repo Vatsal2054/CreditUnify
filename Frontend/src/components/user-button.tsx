@@ -92,7 +92,14 @@ export const UserButton = () => {
           Settings
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => logout()}
+          onClick={() => {
+            document.cookie.split(";").forEach((cookie) => {
+              document.cookie = cookie
+                .replace(/^ +/, "")
+                .replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
+            });
+            logout()
+          }}
           className="cursor-pointer gap-2 p-2 text-destructive transition-colors duration-200 hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
         >
           <LogOut className="h-4 w-4" />
