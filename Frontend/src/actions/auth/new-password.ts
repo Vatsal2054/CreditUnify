@@ -5,12 +5,7 @@ import { getUserByEmail } from "@/data/user";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { NewPasswordSchema } from "@/lib/index";
-// import { getSchemas } from "@/lib/index"
-// import { getTranslations } from "next-intl/server";
-// const { NewPasswordSchema } =await (async ()=>{
-//   const t = await getTranslations();
-//   return getSchemas(t);
-// })();
+
 
 export const newPassword = async(values:z.infer<typeof NewPasswordSchema>,token?:string|null) => {
   if(!token)
@@ -53,9 +48,9 @@ export const newPassword = async(values:z.infer<typeof NewPasswordSchema>,token?
     }
   });
 
-  await db.tokens.delete({
-    where:{id:existingToken.id,type:"PasswordReset"}
-  })
+  // await db.tokens.delete({
+  //   where:{id:existingToken.id,type:"PasswordReset"}
+  // })
 
   return {success:"Password updated"}
 }
