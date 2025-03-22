@@ -1,6 +1,4 @@
 'use client';
-
-import { settings } from '@/actions/auth/settings';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import { ModeToggle } from '@/components/ModeToggle';
 import { Passwordcmp } from '@/components/Passwordcmp';
@@ -16,22 +14,30 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useCurrentUserClient } from '@/hooks/use-current-user';
-import { SettingsSchema } from '@/lib/index';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { UserRole } from '@prisma/client';
 import {
+  IconBuildingBank,
+  IconCheck,
+  IconId,
   IconLock,
   IconMail,
   IconPalette,
   IconShieldLock,
   IconUser,
-  IconId,
-  IconBuildingBank,
-  IconCheck,
 } from '@tabler/icons-react';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   useCallback,
   useEffect,
@@ -43,16 +49,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import zxcvbn from 'zxcvbn';
-import { updateUserDocuments, getUserDocuments, updatePersonalInfo, updatePassword, updateTwoFactor } from './action';
-import { useSearchParams } from 'next/navigation';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { UserRole } from '@prisma/client';
+import { getUserDocuments, updatePassword, updatePersonalInfo, updateTwoFactor, updateUserDocuments } from './action';
 
 // Extended schema to include UPI ID, Aadhaar, PAN, and Bank
 const ExtendedSettingsSchema = z.object({
@@ -99,6 +96,7 @@ const SettingsPage = () => {
   const [errorpassword, setErrorpassword] = useState<string | undefined>('');
   const [errorpassword1, setErrorpassword1] = useState<string | undefined>('');
   const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean>(user?.isTwoFactorEnabled || false);
+  const router = useRouter();
   const [userDocs, setUserDocs] = useState({
     aadhaarNumber: '',
     PAN: '',
@@ -140,7 +138,7 @@ const SettingsPage = () => {
   // Show warning for missing documents
   useEffect(() => {
     const missing = searchParams.get('missing');
-
+    console.log("missing: ",missing);
     if (missing == "aadhaar" || missing == "both") {
       console.log("missing aadhaar");
       toast.warning('Please add your Aadhaar details to continue', {
@@ -153,7 +151,7 @@ const SettingsPage = () => {
         description: 'PAN is required for this feature',
       });
     }
-  }, [searchParams]);
+  }, []);
 
   // Password strength evaluation
   const Password_testResult = useMemo(() => zxcvbn(password), [password]);
@@ -226,8 +224,6 @@ const SettingsPage = () => {
     if (userDocs.bankName) {
       form.setValue('bankName', userDocs.bankName);
     }
-
-
   }, [userDocs, form]);
 
   // Update personal information
@@ -321,6 +317,17 @@ const SettingsPage = () => {
     PAN?: string;
     bankName?: string;
   }) => {
+    console.log("Aadhaar Number:", data.aadhaarNumber);
+    console.log("PAN Number:", data.PAN);
+    if ((
+      (data.aadhaarNumber && data.PAN===undefined) ||
+      (data.PAN && data.aadhaarNumber===undefined) || (
+        !data.aadhaarNumber && !data.PAN
+      )) && !data.bankName
+    ) {
+      toast.info('Enter Both Aadhaar Number and PAN Number');
+      return;
+    }
     if (
       (data.aadhaarNumber === userDocs.aadhaarNumber || !data.aadhaarNumber) &&
       (data.PAN === userDocs.PAN || !data.PAN) &&
@@ -329,7 +336,6 @@ const SettingsPage = () => {
       toast.info('No changes to update');
       return;
     }
-
     const toastId = toast.loading('Updating documents...');
     startDocTransition(() => {
       updateUserDocuments(data)
@@ -341,9 +347,15 @@ const SettingsPage = () => {
               ...(data.PAN && { PAN: data.PAN }),
               ...(data.bankName && { bankName: data.bankName }),
             });
+            const missing = searchParams.get('missing');
             toast.success('Documents updated successfully', {
               id: toastId,
             });
+            
+            if(missing){
+              router.push("/user-dashboard");
+            }
+
           } else {
             toast.error(result?.error || 'Failed to update documents', {
               id: toastId,
