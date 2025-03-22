@@ -231,13 +231,348 @@
       },
       "resources": {
         "title": "संसाधन",
-        "links": ["दस्तावेज़ीकरण", "ब्लॉग", "सहायता", "अक्सर पूछे जाने वाले प्रश्न"]
+        "links": [
+          "दस्तावेज़ीकरण",
+          "ब्लॉग",
+          "सहायता",
+          "अक्सर पूछे जाने वाले प्रश्न"
+        ]
       },
       "company": {
         "title": "कंपनी",
         "links": ["हमारे बारे में", "करियर", "गोपनीयता नीति", "सेवा की शर्तें"]
       },
       "copyright": "© {year} CreditUnify. सर्वाधिकार सुरक्षित।"
+    }
+  },
+  "admin": {
+    "AdminDashboardPage": {
+      "title": "एडमिन डैशबोर्ड",
+      "description": "बैंकों का प्रबंधन करें और सिस्टम एनालिटिक्स देखें",
+      "tabs": {
+        "banks": "बैंक प्रबंधन",
+        "activity": "सिस्टम गतिविधि",
+        "add": "नया बैंक जोड़ें"
+      },
+      "bankManagement": {
+        "title": "बैंक प्रबंधन",
+        "description": "सिस्टम में सभी पंजीकृत बैंक खातों को देखें और प्रबंधित करें।"
+      },
+      "systemActivity": {
+        "title": "हाल की सिस्टम गतिविधि",
+        "description": "सिस्टम में सभी बैंकों में हाल की क्रेडिट स्कोर जाँच।"
+      },
+      "addBank": {
+        "title": "नया उपयोगकर्ता जोड़ें",
+        "description": "सिस्टम में एक नया बैंक प्रतिनिधि खाता बनाएं।"
+      }
+    },
+    "DashboardStats": {
+      "totalBanks": "कुल बैंक",
+      "totalBanksDescription": "पंजीकृत वित्तीय संस्थान",
+      "registeredUsers": "पंजीकृत उपयोगकर्ता",
+      "registeredUsersGrowth": "पिछले महीने से {growth}% वृद्धि",
+      "creditChecksToday": "आज के क्रेडिट चेक",
+      "creditChecksDescription": "पिछले 24 घंटों में कुल पूछताछ",
+      "averageCreditScore": "औसत क्रेडिट स्कोर",
+      "averageCreditScoreDescription": "सिस्टम में सभी उपयोगकर्ताओं का"
+    },
+    "BankActivityTable": {
+      "title": "हाल की गतिविधि",
+      "titleWithBank": "{bankName} की हाल की गतिविधि",
+      "description": "इस बैंक द्वारा किए गए अंतिम 5 क्रेडिट स्कोर चेक",
+      "aadhar": "आधार नंबर",
+      "pan": "पैन",
+      "creditScore": "क्रेडिट स्कोर",
+      "dateTime": "दिनांक और समय"
+    },
+    "RecentActivity": {
+      "justNow": "अभी-अभी",
+      "hoursAgo": "{hours} घंटे पहले",
+      "loadMore": "और लोड करें",
+      "userCreated": "नया उपयोगकर्ता खाता बनाया गया",
+      "creditCheck": "{targetUser} के लिए क्रेडिट स्कोर की जाँच की गई",
+      "alert": "उपयोगकर्ता आईडी {id} के लिए कई क्रेडिट स्कोर चेक का पता चला",
+      "creditUpdate": "क्रेडिट स्कोर {oldScore} से {newScore} तक अपडेट किया गया",
+      "failedLogin": "एडमिन खाते के लिए विफल लॉगिन प्रयास का पता चला",
+      "userLogin": "एडमिन उपयोगकर्ता लॉग इन किया"
+    },
+    "UserAddForm": {
+      "name": "नाम",
+      "namePlaceholder": "जॉन डो",
+      "nameDescription": "उपयोगकर्ता का पूरा नाम।",
+      "email": "ईमेल",
+      "emailPlaceholder": "user@example.com",
+      "emailDescription": "उपयोगकर्ता का ईमेल पता।",
+      "password": "पासवर्ड",
+      "passwordPlaceholder": "••••••••",
+      "passwordDescription": "अपर केस, लोअर केस और नंबर के साथ कम से कम 8 अक्षर होने चाहिए।",
+      "role": "भूमिका",
+      "rolePlaceholder": "एक भूमिका चुनें",
+      "roleDescription": "उपयोगकर्ता का अनुमति स्तर।",
+      "bankName": "बैंक का नाम",
+      "bankNamePlaceholder": "एक बैंक चुनें",
+      "bankNameDescription": "बैंक उपयोगकर्ताओं के लिए आवश्यक।",
+      "createUser": "उपयोगकर्ता बनाएं",
+      "creatingUser": "उपयोगकर्ता बनाया जा रहा है...",
+      "processingRequest": "कृपया प्रतीक्षा करें जबकि हम आपके अनुरोध को प्रोसेस कर रहे हैं...",
+      "userCreatedSuccess": "उपयोगकर्ता सफलतापूर्वक बनाया गया",
+      "userCreatedDescription": "{email} को {bank} बैंक के लिए {role} भूमिका के साथ जोड़ा गया है।",
+      "userCreationFailed": "उपयोगकर्ता बनाने में विफल",
+      "processingError": "एक अप्रत्याशित त्रुटि हुई"
+    },
+    "UserTable": {
+      "bankName": "बैंक का नाम",
+      "email": "ईमेल",
+      "bankCode": "बैंक कोड",
+      "created": "बनाया गया",
+      "lastActive": "आखिरी बार सक्रिय",
+      "actions": "कार्रवाई",
+      "viewBankDetails": "बैंक विवरण देखें",
+      "editBankInfo": "बैंक जानकारी संपादित करें",
+      "viewRecentActivity": "हाल की गतिविधि देखें",
+      "viewBankBranches": "बैंक शाखाएँ देखें",
+      "deleteBank": "बैंक हटाएं",
+      "confirmDeletion": "हटाने की पुष्टि करें",
+      "deleteConfirmationMessage": "क्या आप वाकई {name} को हटाना चाहते हैं? यह क्रिया वापस नहीं ली जा सकती।",
+      "cancel": "रद्द करें",
+      "delete": "हटाएं",
+      "recentActivity": "{name} - हाल की गतिविधि",
+      "recentActivityDescription": "इस बैंक द्वारा हाल ही में किए गए क्रेडिट स्कोर चेक",
+      "close": "बंद करें"
+    }
+  },
+  "auth": {
+    "create-account": "एक खाता बनाएं",
+    "already-have-account": "क्या आपके पास पहले से खाता है?",
+    "name": "नाम",
+    "enter-name": "अपना नाम दर्ज करें",
+    "email": "ईमेल",
+    "enter-email": "अपना ईमेल दर्ज करें",
+    "password": "पासवर्ड",
+    "enter-password": "अपना पासवर्ड दर्ज करें",
+    "register": "पंजीकरण करें",
+    "registering": "उपयोगकर्ता का पंजीकरण हो रहा है...",
+    "weak-password": "कृपया एक मजबूत पासवर्ड सेट करें",
+    "Creditunify-register": "क्रेडिटयूनिफाई - पंजीकरण",
+    "Creditunify-login": "क्रेडिटयूनिफाई - लॉगिन",
+    "validation": {
+      "email-empty": "ईमेल फ़ील्ड खाली है!",
+      "name-empty": "नाम फ़ील्ड खाली है!",
+      "password-min": "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए",
+      "password-regex": "पासवर्ड में अंक (0-9), विशेष प्रतीक (@, #, &...), अपरकेस (A-Z), लोअरकेस (a-z) अक्षर शामिल होने चाहिए",
+      "passwords-match": "पासवर्ड मेल नहीं खाते",
+      "email-required": "ईमेल आवश्यक है"
+    },
+    "loading": {
+      "preparing": "आपकी वित्तीय अंतर्दृष्टि तैयार की जा रही है",
+      "crunching": "आंकड़ों का विश्लेषण किया जा रहा है",
+      "balancing": "बही-खातों को संतुलित किया जा रहा है",
+      "counting": "आपके रुपयों की गिनती की जा रही है",
+      "maximizing": "आपकी बचत को अधिकतम किया जा रहा है",
+      "optimizing": "आपके बजट को अनुकूलित किया जा रहा है",
+      "empowering": "हर रुपये को सशक्त बनाना",
+      "money-maximized": "आपका पैसा, अधिकतम",
+      "track-smart": "स्मार्ट ट्रैक करें, बुद्धिमानी से खर्च करें",
+      "savings": "हर स्वाइप में बचत",
+      "financial-clarity": "वित्तीय स्पष्टता, एक क्लिक दूर",
+      "spend-confidence": "आत्मविश्वास के साथ खर्च करें, आसानी से बचत करें",
+      "master-money": "अपने धन प्रवाह पर नियंत्रण रखें",
+      "budgeting": "बजट बनाना हुआ सरल",
+      "finances-optimized": "आपका वित्त, पूरी तरह से अनुकूलित",
+      "effortless": "आसान ट्रैकिंग, स्मार्ट खर्च",
+      "track-with": "क्रेडिटयूनिफाई के साथ ट्रैक करें",
+      "Creditunify": "क्रेडिटयूनिफाई"
+    },
+    "Login": {
+      "header": "अपने खाते में साइन इन करें",
+      "backButton": {
+        "label": "क्या आपके पास खाता नहीं है?"
+      },
+      "twoFactor": {
+        "label": "दो कारक कोड",
+        "confirm": "पुष्टि करें"
+      },
+      "email": {
+        "label": "ईमेल",
+        "placeholder": "xyz@gmail.com"
+      },
+      "password": {
+        "label": "पासवर्ड",
+        "placeholder": "अपना पासवर्ड दर्ज करें",
+        "forgot": "पासवर्ड भूल गए?"
+      },
+      "submit": "मेल से लॉगिन करें",
+      "error": {
+        "oauth": "ईमेल पहले से ही एक अलग प्रदाता के साथ उपयोग में है!",
+        "generic": "कुछ गलत हो गया"
+      }
+    },
+    "error": {
+      "title": "उफ़! कुछ गलत हो गया!",
+      "errors": {
+        "configuration": "गूगल के बिना लॉगिन करने का प्रयास करें"
+      },
+      "backButton": "लॉगिन पर वापस जाएं"
+    },
+    "resetPassword": {
+      "header": "अपना पासवर्ड भूल गए?",
+      "backButton": {
+        "text": "क्या आपके पास खाता नहीं है?",
+        "href": "/auth/signup"
+      },
+      "emailLabel": "ईमेल",
+      "emailPlaceholder": "अपना ईमेल दर्ज करें",
+      "submitButton": "पासवर्ड रीसेट ईमेल भेजें",
+      "loadingMessage": "पासवर्ड रीसेट ईमेल भेजा जा रहा है...",
+      "successMessage": "पासवर्ड रीसेट ईमेल सफलतापूर्वक भेजा गया!",
+      "errorMessage": "ईमेल भेजते समय एक त्रुटि हुई।"
+    },
+    "verification": {
+      "header": "आपके सत्यापन की पुष्टि की जा रही है",
+      "back": "लॉगिन पर वापस जाएं",
+      "missingToken": "टोकन गायब है",
+      "errorGeneral": "कुछ गलत हो गया"
+    },
+    "newPassword": {
+      "header": "नया पासवर्ड दर्ज करें",
+      "backButton": {
+        "text": "लॉगिन पर वापस जाएं",
+        "href": "/auth/signin"
+      },
+      "passwordLabel": "पासवर्ड",
+      "passwordPlaceholder": "अपना पासवर्ड दर्ज करें",
+      "confirmPasswordLabel": "पासवर्ड की पुष्टि करें",
+      "confirmPasswordPlaceholder": "अपने पासवर्ड की पुष्टि करें",
+      "submitButton": "पासवर्ड रीसेट करें",
+      "loadingMessage": "पासवर्ड बदला जा रहा है...",
+      "successMessage": "आपका पासवर्ड सफलतापूर्वक अपडेट किया गया है!",
+      "errorMessage": "पासवर्ड अपडेट करते समय एक त्रुटि हुई।"
+    }
+  },
+  "Common": {
+    "getStarted": "शुरू करें",
+    "switchLanguage": "भाषा बदलें",
+    "brand": "क्रेडिट",
+    "brandHighlight": "यूनिफाई"
+  },
+  "bank": {
+    "title": "बैंक प्रतिनिधि डैशबोर्ड",
+    "description": "ग्राहक वित्तीय डेटा का कुशलतापूर्वक विश्लेषण करें।",
+    "customerLookup": {
+      "title": "ग्राहक खोज",
+      "description": "आधार या पैन का उपयोग करके ग्राहक विवरण खोजें।"
+    },
+    "searchModes": {
+      "aadhaar": "आधार",
+      "pan": "पैन"
+    },
+    "placeholders": {
+      "aadhaar": "आधार नंबर दर्ज करें",
+      "pan": "पैन नंबर दर्ज करें"
+    },
+    "buttons": {
+      "search": "खोजें",
+      "searching": "खोज रहे हैं..."
+    },
+    "errors": {
+      "customerSearch": "ग्राहक को खोजने में विफल। कृपया पुनः प्रयास करें।",
+      "additionalData": "कुछ ग्राहक डेटा लोड नहीं हो सका।"
+    },
+    "tabs": {
+      "overview": "अवलोकन",
+      "creditHistory": "क्रेडिट इतिहास",
+      "loans": "ऋण",
+      "riskAnalysis": "जोखिम विश्लेषण"
+    },
+    "riskLevels": {
+      "low": "कम जोखिम",
+      "medium": "मध्यम जोखिम",
+      "high": "उच्च जोखिम"
+    },
+    "creditScoreCard": {
+      "title": "क्रेडिट स्कोर",
+      "updateText": "अंतिम अपडेट"
+    },
+    "activeLoansCard": {
+      "title": "सक्रिय ऋण",
+      "totalOutstanding": "कुल बकाया"
+    },
+    "paymentHistoryCard": {
+      "title": "भुगतान इतिहास",
+      "missedInstallments": "सभी ऋणों में छूटी हुई किस्तें"
+    },
+    "sections": {
+      "customerInfo": {
+        "title": "ग्राहक जानकारी",
+        "name": "नाम",
+        "email": "ईमेल",
+        "aadhaarNumber": "आधार नंबर",
+        "pan": "पैन",
+        "primaryBank": "प्राथमिक बैंक"
+      },
+      "creditSummary": {
+        "title": "क्रेडिट सारांश",
+        "currentScore": "वर्तमान क्रेडिट स्कोर",
+        "activeLoans": "सक्रिय ऋण",
+        "totalEMI": "कुल ईएमआई/महीना",
+        "recommendationTitle": "ऋण पात्रता अनुशंसा"
+      },
+      "creditHistory": {
+        "title": "क्रेडिट स्कोर इतिहास",
+        "chart": "क्रेडिट स्कोर चार्ट",
+        "scoreHistory": "स्कोर इतिहास",
+        "date": "दिनांक",
+        "score": "स्कोर",
+        "change": "परिवर्तन"
+      },
+      "loanDetails": {
+        "title": "ऋण विवरण",
+        "started": "शुरू किया",
+        "loanAmount": "ऋण राशि",
+        "monthlyEMI": "मासिक ईएमआई",
+        "missedInstallments": "छूटी हुई किस्तें"
+      },
+      "riskAnalysis": {
+        "title": "जोखिम विश्लेषण",
+        "basedOn": "{score} के क्रेडिट स्कोर और भुगतान इतिहास के आधार पर",
+        "riskFactors": "जोखिम कारक",
+        "creditUtilization": "क्रेडिट उपयोग",
+        "current": "वर्तमान",
+        "utilizationRecommendation": "अनुशंसा: बेहतर स्कोर के लिए उपयोग को 30% से नीचे रखें",
+        "paymentHistory": "भुगतान इतिहास",
+        "missedPayments": "छूटे हुए भुगतान",
+        "paymentRecommendation": "अनुशंसा: समय पर लगातार भुगतान बनाए रखें",
+        "loanEligibility": "ऋण पात्रता मूल्यांकन",
+        "recommendedActions": "अनुशंसित कार्रवाई"
+      }
+    },
+    "eligibilityRecommendations": {
+      "excellent": "ग्राहक का क्रेडिट स्कोर उत्कृष्ट है और भुगतान इतिहास लगातार है। प्रीमियम ऋण उत्पादों के लिए पात्र, वरीयता ब्याज दरों के साथ।",
+      "good": "ग्राहक का क्रेडिट स्कोर अच्छा है, मामूली भुगतान समस्याओं के साथ। नियमित ब्याज दरों के साथ मानक ऋण उत्पादों की पेशकश की जा सकती है।",
+      "belowAverage": "ग्राहक का क्रेडिट स्कोर औसत से कम है, भुगतान चिंताओं के साथ। केवल सुरक्षित ऋण या उच्च ब्याज दरों वाले ऋणों पर विचार करें।"
+    },
+    "loanRecommendations": {
+      "excellent": {
+        "eligible": "प्रीमियम ऋण उत्पादों के लिए पात्र",
+        "preferentialRates": "वरीयता ब्याज दरों की अनुशंसा",
+        "homeLoan": "₹30,00,000 तक के गृह ऋण के लिए पूर्व-स्वीकृत",
+        "personalLoan": "₹5,00,000 तक के व्यक्तिगत ऋण के लिए पूर्व-स्वीकृत"
+      },
+      "good": {
+        "eligible": "मानक ऋण उत्पादों के लिए पात्र",
+        "regularRates": "नियमित ब्याज दरें लागू",
+        "homeLoan": "गृह ऋण के लिए ₹20,00,000 तक पर विचार करें",
+        "personalLoan": "व्यक्तिगत ऋण के लिए ₹3,00,000 तक पर विचार करें",
+        "improvePayment": "भुगतान निरंतरता में सुधार की अनुशंसा"
+      },
+      "poor": {
+        "limitedEligibility": "सीमित पात्रता - उच्च जोखिम प्रोफाइल",
+        "securedOptions": "केवल सुरक्षित ऋण विकल्पों पर विचार करें",
+        "higherRates": "उच्च ब्याज दरें लागू होंगी",
+        "guarantor": "अतिरिक्त गारंटर या संपार्श्विक की आवश्यकता",
+        "counseling": "क्रेडिट परामर्श सेवाओं की अनुशंसा"
+      }
     }
   }
 }
