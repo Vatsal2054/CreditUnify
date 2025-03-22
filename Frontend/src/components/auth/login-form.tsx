@@ -231,14 +231,15 @@ import { getSchemas } from "@/lib/index";
 import { useTranslations } from "next-intl";
 
 export const LoginForm = () => {
-  const t = useTranslations("auth.Login");
   const [showTwoFactor, setShowTwoFactor] = useState<boolean | undefined>();
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
   const [isDisabled, setDisabled] = useState<boolean>(false);
   const searchparams = useSearchParams();
 
+  let t = useTranslations();
   const { SigninSchema } =  getSchemas(t);
+  t=useTranslations("auth.Login");
 
   const urlError =
     searchparams.get("error") === "OAuthAccountNotLinked"
