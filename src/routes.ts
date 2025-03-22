@@ -7,6 +7,8 @@
 export const publicRoutes = [
   "/",
   "/auth/new-verification",
+  "/admin-dashboard",
+  "/bank-dashboard"
 ]
 
 /**
@@ -39,7 +41,7 @@ export const privateUSER=[
 ]
 
 export const privateADMIN=[
-  "/admin-dashboard",
+  // "/admin-dashboard",
 ]
 
 export const privateBANK=[
