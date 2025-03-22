@@ -24,7 +24,7 @@ export default function Navbar({ children }: { children: React.ReactNode }) {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: 'spring', stiffness: 100 }}
-        className="fixed top-0 z-[100] w-full border-b bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/85"
+        className="fixed top-0 z-[40] w-full border-b bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/85"
       >
         <div className="container flex h-16 items-center justify-between">
           <motion.div
