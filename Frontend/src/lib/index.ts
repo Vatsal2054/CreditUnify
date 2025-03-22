@@ -42,11 +42,10 @@ export const NewPasswordSchema = z.object({
 export const SettingsSchema = z.object({
   name:z.optional(z.string()),
   isTwoFactorEnabled:z.optional(z.boolean()),
-  role : z.enum([UserRole.ADMIN,UserRole.USER]),
   email : z.optional(z.string().email()),
+  theme: z.optional(z.string()),
   password:z.optional(z.string().min(6,{message:"password shold be of min 6 characters"})),
   newPassword:z.optional(z.string().min(6)),
-  theme: z.optional(z.string()),
 }) .refine((data)=>{
   if(data.password && !data.newPassword)      return false;
 
@@ -105,7 +104,6 @@ export const getSchemas = (t: any) => {
   const SettingsSchema = z.object({
     name: z.optional(z.string()),
     isTwoFactorEnable: z.optional(z.boolean()),
-    role : z.enum([UserRole.ADMIN,UserRole.USER]),
     email: z.optional(z.string().email()),
     password: z.optional(z.string()),
     newPassword: z.optional(z.string()),

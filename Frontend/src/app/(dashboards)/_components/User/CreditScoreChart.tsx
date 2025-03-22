@@ -27,16 +27,16 @@ const CreditScoreChart = ({ data }) => {
   // Find min and max values across all bureaus for better axis visualization
   let minScore = 300;
   let maxScore = 900;
-  
-  data.forEach(entry => {
-    bureaus.forEach(bureau => {
+
+  data.forEach((entry) => {
+    bureaus.forEach((bureau) => {
       if (entry[bureau] && !isNaN(entry[bureau])) {
         minScore = Math.min(minScore, entry[bureau]);
         maxScore = Math.max(maxScore, entry[bureau]);
       }
     });
   });
-  
+
   // Create a padding to ensure data points don't touch edges
   minScore = Math.max(300, Math.floor(minScore / 50) * 50 - 50);
   maxScore = Math.min(900, Math.ceil(maxScore / 50) * 50 + 50);
@@ -55,11 +55,13 @@ const CreditScoreChart = ({ data }) => {
             {payload.map((entry, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div 
-                    className="w-3 h-3 rounded-full mr-2" 
+                  <div
+                    className="w-3 h-3 rounded-full mr-2"
                     style={{ backgroundColor: entry.color }}
                   ></div>
-                  <span className="font-medium text-gray-700">{entry.name}:</span>
+                  <span className="font-medium text-gray-700">
+                    {entry.name}:
+                  </span>
                 </div>
                 <span className="font-bold ml-4">{entry.value || 'N/A'}</span>
               </div>
@@ -74,16 +76,18 @@ const CreditScoreChart = ({ data }) => {
   // Custom legend that shows colored dots instead of lines
   const CustomLegend = (props) => {
     const { payload } = props;
-    
+
     return (
       <div className="flex flex-wrap justify-center gap-4 mt-2">
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center">
-            <div 
-              className="w-3 h-3 rounded-full mr-2" 
+            <div
+              className="w-3 h-3 rounded-full mr-2"
               style={{ backgroundColor: entry.color }}
             ></div>
-            <span className="text-sm font-medium text-gray-700">{entry.value}</span>
+            <span className="text-sm font-medium text-gray-700">
+              {entry.value}
+            </span>
           </div>
         ))}
       </div>
@@ -97,65 +101,79 @@ const CreditScoreChart = ({ data }) => {
         margin={{ top: 10, right: 60, left: -20, bottom: 20 }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" opacity={0.5} />
-        
-        <XAxis 
-          dataKey="date" 
+
+        <XAxis
+          dataKey="date"
           tick={{ fontSize: 12, fill: '#6B7280' }}
           tickLine={{ stroke: '#E5E7EB' }}
           axisLine={{ stroke: '#E5E7EB' }}
         />
-        
-        <YAxis 
-          domain={[minScore, maxScore]} 
+
+        <YAxis
+          domain={[minScore, maxScore]}
           tick={{ fontSize: 12, fill: '#6B7280' }}
           tickLine={{ stroke: '#E5E7EB' }}
           axisLine={{ stroke: '#E5E7EB' }}
           tickCount={7}
         />
-        
+
         {/* Reference lines for credit score ranges */}
-        <ReferenceLine 
-          y={excellentCreditLine} 
-          stroke="#10B981" 
+        <ReferenceLine
+          y={excellentCreditLine}
+          stroke="#10B981"
           strokeDasharray="3 3"
-          label={{ 
-            value: 'Excellent', 
-            position: 'right', 
+          label={{
+            value: 'Excellent',
+            position: 'right',
             fill: '#10B981',
-            fontSize: 12
-          }} 
+            fontSize: 12,
+          }}
         />
-        
-        <ReferenceLine 
-          y={goodCreditLine} 
-          stroke="#F59E0B" 
+
+        <ReferenceLine
+          y={goodCreditLine}
+          stroke="#F59E0B"
           strokeDasharray="3 3"
-          label={{ 
-            value: 'Good', 
-            position: 'right', 
+          label={{
+            value: 'Good',
+            position: 'right',
             fill: '#F59E0B',
-            fontSize: 12
-          }} 
+            fontSize: 12,
+          }}
         />
-        
-        <Tooltip content={<CustomTooltip />} />
+
+        <Tooltip
+          content={
+            //@ts-ignore
+            <CustomTooltip />
+          }
+        />
         <Legend content={<CustomLegend />} />
-        
+
         {bureaus.map((bureau, index) => (
           <Line
             key={index}
             type="monotone"
             dataKey={bureau}
             name={bureau}
-            stroke={bureauColors[bureau] || `#${Math.floor(Math.random() * 16777215).toString(16)}`}
+            stroke={
+              bureauColors[bureau] ||
+              `#${Math.floor(Math.random() * 16777215).toString(16)}`
+            }
             strokeWidth={2.5}
-            dot={{ stroke: bureauColors[bureau], strokeWidth: 2, r: 4, fill: 'white' }}
-            activeDot={{ 
+            dot={{
+              stroke: bureauColors[bureau],
+              strokeWidth: 2,
+              r: 4,
+              fill: 'white',
+            }}
+            activeDot={{
               stroke: bureauColors[bureau],
               strokeWidth: 2,
               r: 6,
               fill: 'white',
-              boxShadow: '0 0 0 2px rgba(255,255,255,0.8)'
+              //@ts-ignore
+              boxShadow: '0 0 0 2px rgba(255,255,255,0.8)',
             }}
             connectNulls={true}
           />

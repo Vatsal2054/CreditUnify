@@ -5,11 +5,11 @@
  *
  */
 export const publicRoutes = [
-  "/",
-  "/auth/new-verification",
+  '/',
+  '/auth/new-verification',
   // "/admin-dashboard",
-  // "/bank-dashboard"
-]
+  //'/bank-dashboard',
+];
 
 /**
  *
@@ -20,12 +20,12 @@ export const publicRoutes = [
  */
 
 export const authRoutes = [
-  "/auth/signin",
-  "/auth/signup",
-  "/auth/error",
-  "/auth/reset",
-  "/auth/new-password",
-]
+  '/auth/signin',
+  '/auth/signup',
+  '/auth/error',
+  '/auth/reset',
+  '/auth/new-password',
+];
 
 /**
  *  The prefix for Api authentication routes
@@ -34,36 +34,30 @@ export const authRoutes = [
  *
  */
 
-export const apiAuthPrefix = "/api/auth"
+export const apiAuthPrefix = '/api/auth';
 
-export const privateUSER=[
-  "/user-dashboard",
-]
+export const privateUSER = ['/user-dashboard'];
 
-export const privateADMIN=[
-  "/admin-dashboard",
-]
+export const privateADMIN = ['/admin-dashboard'];
 
-export const privateBANK=[
-  "/bank-dashboard",
-]
+export const privateBANK = [
+ '/bank-dashboard'
+];
 /**
  *  The default redirect path after loggong in
  * @type{string}
  *
  */
 
-export const DEFAULT_LOGIN_REDIRECT_USER = "/user-dashboard"
-export const DEFAULT_LOGIN_REDIRECT_BANK = "/bank-dashboard"
-export const DEFAULT_LOGIN_REDIRECT_ADMIN = "/admin-dashboard"
+export const DEFAULT_LOGIN_REDIRECT_USER = '/user-dashboard';
+export const DEFAULT_LOGIN_REDIRECT_BANK = '/bank-dashboard';
+export const DEFAULT_LOGIN_REDIRECT_ADMIN = '/admin-dashboard';
 
-export const apiRoutes = [
-  "/api/*"
-]
+export const apiRoutes = ['/api/*'];
 
 export const privateRoutes = [
-  "/admin-dashboard",
-  "/bank-dashboard",
-  "/user-dashboard",
-  "/settings"
-]
+  '/admin-dashboard',
+  '/bank-dashboard',
+  '/user-dashboard',
+  '/settings',
+];
