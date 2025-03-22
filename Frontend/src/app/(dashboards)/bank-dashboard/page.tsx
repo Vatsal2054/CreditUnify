@@ -30,6 +30,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import EnhancedSpeedometer from '@/app/components/Dashboard/Speedometer';
 import axios from 'axios';
+import LoanRiskForm from './loan-form';
 import CreditScoreChart from '../_components/User/CreditScoreChart';
 
 // Type definitions
@@ -533,7 +534,12 @@ const BankDashboard = () => {
                               </div>
                               <div className="text-right">
                                 <span className="text-sm">
-                                  weight: {item.weight * 100}%
+                                  weight:{' '}
+                                  {
+                                    //@ts-ignore
+                                    item.weight * 100
+                                  }
+                                  %
                                 </span>
                                 <span className="text-xs text-gray-500 ml-2">
                                   Contribution: {item.weightedContribution}
@@ -1235,6 +1241,7 @@ const BankDashboard = () => {
           </Tabs>
         </div>
       )}
+      <div className="mt-4">{creditReport && <LoanRiskForm creditReport={creditReport}/>}</div>
     </div>
   );
 };

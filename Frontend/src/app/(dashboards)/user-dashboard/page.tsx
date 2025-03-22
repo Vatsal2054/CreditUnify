@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import {
   Card,
   CardContent,
@@ -33,6 +33,7 @@ import CreditScoreChart from '../_components/User/CreditScoreChart';
 import { useCurrentUserClient } from '@/hooks/use-current-user';
 import AIInsight from './components/ai-insight';
 import LoanInterestRates from './components/loan-interest-rates';
+import { useRouter } from 'next/navigation';
 
 // Mock API function to simulate data fetching
 const fetchUserCreditData = async () => {
@@ -41,7 +42,7 @@ const fetchUserCreditData = async () => {
 };
 
 export default function CreditDashboard() {
-  const [idType, setIdType] = useState('aadhar');
+  const [idType, setIdType] = useState<'aadhar' | 'pan'>('aadhar');
   const [idNumber, setIdNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState<CreditReport | null>(null);
@@ -96,10 +97,6 @@ export default function CreditDashboard() {
       age: number;
     };
   }
-
-  const handleIdTypeChange = (value) => {
-    setIdType(value);
-  };
 
   const handleFetchData = async () => {
     // Validate input
@@ -209,7 +206,59 @@ export default function CreditDashboard() {
   
     return allData;
   };
-  const user = useCurrentUserClient();
+  const router = useRouter();
+  const currentUser  = useCurrentUserClient();
+  
+  useEffect(() => {
+    if (currentUser) {
+      if (idType === 'aadhar' && currentUser.aadhaarNumber) {
+        setIdNumber(currentUser.aadhaarNumber);
+      } else if (idType === 'pan' && currentUser.PAN) {
+        setIdNumber(currentUser.PAN);
+      }
+    }
+  }, [currentUser, idType]);
+
+  const handleIdTypeChange = (value) => {
+    setIdType(value);
+    // if(currentUser?.aadhaarNumber){
+    //   setIdNumber(currentUser.aadhaarNumber);
+    // }
+    // if(currentUser?.PAN){
+    //   setIdNumber(currentUser.PAN);
+    // }
+    // Check if the selected field is empty based on user data
+    if (value === 'aadhar' && !currentUser?.aadhaarNumber) {
+      router.push('/settings?missing=aadhaar');
+    } else if (value === 'pan' && !currentUser?.PAN) {
+      router.push('/settings?missing=PAN');
+    }else if(value==='aadhar' && currentUser?.aadhaarNumber){
+      setIdNumber(currentUser.aadhaarNumber);
+    }else{
+      setIdNumber(currentUser?.PAN || "");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const value = idType === 'pan' ? e.target.value.toUpperCase() : e.target.value;
+    setIdNumber(value);
+  };
+
+  // Check if the required field is empty and navigate if needed
+  const validateAndNavigate = () => {
+    if(currentUser?.aadhaarNumber && idType==='aadhar'){
+      setIdNumber(currentUser.aadhaarNumber);
+    }else if(currentUser?.PAN && idType==='pan'){
+      setIdNumber(currentUser.PAN);
+    }
+
+    if (!idNumber) {
+      router.push(`/settings?missing=${idType === 'aadhar' ? 'aadhar' : 'PAN'}`);
+      return false;
+    }
+    return true;
+  };
+
 
   return (
     <>
@@ -234,7 +283,7 @@ export default function CreditDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <Tabs defaultValue="aadhar" onValueChange={handleIdTypeChange}>
+                {/* <Tabs defaultValue="aadhar" onValueChange={handleIdTypeChange}>
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="aadhar">Aadhar Number</TabsTrigger>
                     <TabsTrigger value="pan">PAN Number</TabsTrigger>
@@ -265,7 +314,41 @@ export default function CreditDashboard() {
                       />
                     </div>
                   </TabsContent>
-                </Tabs>
+                </Tabs> */}
+                     <Tabs defaultValue="aadhar" onValueChange={handleIdTypeChange}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="aadhar">Aadhar Number</TabsTrigger>
+          <TabsTrigger value="pan">PAN Number</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="aadhar" className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="aadhar">
+              Enter your 12-digit Aadhar Number
+            </Label>
+            <Input
+              id="aadhar"
+              placeholder="XXXX XXXX XXXX"
+              value={idNumber}
+              onChange={handleInputChange}
+              onBlur={validateAndNavigate}
+            />
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="pan" className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="pan">Enter your PAN</Label>
+            <Input
+              id="pan"
+              placeholder="ABCDE1234F"
+              value={idNumber}
+              onChange={handleInputChange}
+              onBlur={validateAndNavigate}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
 
                 {error && (
                   <Alert variant="destructive">
@@ -293,7 +376,7 @@ export default function CreditDashboard() {
                 <div className="flex justify-between items-center">
                   <div>
                     <h2 className="text-2xl font-bold">
-                      {user ? user.name : 'Vatsal Bharakhda'}
+                      {currentUser ? currentUser.name : 'Vatsal Bharakhda'}
                     </h2>
                     <p className="text-muted-foreground">
                       {userData.personalInfo.age} years •{' '}
