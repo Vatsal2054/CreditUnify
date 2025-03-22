@@ -25,6 +25,7 @@ const EnhancedSpeedometer = ({ data }) => {
   // Animation function using requestAnimationFrame for needle
   const animateNeedle = (timestamp) => {
     if (!startTimeRef.current) startTimeRef.current = timestamp;
+    //@ts-ignore
     const elapsed = timestamp - startTimeRef.current;
 
     // Animation duration in ms
@@ -42,6 +43,7 @@ const EnhancedSpeedometer = ({ data }) => {
       setDisplayScore(currentScore);
 
       setNeedleAngle(currentAngle);
+      //@ts-ignore
       requestRef.current = requestAnimationFrame(animateNeedle);
     } else {
       setNeedleAngle(targetAngle);
@@ -69,6 +71,7 @@ const EnhancedSpeedometer = ({ data }) => {
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
       setIsAnimating(true);
+      //@ts-ignore
       requestRef.current = requestAnimationFrame(animateNeedle);
     }, 300);
 
@@ -82,9 +85,9 @@ const EnhancedSpeedometer = ({ data }) => {
 
   // Get color based on percentage - for the score text
   const getScoreColor = () => {
-    if (displayPercentage < 33) return 'text-orange-500';
-    if (displayPercentage < 67) return 'text-amber-400';
-    return 'text-emerald-500';
+    if (displayPercentage < 33) return 'text-orange-500 dark:text-orange-400';
+    if (displayPercentage < 67) return 'text-amber-400 dark:text-amber-300';
+    return 'text-emerald-500 dark:text-emerald-400';
   };
 
   // Generate tick marks around the full speedometer
@@ -104,13 +107,15 @@ const EnhancedSpeedometer = ({ data }) => {
         100 + (78 - tickLength) * Math.sin((tickAngle * Math.PI) / 180);
 
       ticks.push(
+        //@ts-ignore
         <line
           key={i}
           x1={x1}
           y1={y1}
           x2={x2}
           y2={y2}
-          stroke="#666"
+          stroke="currentColor"
+          className="text-gray-400 dark:text-gray-500"
           strokeWidth={isMajor ? '2' : '1'}
         />,
       );
@@ -119,12 +124,14 @@ const EnhancedSpeedometer = ({ data }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg p-3 shadow-sm w-full border border-gray-100 h-full">
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm w-full border border-gray-100 dark:border-gray-700 h-full">
       <div className="flex flex-col items-center">
         {/* Bureau name with badge */}
         <div className="flex items-center mb-2">
-          <h3 className="text-lg font-bold text-gray-800">{bureau}</h3>
-          <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+            {bureau}
+          </h3>
+          <span className="ml-2 px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full">
             Score
           </span>
         </div>
@@ -142,18 +149,23 @@ const EnhancedSpeedometer = ({ data }) => {
         </div>
 
         {/* Range display */}
-        <div className="text-xs text-gray-500 mb-2">
+        <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
           Range: {rangeStart} - {rangeEnd}
         </div>
 
         {/* Gauge */}
         <div className="relative w-full h-24 mb-2">
-          <svg width="100%" height="100%" viewBox="0 0 200 120">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 200 120"
+            className="dark:text-gray-700"
+          >
             {/* Background circle for the full 180-degree arc */}
             <path
               d="M 10 100 A 90 90 0 0 1 190 100"
               fill="none"
-              stroke="#f1f1f1"
+              className="stroke-gray-200 dark:stroke-gray-600"
               strokeWidth="12"
               strokeLinecap="round"
             />
@@ -162,7 +174,7 @@ const EnhancedSpeedometer = ({ data }) => {
             <path
               d="M 10 100 A 90 90 0 0 1 42 31"
               fill="none"
-              stroke="#FF7A50"
+              className="stroke-orange-500 dark:stroke-orange-600"
               strokeWidth="12"
               strokeLinecap="round"
             />
@@ -171,7 +183,7 @@ const EnhancedSpeedometer = ({ data }) => {
             <path
               d="M 42 31 A 90 90 0 0 1 158 31"
               fill="none"
-              stroke="#FFC93C"
+              className="stroke-amber-400 dark:stroke-amber-500"
               strokeWidth="12"
               strokeLinecap="round"
             />
@@ -180,7 +192,7 @@ const EnhancedSpeedometer = ({ data }) => {
             <path
               d="M 158 31 A 90 90 0 0 1 190 100"
               fill="none"
-              stroke="#34C77B"
+              className="stroke-emerald-500 dark:stroke-emerald-600"
               strokeWidth="12"
               strokeLinecap="round"
             />
@@ -195,11 +207,16 @@ const EnhancedSpeedometer = ({ data }) => {
                 y1="100"
                 x2="100"
                 y2="30"
-                stroke="#333"
+                className="stroke-gray-800 dark:stroke-gray-200"
                 strokeWidth="2"
                 strokeLinecap="round"
               />
-              <circle cx="100" cy="100" r="5" fill="#333" />
+              <circle
+                cx="100"
+                cy="100"
+                r="5"
+                className="fill-gray-800 dark:fill-gray-200"
+              />
             </g>
 
             {/* Center point */}
@@ -207,8 +224,7 @@ const EnhancedSpeedometer = ({ data }) => {
               cx="100"
               cy="100"
               r="8"
-              fill="white"
-              stroke="#ccc"
+              className="fill-white dark:fill-gray-800 stroke-gray-300 dark:stroke-gray-600"
               strokeWidth="1"
             />
           </svg>
@@ -216,21 +232,27 @@ const EnhancedSpeedometer = ({ data }) => {
 
         {/* Labels and value display */}
         <div className="w-full grid grid-cols-3 text-center">
-          <span className="text-xs font-semibold text-orange-500">Poor</span>
-          <span className="text-xs font-semibold text-amber-400">Average</span>
-          <span className="text-xs font-semibold text-emerald-500">
+          <span className="text-xs font-semibold text-orange-500 dark:text-orange-400">
+            Poor
+          </span>
+          <span className="text-xs font-semibold text-amber-400 dark:text-amber-300">
+            Average
+          </span>
+          <span className="text-xs font-semibold text-emerald-500 dark:text-emerald-400">
             Excellent
           </span>
         </div>
 
         <div className="w-full flex justify-between px-2 mt-1">
-          <span className="text-xs font-medium text-gray-700">
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
             {rangeStart}
           </span>
           <span className={`text-xs font-bold ${getScoreColor()}`}>
             {displayPercentage}%
           </span>
-          <span className="text-xs font-medium text-gray-700">{rangeEnd}</span>
+          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+            {rangeEnd}
+          </span>
         </div>
       </div>
     </div>
