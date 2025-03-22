@@ -94,7 +94,7 @@ const CreditScoreChart = ({ data }) => {
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         data={data}
-        margin={{ top: 10, right: 20, left: 10, bottom: 20 }}
+        margin={{ top: 10, right: 60, left: -20, bottom: 20 }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" opacity={0.5} />
         
