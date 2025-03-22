@@ -30,122 +30,70 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import EnhancedSpeedometer from '@/app/components/Dashboard/Speedometer';
 import CreditScoreChart from '../_components/User/CreditScoreChart';
+import { useCurrentUserClient } from '@/hooks/use-current-user';
 
 // Mock API function to simulate data fetching
-const fetchUserCreditData = async (id) => {
-  // In a real app, this would be an API call
-  // Simulating a delay for API fetch
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  return {
-    personalInfo: {
-      name: 'Alex Johnson',
-      age: 32,
-      address: '456 Maple Avenue, Springfield, IL',
-    },
-    bureauScores: [
-      {
-        bureau: 'CIBIL',
-        score: 780,
-        rangeStart: 300,
-        rangeEnd: 900,
-        history: [
-          { date: 'Feb 2025', score: 780 },
-          { date: 'Jan 2025', score: 765 },
-          { date: 'Dec 2024', score: 750 },
-          { date: 'Nov 2024', score: 720 },
-          { date: 'Oct 2024', score: 710 },
-          { date: 'Sep 2024', score: 700 },
-        ],
-      },
-      {
-        bureau: 'Equifax',
-        score: 820,
-        rangeStart: 300,
-        rangeEnd: 900,
-        history: [
-          { date: 'Feb 2025', score: 820 },
-          { date: 'Jan 2025', score: 810 },
-          { date: 'Dec 2024', score: 800 },
-          { date: 'Nov 2024', score: 790 },
-          { date: 'Oct 2024', score: 785 },
-          { date: 'Sep 2024', score: 770 },
-        ],
-      },
-      {
-        bureau: 'Experian',
-        score: 740,
-        rangeStart: 300,
-        rangeEnd: 900,
-        history: [
-          { date: 'Feb 2025', score: 740 },
-          { date: 'Jan 2025', score: 730 },
-          { date: 'Dec 2024', score: 720 },
-          { date: 'Nov 2024', score: 700 },
-          { date: 'Oct 2024', score: 690 },
-          { date: 'Sep 2024', score: 670 },
-        ],
-      },
-      // Note: CRIF HighMark is not available in this example
-    ],
-    loans: {
-      active: [
-        {
-          type: 'Mortgage',
-          lender: 'First National Bank',
-          amount: 250000,
-          emi: 1850,
-          remainingTenure: 168,
-        },
-        {
-          type: 'Personal Loan',
-          lender: 'Universal Credit',
-          amount: 50000,
-          emi: 1200,
-          remainingTenure: 36,
-        },
-      ],
-      closed: [
-        {
-          type: 'Auto Loan',
-          lender: 'Metro Finance',
-          amount: 80000,
-          closureDate: 'Oct 2024',
-        },
-        {
-          type: 'Education Loan',
-          lender: 'National Education Fund',
-          amount: 40000,
-          closureDate: 'May 2023',
-        },
-      ],
-      rejected: [
-        {
-          type: 'Business Loan',
-          lender: 'Capital Bank',
-          amount: 100000,
-          date: 'Aug 2024',
-          reason: 'Existing high debt',
-        },
-      ],
-    },
-    paymentHistory: {
-      onTime: 48,
-      late: 2,
-      totalAccounts: 6,
-    },
-    creditUtilization: 28, // percentage
-    inquiries: 3, // last 12 months
-    oldestAccount: { type: 'Credit Card', age: 8 }, // years
-  };
+const fetchUserCreditData = async () => {
+  const data = await fetch(`http://localhost:5000/get-scores`);
+  return await data.json();
 };
 
 export default function CreditDashboard() {
   const [idType, setIdType] = useState('aadhar');
   const [idNumber, setIdNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
-  const [error, setError] = useState(null);
+  const [userData, setUserData] = useState<CreditReport | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  interface CreditReport {
+    personalInfo: {
+      name: string;
+      age: number;
+      address: string;
+    };
+    bureauScores: Array<{
+      bureau: string;
+      score: number;
+      rangeStart: number;
+      rangeEnd: number;
+      history: Array<{
+        date: string;
+        score: number;
+      }>;
+    }>;
+    loans: {
+      active: Array<{
+        type: string;
+        lender: string;
+        amount: number;
+        emi: number;
+        remainingTenure: number;
+      }>;
+      closed: Array<{
+        type: string;
+        lender: string;
+        amount: number;
+        closureDate: string;
+      }>;
+      rejected: Array<{
+        type: string;
+        lender: string;
+        amount: number;
+        date: string;
+        reason: string;
+      }>;
+    };
+    paymentHistory: {
+      onTime: number;
+      late: number;
+      totalAccounts: number;
+    };
+    creditUtilization: number;
+    inquiries: number;
+    oldestAccount: {
+      type: string;
+      age: number;
+    };
+  }
 
   const handleIdTypeChange = (value) => {
     setIdType(value);
@@ -172,7 +120,7 @@ export default function CreditDashboard() {
     setIsLoading(true);
 
     try {
-      const data = await fetchUserCreditData(idNumber);
+      const data: CreditReport = await fetchUserCreditData();
       setUserData(data);
     } catch (err) {
       setError('Failed to fetch credit data. Please try again.');
@@ -186,10 +134,12 @@ export default function CreditDashboard() {
   const getCreditHealthStatus = () => {
     if (!userData) return null;
 
-    // Calculate average score across all bureaus
+    const scaledScores = userData.bureauScores.map((bureau) => {
+      return 300 + ((bureau.score - 1) / (999 - 1)) * (900 - 300);
+    });
+
     const avgScore =
-      userData.bureauScores.reduce((acc, bureau) => acc + bureau.score, 0) /
-      userData.bureauScores.length;
+      scaledScores.reduce((acc, score) => acc + score, 0) / scaledScores.length;
 
     // Determine overall status
     let status = 'poor';
@@ -200,11 +150,11 @@ export default function CreditDashboard() {
       status = 'excellent';
       color = 'success';
       message = 'Your credit score is excellent';
-    } else if (avgScore >= 700) {
+    } else if (avgScore >= 670) {
       status = 'good';
       color = 'success';
       message = 'Your credit score is good';
-    } else if (avgScore >= 650) {
+    } else if (avgScore >= 580) {
       status = 'fair';
       color = 'warning';
       message = 'Your credit score is fair';
@@ -238,11 +188,13 @@ export default function CreditDashboard() {
           dataPoint[bureau.bureau] = historyItem ? historyItem.score : null;
         });
 
+        //@ts-ignore
         allData.push(dataPoint);
       });
 
     return allData;
   };
+  const user = useCurrentUserClient();
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -325,7 +277,7 @@ export default function CreditDashboard() {
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-2xl font-bold">
-                    {userData.personalInfo.name}
+                    {user ? user.name : 'Vatsal Bharakhda'}
                   </h2>
                   <p className="text-muted-foreground">
                     {userData.personalInfo.age} years •{' '}
@@ -342,7 +294,8 @@ export default function CreditDashboard() {
           {/* Credit Health Overview */}
           {getCreditHealthStatus() && (
             <Card
-              className={border-l-4 border-${getCreditHealthStatus().color}}
+              //@ts-ignore
+              className={`border-l-4 border-${getCreditHealthStatus().color}`}
             >
               <CardHeader className="pb-2">
                 <CardTitle>Credit Health Overview</CardTitle>
@@ -351,18 +304,28 @@ export default function CreditDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <p className="text-lg font-medium">
-                      {getCreditHealthStatus().message}
+                      {
+                        //@ts-ignore
+                        getCreditHealthStatus().message
+                      }
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Average score:{' '}
-                      {Math.round(getCreditHealthStatus().avgScore)}
+                      {
+                        //@ts-ignore
+                        Math.round(getCreditHealthStatus().avgScore)
+                      }
                     </p>
                   </div>
                   <Badge
+                    //@ts-ignore
                     variant={getCreditHealthStatus().color}
                     className="text-lg py-1 px-3"
                   >
-                    {getCreditHealthStatus().status.toUpperCase()}
+                    {
+                      //@ts-ignore
+                      getCreditHealthStatus().status.toUpperCase()
+                    }
                   </Badge>
                 </div>
               </CardContent>
@@ -383,7 +346,7 @@ export default function CreditDashboard() {
                     Track how your credit scores have changed over time
                   </CardDescription>
                 </CardHeader>
-                <CardContent className='flex-1'>
+                <CardContent className="flex-1">
                   <div className="h-[100%] flex items-center">
                     <CreditScoreChart data={getAllBureauHistory()} />
                   </div>
@@ -413,7 +376,7 @@ export default function CreditDashboard() {
                         length: Math.max(0, 4 - userData.bureauScores.length),
                       }).map((_, index) => (
                         <div
-                          key={empty-${index}}
+                          key={`empty-${index}`}
                           className="flex justify-center"
                         >
                           <Card className="bg-gray-50 w-full h-full border border-gray-100 p-4 rounded-xl flex flex-col items-center justify-center">
@@ -682,7 +645,7 @@ export default function CreditDashboard() {
                               ? 'bg-amber-500'
                               : 'bg-red-600'
                           }`}
-                          style={{ width: ${userData.creditUtilization}% }}
+                          style={{ width: `${userData.creditUtilization}%` }}
                         ></div>
                       </div>
                       <div className="flex justify-between mt-1 text-xs text-muted-foreground">
