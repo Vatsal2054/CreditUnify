@@ -8,7 +8,7 @@ export const publicRoutes = [
   '/',
   '/auth/new-verification',
   // "/admin-dashboard",
-  // '/bank-dashboard',
+  //'/bank-dashboard',
 ];
 
 /**
@@ -40,7 +40,9 @@ export const privateUSER = ['/user-dashboard'];
 
 export const privateADMIN = ['/admin-dashboard'];
 
-export const privateBANK = ['/bank-dashboard'];
+export const privateBANK = [
+ '/bank-dashboard'
+];
 /**
  *  The default redirect path after loggong in
  * @type{string}
