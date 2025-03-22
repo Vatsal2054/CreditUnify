@@ -239,5 +239,335 @@
       },
       "copyright": "© {year} CreditUnify. બધા અધિકારો સુરક્ષિત."
     }
+  },
+  "admin": {
+    "AdminDashboardPage": {
+      "title": "એડમિન ડેશબોર્ડ",
+      "description": "બેંકોનું સંચાલન કરો અને સિસ્ટમ એનાલિટિક્સ જુઓ",
+      "tabs": {
+        "banks": "બેંક સંચાલન",
+        "activity": "સિસ્ટમ પ્રવૃત્તિ",
+        "add": "નવી બેંક ઉમેરો"
+      },
+      "bankManagement": {
+        "title": "બેંક સંચાલન",
+        "description": "સિસ્ટમમાં નોંધાયેલા તમામ બેંક ખાતાઓ જુઓ અને સંચાલિત કરો."
+      },
+      "systemActivity": {
+        "title": "તાજેતરની સિસ્ટમ પ્રવૃત્તિ",
+        "description": "સિસ્ટમમાં તમામ બેંકોમાં તાજેતરના ક્રેડિટ સ્કોર ચેક."
+      },
+      "addBank": {
+        "title": "નવો વપરાશકર્તા ઉમેરો",
+        "description": "સિસ્ટમમાં નવું બેંક પ્રતિનિધિ ખાતું બનાવો."
+      }
+    },
+    "DashboardStats": {
+      "totalBanks": "કુલ બેંકો",
+      "totalBanksDescription": "નોંધાયેલ નાણાકીય સંસ્થાઓ",
+      "registeredUsers": "નોંધાયેલા વપરાશકર્તાઓ",
+      "registeredUsersGrowth": "ગયા મહિનાથી {growth}% વૃદ્ધિ",
+      "creditChecksToday": "આજે ક્રેડિટ ચેક",
+      "creditChecksDescription": "છેલ્લા 24 કલાકમાં કુલ પૂછપરછ",
+      "averageCreditScore": "સરેરાશ ક્રેડિટ સ્કોર",
+      "averageCreditScoreDescription": "સિસ્ટમમાં તમામ વપરાશકર્તાઓનો"
+    },
+    "BankActivityTable": {
+      "title": "તાજેતરની પ્રવૃત્તિ",
+      "titleWithBank": "{bankName} માટે તાજેતરની પ્રવૃત્તિ",
+      "description": "આ બેંક દ્વારા કરવામાં આવેલ છેલ્લા 5 ક્રેડિટ સ્કોર ચેક",
+      "aadhar": "આધાર નંબર",
+      "pan": "પાન",
+      "creditScore": "ક્રેડિટ સ્કોર",
+      "dateTime": "તારીખ અને સમય"
+    },
+    "RecentActivity": {
+      "justNow": "હમણાં જ",
+      "hoursAgo": "{hours} કલાક પહેલા",
+      "loadMore": "વધુ લોડ કરો",
+      "userCreated": "નવું વપરાશકર્તા ખાતું બનાવવામાં આવ્યું",
+      "creditCheck": "{targetUser} માટે ક્રેડિટ સ્કોર ચકાસવામાં આવ્યો",
+      "alert": "વપરાશકર્તા ID {id} માટે બહુવિધ ક્રેડિટ સ્કોર ચેક મળ્યા",
+      "creditUpdate": "ક્રેડિટ સ્કોર {oldScore} થી {newScore} સુધી અપડેટ થયો",
+      "failedLogin": "એડમિન ખાતા માટે નિષ્ફળ લોગિન પ્રયાસો મળ્યા",
+      "userLogin": "એડમિન વપરાશકર્તા લોગીન થયા"
+    },
+    "UserAddForm": {
+      "name": "નામ",
+      "namePlaceholder": "જોન ડો",
+      "nameDescription": "વપરાશકર્તાનું પૂરું નામ.",
+      "email": "ઈમેલ",
+      "emailPlaceholder": "user@example.com",
+      "emailDescription": "વપરાશકર્તાનું ઈમેલ એડ્રેસ.",
+      "password": "પાસવર્ડ",
+      "passwordPlaceholder": "••••••••",
+      "passwordDescription": "અપરકેસ, લોઅરકેસ અને નંબર સાથે ઓછામાં ઓછા 8 અક્ષરો હોવા જોઈએ.",
+      "role": "ભૂમિકા",
+      "rolePlaceholder": "એક ભૂમિકા પસંદ કરો",
+      "roleDescription": "વપરાશકર્તાનું પરમિશન સ્તર.",
+      "bankName": "બેંકનું નામ",
+      "bankNamePlaceholder": "એક બેંક પસંદ કરો",
+      "bankNameDescription": "બેંક વપરાશકર્તાઓ માટે જરૂરી.",
+      "createUser": "વપરાશકર્તા બનાવો",
+      "creatingUser": "વપરાશકર્તા બનાવી રહ્યા છીએ...",
+      "processingRequest": "કૃપા કરીને રાહ જુઓ જ્યારે અમે તમારી વિનંતી પર પ્રક્રિયા કરી રહ્યા છીએ...",
+      "userCreatedSuccess": "વપરાશકર્તા સફળતાપૂર્વક બનાવવામાં આવ્યો",
+      "userCreatedDescription": "{email} ને {bank} બેંક માટે {role} ભૂમિકા સાથે ઉમેરવામાં આવ્યો છે.",
+      "userCreationFailed": "વપરાશકર્તા બનાવવામાં નિષ્ફળ",
+      "processingError": "એક અનપેક્ષિત ભૂલ આવી"
+    },
+    "UserTable": {
+      "bankName": "બેંકનું નામ",
+      "email": "ઈમેલ",
+      "bankCode": "બેંક કોડ",
+      "created": "બનાવ્યું",
+      "lastActive": "છેલ્લે સક્રિય",
+      "actions": "ક્રિયાઓ",
+      "viewBankDetails": "બેંક વિગતો જુઓ",
+      "editBankInfo": "બેંક માહિતી સંપાદિત કરો",
+      "viewRecentActivity": "તાજેતરની પ્રવૃત્તિ જુઓ",
+      "viewBankBranches": "બેંક શાખાઓ જુઓ",
+      "deleteBank": "બેંક કાઢી નાખો",
+      "confirmDeletion": "કાઢી નાખવાની પુષ્ટિ કરો",
+      "deleteConfirmationMessage": "શું તમે ખરેખર {name} ને કાઢી નાખવા માંગો છો? આ ક્રિયા પાછી લઈ શકાતી નથી.",
+      "cancel": "રદ કરો",
+      "delete": "કાઢી નાખો",
+      "recentActivity": "{name} - તાજેતરની પ્રવૃત્તિ",
+      "recentActivityDescription": "આ બેંક દ્વારા તાજેતરમાં કરવામાં આવેલ ક્રેડિટ સ્કોર ચેક",
+      "close": "બંધ કરો"
+    }
+  },
+  "auth": {
+    "create-account": "એક ખાતું બનાવો",
+    "already-have-account": "પહેલેથી ખાતું છે?",
+    "name": "નામ",
+    "enter-name": "તમારું નામ દાખલ કરો",
+    "email": "ઈમેલ",
+    "enter-email": "તમારો ઈમેલ દાખલ કરો",
+    "password": "પાસવર્ડ",
+    "enter-password": "તમારો પાસવર્ડ દાખલ કરો",
+    "register": "નોંધણી કરો",
+    "registering": "વપરાશકર્તાની નોંધણી કરી રહ્યા છીએ...",
+    "weak-password": "કૃપા કરીને મજબૂત પાસવર્ડ સેટ કરો",
+    "Creditunify-register": "ક્રેડિટયુનિફાઇ - નોંધણી",
+    "Creditunify-login": "ક્રેડિટયુનિફાઇ - લોગિન",
+    "validation": {
+      "email-empty": "ઈમેલ ફીલ્ડ ખાલી છે!",
+      "name-empty": "નામ ફીલ્ડ ખાલી છે!",
+      "password-min": "પાસવર્ડ ઓછામાં ઓછા 8 અક્ષરનો હોવો જોઈએ",
+      "password-regex": "પાસવર્ડમાં અંકો (0-9), ખાસ પ્રતીકો (@, #, &...), અપરકેસ (A-Z), લોઅરકેસ (a-z) અક્ષરો શામેલ હોવા જોઈએ",
+      "passwords-match": "પાસવર્ડ મેળ ખાતા નથી",
+      "email-required": "ઈમેલ જરૂરી છે"
+    },
+    "loading": {
+      "preparing": "તમારી નાણાકીય સમજણ તૈયાર કરી રહ્યા છીએ",
+      "crunching": "આંકડાઓનું વિશ્લેષણ કરી રહ્યા છીએ",
+      "balancing": "ચોપડાઓને સંતુલિત કરી રહ્યા છીએ",
+      "counting": "તમારા રૂપિયાની ગણતરી કરી રહ્યા છીએ",
+      "maximizing": "તમારી બચતને મહત્તમ કરી રહ્યા છીએ",
+      "optimizing": "તમારા બજેટને ઓપ્ટિમાઇઝ કરી રહ્યા છીએ",
+      "empowering": "દરેક રૂપિયાને સશક્ત બનાવવું",
+      "money-maximized": "તમારા પૈસા, મહત્તમ",
+      "track-smart": "સ્માર્ટ ટ્રેક કરો, બુદ્ધિપૂર્વક ખર્ચ કરો",
+      "savings": "દરેક સ્વાઇપમાં બચત",
+      "financial-clarity": "નાણાકીય સ્પષ્ટતા, એક ક્લિક દૂર",
+      "spend-confidence": "આત્મવિશ્વાસ સાથે ખર્ચ કરો, સરળતાથી બચત કરો",
+      "master-money": "તમારા નાણાંના પ્રવાહને મેનેજ કરો",
+      "budgeting": "બજેટ બનાવવું સરળ બન્યું",
+      "finances-optimized": "તમારું નાણાં, સંપૂર્ણપણે ઓપ્ટિમાઇઝ્ડ",
+      "effortless": "સરળ ટ્રેકિંગ, સ્માર્ટ ખર્ચ",
+      "track-with": "ક્રેડિટયુનિફાઇ સાથે ટ્રેક કરો",
+      "Creditunify": "ક્રેડિટયુનિફાઇ"
+    },
+    "Login": {
+      "header": "તમારા ખાતામાં સાઇન ઇન કરો",
+      "backButton": {
+        "label": "ખાતું નથી?"
+      },
+      "twoFactor": {
+        "label": "બે ફેક્ટર કોડ",
+        "confirm": "પુષ્ટિ કરો"
+      },
+      "email": {
+        "label": "ઈમેલ",
+        "placeholder": "xyz@gmail.com"
+      },
+      "password": {
+        "label": "પાસવર્ડ",
+        "placeholder": "તમારો પાસવર્ડ દાખલ કરો",
+        "forgot": "પાસવર્ડ ભૂલી ગયા?"
+      },
+      "submit": "મેલથી લોગિન કરો",
+      "error": {
+        "oauth": "ઈમેલ પહેલેથી જ અલગ પ્રદાતા સાથે વપરાશમાં છે!",
+        "generic": "કંઈક ખોટું થયું"
+      }
+    },
+    "error": {
+      "title": "ઓહ! કંઈક ખોટું થયું!",
+      "errors": {
+        "configuration": "ગૂગલ વિના લોગિન કરવાનો પ્રયાસ કરો"
+      },
+      "backButton": "લોગિન પર પાછા જાઓ"
+    },
+    "resetPassword": {
+      "header": "તમારો પાસવર્ડ ભૂલી ગયા?",
+      "backButton": {
+        "text": "ખાતું નથી?",
+        "href": "/auth/signup"
+      },
+      "emailLabel": "ઈમેલ",
+      "emailPlaceholder": "તમારો ઈમેલ દાખલ કરો",
+      "submitButton": "પાસવર્ડ રીસેટ ઈમેલ મોકલો",
+      "loadingMessage": "પાસવર્ડ રીસેટ ઈમેલ મોકલી રહ્યા છીએ...",
+      "successMessage": "પાસવર્ડ રીસેટ ઈમેલ સફળતાપૂર્વક મોકલ્યો!",
+      "errorMessage": "ઈમેલ મોકલતી વખતે એક ભૂલ આવી."
+    },
+    "verification": {
+      "header": "તમારી ચકાસણીની પુષ્ટિ કરી રહ્યા છીએ",
+      "back": "લોગિન પર પાછા જાઓ",
+      "missingToken": "ટોકન ગુમ છે",
+      "errorGeneral": "કંઈક ખોટું થયું"
+    },
+    "newPassword": {
+      "header": "નવો પાસવર્ડ દાખલ કરો",
+      "backButton": {
+        "text": "લોગિન પર પાછા જાઓ",
+        "href": "/auth/signin"
+      },
+      "passwordLabel": "પાસવર્ડ",
+      "passwordPlaceholder": "તમારો પાસવર્ડ દાખલ કરો",
+      "confirmPasswordLabel": "પાસવર્ડની પુષ્ટિ કરો",
+      "confirmPasswordPlaceholder": "તમારા પાસવર્ડની પુષ્ટિ કરો",
+      "submitButton": "પાસવર્ડ રીસેટ કરો",
+      "loadingMessage": "પાસવર્ડ બદલી રહ્યા છીએ...",
+      "successMessage": "તમારો પાસવર્ડ સફળતાપૂર્વક અપડેટ થયો છે!",
+      "errorMessage": "પાસવર્ડ અપડેટ કરતી વખતે એક ભૂલ આવી."
+    }
+  },
+  "Common": {
+    "getStarted": "શરૂ કરો",
+    "switchLanguage": "ભાષા બદલો",
+    "brand": "ક્રેડિટ",
+    "brandHighlight": "યુનિફાઇ"
+  },
+  "bank": {
+    "title": "બેંક પ્રતિનિધિ ડેશબોર્ડ",
+    "description": "ગ્રાહક નાણાકીય ડેટાનું કુશળતાથી વિશ્લેષણ કરો.",
+    "customerLookup": {
+      "title": "ગ્રાહક શોધ",
+      "description": "આધાર અથવા પાન વડે ગ્રાહક વિગતો શોધો."
+    },
+    "searchModes": {
+      "aadhaar": "આધાર",
+      "pan": "પાન"
+    },
+    "placeholders": {
+      "aadhaar": "આધાર નંબર દાખલ કરો",
+      "pan": "પાન નંબર દાખલ કરો"
+    },
+    "buttons": {
+      "search": "શોધો",
+      "searching": "શોધી રહ્યા છીએ..."
+    },
+    "errors": {
+      "customerSearch": "ગ્રાહકને શોધવામાં નિષ્ફળ. કૃપા કરી ફરી પ્રયાસ કરો.",
+      "additionalData": "કેટલાક ગ્રાહક ડેટા લોડ કરી શકાયા નહીં."
+    },
+    "tabs": {
+      "overview": "ઓવરવ્યુ",
+      "creditHistory": "ક્રેડિટ ઇતિહાસ",
+      "loans": "લોન",
+      "riskAnalysis": "જોખમ વિશ્લેષણ"
+    },
+    "riskLevels": {
+      "low": "ઓછું જોખમ",
+      "medium": "મધ્યમ જોખમ",
+      "high": "ઉચ્ચ જોખમ"
+    },
+    "creditScoreCard": {
+      "title": "ક્રેડિટ સ્કોર",
+      "updateText": "છેલ્લે અપડેટ કર્યું"
+    },
+    "activeLoansCard": {
+      "title": "સક્રિય લોન",
+      "totalOutstanding": "કુલ બાકી રકમ"
+    },
+    "paymentHistoryCard": {
+      "title": "ચુકવણી ઇતિહાસ",
+      "missedInstallments": "બધી લોનમાં ચૂકી ગયેલા હપ્તાઓ"
+    },
+    "sections": {
+      "customerInfo": {
+        "title": "ગ્રાહક માહિતી",
+        "name": "નામ",
+        "email": "ઈમેલ",
+        "aadhaarNumber": "આધાર નંબર",
+        "pan": "પાન",
+        "primaryBank": "પ્રાથમિક બેંક"
+      },
+      "creditSummary": {
+        "title": "ક્રેડિટ સારાંશ",
+        "currentScore": "વર્તમાન ક્રેડિટ સ્કોર",
+        "activeLoans": "સક્રિય લોન",
+        "totalEMI": "કુલ ઇએમઆઇ/મહિનો",
+        "recommendationTitle": "લોન પાત્રતા ભલામણ"
+      },
+      "creditHistory": {
+        "title": "ક્રેડિટ સ્કોર ઇતિહાસ",
+        "chart": "ક્રેડિટ સ્કોર ચાર્ટ",
+        "scoreHistory": "સ્કોર ઇતિહાસ",
+        "date": "તારીખ",
+        "score": "સ્કોર",
+        "change": "ફેરફાર"
+      },
+      "loanDetails": {
+        "title": "લોન વિગતો",
+        "started": "શરૂ કરી",
+        "loanAmount": "લોન રકમ",
+        "monthlyEMI": "માસિક ઇએમઆઇ",
+        "missedInstallments": "ચૂકી ગયેલા હપ્તાઓ"
+      },
+      "riskAnalysis": {
+        "title": "જોખમ વિશ્લેષણ",
+        "basedOn": "{score}ના ક્રેડિટ સ્કોર અને ચુકવણી ઇતિહાસના આધારે",
+        "riskFactors": "જોખમ પરિબળો",
+        "creditUtilization": "ક્રેડિટ ઉપયોગ",
+        "current": "વર્તમાન",
+        "utilizationRecommendation": "ભલામણ: વધુ સારા સ્કોર માટે ઉપયોગ 30% થી નીચે રાખો",
+        "paymentHistory": "ચુકવણી ઇતિહાસ",
+        "missedPayments": "ચૂકી ગયેલી ચુકવણીઓ",
+        "paymentRecommendation": "ભલામણ: સમયસર સતત ચુકવણી જાળવી રાખો",
+        "loanEligibility": "લોન પાત્રતા મૂલ્યાંકન",
+        "recommendedActions": "ભલામણ કરેલ પગલાં"
+      }
+    },
+    "eligibilityRecommendations": {
+      "excellent": "ગ્રાહક પાસે ઉત્કૃષ્ટ ક્રેડિટ સ્કોર અને સાતત્યપૂર્ણ ચુકવણી ઇતિહાસ છે. પસંદગીના વ્યાજ દરો સાથે પ્રીમિયમ લોન પ્રોડક્ટ્સ માટે પાત્ર છે.",
+      "good": "ગ્રાહક પાસે સારો ક્રેડિટ સ્કોર છે જેમાં નાની ચુકવણી સમસ્યાઓ છે. નિયમિત વ્યાજ દરો સાથે સ્ટાન્ડર્ડ લોન પ્રોડક્ટ્સ ઓફર કરી શકાય છે.",
+      "belowAverage": "ગ્રાહક પાસે ચુકવણી ચિંતાઓ સાથે સરેરાશથી નીચેનો ક્રેડિટ સ્કોર છે. માત્ર સુરક્ષિત લોન અથવા ઉચ્ચ વ્યાજ દરો સાથેની લોન પર વિચાર કરો."
+    },
+    "loanRecommendations": {
+      "excellent": {
+        "eligible": "પ્રીમિયમ લોન પ્રોડક્ટ્સ માટે પાત્ર",
+        "preferentialRates": "પસંદગીના વ્યાજ દરોની ભલામણ",
+        "homeLoan": "₹30,00,000 સુધીની હોમ લોન માટે પૂર્વ-મંજૂરી",
+        "personalLoan": "₹5,00,000 સુધીની પર્સનલ લોન માટે પૂર્વ-મંજૂરી"
+      },
+      "good": {
+        "eligible": "સ્ટાન્ડર્ડ લોન પ્રોડક્ટ્સ માટે પાત્ર",
+        "regularRates": "નિયમિત વ્યાજ દરો લાગુ",
+        "homeLoan": "હોમ લોન માટે ₹20,00,000 સુધી વિચારો",
+        "personalLoan": "પર્સનલ લોન માટે ₹3,00,000 સુધી વિચારો",
+        "improvePayment": "ચુકવણી સાતત્ય સુધારવાની ભલામણ"
+      },
+      "poor": {
+        "limitedEligibility": "મર્યાદિત પાત્રતા - ઉચ્ચ જોખમ પ્રોફાઇલ",
+        "securedOptions": "માત્ર સુરક્ષિત લોન વિકલ્પો પર વિચાર કરો",
+        "higherRates": "ઉચ્ચ વ્યાજ દરો લાગુ પડશે",
+        "guarantor": "વધારાના જામીન અથવા સંપત્તિની જરૂર",
+        "counseling": "ક્રેડિટ કાઉન્સેલિંગ સેવાઓની ભલામણ"
+      }
+    }
   }
 }
