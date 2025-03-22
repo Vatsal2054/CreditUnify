@@ -15,7 +15,7 @@
       }
     },
     "hero": {
-      "title": "One Score, Complete Clarity – Unified Credit Insights",
+      "title": "One Score, Complete Clarity \n\nUnified Credit Insights",
       "subtitle": "Empowering individuals with multi-bureau credit insights & helping banks make smarter lending decisions.",
       "buttons": {
         "checkScore": "Check Your Score",
@@ -372,8 +372,8 @@
         "description": "Recent credit score checks across all banks in the system."
       },
       "addBank": {
-        "title": "Add New Bank",
-        "description": "Create a new bank account in the system."
+        "title": "Add New User",
+        "description": "Create a new bank representative account in the system."
       }
     },
 
@@ -453,8 +453,8 @@
     }
   },
   "bank": {
-    "title": "Bank Customer Dashboard",
-    "description": "Manage and analyze customer financial data efficiently.",
+    "title": "Bank Representative Dashboard",
+    "description": "Analyze customer financial data efficiently.",
     "customerLookup": {
       "title": "Customer Lookup",
       "description": "Search for customer details using Aadhaar or PAN."

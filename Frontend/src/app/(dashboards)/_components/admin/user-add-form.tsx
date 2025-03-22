@@ -363,6 +363,29 @@ export function UserAddForm() {
               </FormItem>
             )}
           />
+
+          {/* <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('role')}</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('rolePlaceholder')} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="BANK">{t('role')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>{t('roleDescription')}</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+
           {watchRole === 'BANK' && (
             <FormField
               control={form.control}
