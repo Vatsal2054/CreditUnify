@@ -6,98 +6,91 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, CheckCircle, TrendingUp, BarChart3, FileText, CreditCard, Clock, DollarSign } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 // Type definitions
 interface PersonalInfo {
-  id: string;
+  id?: string;
   name: string;
-  email: string;
-  aadhaarNumber: string;
-  PAN: string;
-  bankName: string;
+  email?: string;
+  aadhaarNumber?: string;
+  PAN?: string;
+  bankName?: string;
+  age?: number;
+  address?: string;
 }
 
 interface CreditScore {
-  id: string;
+  id?: string;
   score: number;
-  recordedAt: string;
+  recordedAt?: string;
+  bureau?: string;
+  rangeStart?: number;
+  rangeEnd?: number;
+  history?: Array<{
+    date: string;
+    score: number;
+  }>;
 }
 
 interface Loan {
-  id: string;
+  id?: string;
   type: string;
+  lender?: string;
   amount: number;
-  emi: number;
-  startDate: string;
-  status: string;
-  installmentsMissed: number;
+  emi?: number;
+  startDate?: string;
+  closureDate?: string;
+  date?: string;
+  reason?: string;
+  status?: string;
+  installmentsMissed?: number;
+  remainingTenure?: number;
 }
 
-interface UserData {
+interface CreditReport {
   personalInfo: PersonalInfo;
-  creditScores: CreditScore[];
-  loanHistory: Loan[];
+  bureauScores: CreditScore[];
+  loans: {
+    active: Loan[];
+    closed: Loan[];
+    rejected: Loan[];
+  };
+  paymentHistory: {
+    onTime: number;
+    late: number;
+    totalAccounts: number;
+  };
+  creditUtilization: number;
+  inquiries: number;
+  oldestAccount: {
+    type: string;
+    age: number;
+  };
 }
 
-// DUMMY DATA SECTION: Replace this with API calls in production
-const dummyUserData: UserData = {
-  personalInfo: {
-    id: "cuid123456",
-    name: "Rajesh Kumar",
-    email: "rajesh.kumar@example.com",
-    aadhaarNumber: "1234-5678-9012",
-    PAN: "ABCDE1234F",
-    bankName: "SBI",
-  },
-  creditScores: [
-    { id: "cs1", score: 750, recordedAt: "2024-02-15" },
-    { id: "cs2", score: 720, recordedAt: "2023-11-10" },
-    { id: "cs3", score: 695, recordedAt: "2023-08-22" },
-    { id: "cs4", score: 680, recordedAt: "2023-05-14" },
-  ],
-  loanHistory: [
-    { id: "loan1", type: "Home Loan", amount: 2500000, emi: 18500, startDate: "2020-06-10", status: "Active", installmentsMissed: 0 },
-    { id: "loan2", type: "Personal Loan", amount: 500000, emi: 12300, startDate: "2022-01-15", status: "Active", installmentsMissed: 1 },
-    { id: "loan3", type: "Car Loan", amount: 800000, emi: 14200, startDate: "2018-11-05", status: "Closed", installmentsMissed: 2 },
-  ]
-};
-
-// API service functions to replace direct dummy data usage
+// API service functions
 const apiService = {
-  searchCustomer: async (searchMode: 'aadhaar' | 'pan', searchValue: string): Promise<UserData> => {
+  searchCustomer: async (searchMode: 'aadhaar' | 'pan', searchValue: string): Promise<CreditReport> => {
     console.log(`Making API call to search for customer with ${searchMode}: ${searchValue}`);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(dummyUserData);
-      }, 1000);
-    });
-  },
-  
-  getCreditScoreHistory: async (customerId: string): Promise<CreditScore[]> => {
-    console.log(`Making API call to get credit history for customer: ${customerId}`);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(dummyUserData.creditScores);
-      }, 500);
-    });
-  },
-  
-  getLoanHistory: async (customerId: string): Promise<Loan[]> => {
-    console.log(`Making API call to get loan history for customer: ${customerId}`);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(dummyUserData.loanHistory);
-      }, 500);
-    });
+    try {
+      const response = await fetch('http://localhost:5000/get-scores');
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching credit data:', error);
+      throw error;
+    }
   }
 };
 
 const BankDashboard = () => {
   const [searchMode, setSearchMode] = useState<'aadhaar' | 'pan'>('aadhaar');
   const [searchValue, setSearchValue] = useState<string>('');
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [creditReport, setCreditReport] = useState<CreditReport | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const t = useTranslations('bank');
@@ -109,53 +102,65 @@ const BankDashboard = () => {
     return { level: t('riskLevels.high'), color: "bg-red-500", icon: <AlertCircle className="h-5 w-5" /> };
   };
 
-  // Simulate a search using the API service
+  // Search using the API service
   const handleSearch = async () => {
     if (!searchValue) return;
+    
+    // Validate input
+    if (searchMode === 'aadhaar' && !/^\d{12}$/.test(searchValue)) {
+      toast.error("Invalid Adhaar number");
+      return;
+    }
+
+    if (searchMode === 'pan' && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(searchValue)) {
+      toast.error("Invalid PAN number");
+      return;
+    }
     
     setIsSearching(true);
     setError(null);
     
     try {
       const data = await apiService.searchCustomer(searchMode, searchValue);
-      setUserData(data);
+      setCreditReport(data);
     } catch (err) {
       console.error("Error searching for customer:", err);
-      setError(t('errors.customerSearch'));
-      setUserData(null);
+      toast.error("Failed to fetch credit data");
+      setCreditReport(null);
     } finally {
       setIsSearching(false);
     }
   };
 
-  // Fetch additional customer data after finding a customer
-  useEffect(() => {
-    if (userData?.personalInfo?.id) {
-      setIsLoading(true);
-      
-      Promise.all([
-        apiService.getCreditScoreHistory(userData.personalInfo.id),
-        apiService.getLoanHistory(userData.personalInfo.id)
-      ])
-        .then(([creditScores, loanHistory]) => {
-          setUserData(prev => ({
-            ...prev!,
-            creditScores,
-            loanHistory
-          }));
-        })
-        .catch(err => {
-          console.error("Error fetching additional data:", err);
-          setError(t('errors.additionalData'));
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  }, [userData?.personalInfo?.id, t]);
+  // Get the average bureau score
+  const getAverageScore = () => {
+    if (!creditReport?.bureauScores || creditReport.bureauScores.length === 0) return 0;
+    
+    const totalScore = creditReport.bureauScores.reduce((sum, bureau) => sum + bureau.score, 0);
+    return Math.round(totalScore / creditReport.bureauScores.length);
+  };
 
-  const latestScore = userData?.creditScores?.[0]?.score || 0;
-  const riskInfo = getRiskLevel(latestScore);
+  const avgScore = getAverageScore();
+  const riskInfo = getRiskLevel(avgScore);
+
+  // Transform credit report data for the UI
+  const transformLoanData = () => {
+    if (!creditReport) return [];
+    
+    const activeLoans = creditReport.loans.active.map(loan => ({
+      ...loan,
+      status: 'Active',
+      installmentsMissed: 0 // Assuming good standing by default
+    }));
+    
+    const closedLoans = creditReport.loans.closed.map(loan => ({
+      ...loan,
+      status: 'Closed',
+      installmentsMissed: 0
+    }));
+    
+    return [...activeLoans, ...closedLoans];
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -204,13 +209,13 @@ const BankDashboard = () => {
         </CardContent>
       </Card>
 
-      {isLoading && (
+      {isSearching && (
         <div className="flex justify-center my-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
         </div>
       )}
 
-      {userData && !isLoading && (
+      {creditReport && !isSearching && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card>
@@ -220,14 +225,17 @@ const BankDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-2">
-                  <div className="text-3xl font-bold">{latestScore}</div>
+                  <div className="text-3xl font-bold">{avgScore}</div>
                   <div className={`${riskInfo.color} text-white px-2 py-1 rounded text-xs flex items-center`}>
                     {riskInfo.icon}
                     <span className="ml-1">{riskInfo.level}</span>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {t('creditScoreCard.updateText')} {userData.creditScores[0].recordedAt}
+                 
+                  {t('creditScoreCard.updateText')} {
+                     //@ts-ignore
+                  creditReport.bureauScores[0]?.history[0]?.date || 'Feb 2025'}
                 </p>
               </CardContent>
             </Card>
@@ -239,11 +247,10 @@ const BankDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">
-                  {userData.loanHistory.filter(loan => loan.status === "Active").length}
+                  {creditReport.loans.active.length}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {t('activeLoansCard.totalOutstanding')} ₹{userData.loanHistory
-                    .filter(loan => loan.status === "Active")
+                  {t('activeLoansCard.totalOutstanding')} ₹{creditReport.loans.active
                     .reduce((sum, loan) => sum + loan.amount, 0).toLocaleString()}
                 </p>
               </CardContent>
@@ -256,7 +263,7 @@ const BankDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">
-                  {userData.loanHistory.reduce((total, loan) => total + loan.installmentsMissed, 0)}
+                  {creditReport.paymentHistory.late}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {t('paymentHistoryCard.missedInstallments')}
@@ -282,23 +289,19 @@ const BankDashboard = () => {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.name')}</h3>
-                      <p>{userData.personalInfo.name}</p>
+                      <p>Rutu Bhiamni</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.email')}</h3>
-                      <p>{userData.personalInfo.email}</p>
+                      <h3 className="text-sm font-medium text-gray-500">Age</h3>
+                      <p>20</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.aadhaarNumber')}</h3>
-                      <p>{userData.personalInfo.aadhaarNumber}</p>
+                      <h3 className="text-sm font-medium text-gray-500">Address</h3>
+                      <p>{creditReport.personalInfo.address}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.pan')}</h3>
-                      <p>{userData.personalInfo.PAN}</p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.primaryBank')}</h3>
-                      <p>{userData.personalInfo.bankName}</p>
+                      <h3 className="text-sm font-medium text-gray-500">Inquiries (Last 12 months)</h3>
+                      <p>{creditReport.inquiries}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -314,7 +317,7 @@ const BankDashboard = () => {
                       <div>
                         <h3 className="text-sm font-medium text-gray-500">{t('sections.creditSummary.currentScore')}</h3>
                         <div className="flex items-center mt-1">
-                          <span className="text-2xl font-bold">{latestScore}</span>
+                          <span className="text-2xl font-bold">{avgScore}</span>
                           <span className={`ml-2 ${riskInfo.color} text-white px-2 py-1 rounded text-xs`}>
                             {riskInfo.level}
                           </span>
@@ -323,15 +326,14 @@ const BankDashboard = () => {
                       <div>
                         <h3 className="text-sm font-medium text-gray-500">{t('sections.creditSummary.activeLoans')}</h3>
                         <p className="text-2xl font-bold">
-                          {userData.loanHistory.filter(loan => loan.status === "Active").length}
+                          {creditReport.loans.active.length}
                         </p>
                       </div>
                       <div>
                         <h3 className="text-sm font-medium text-gray-500">{t('sections.creditSummary.totalEMI')}</h3>
                         <p className="text-2xl font-bold">
-                          ₹{userData.loanHistory
-                            .filter(loan => loan.status === "Active")
-                            .reduce((sum, loan) => sum + loan.emi, 0).toLocaleString()}
+                          ₹{creditReport.loans.active
+                            .reduce((sum, loan) => sum + (loan.emi || 0), 0).toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -339,11 +341,11 @@ const BankDashboard = () => {
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-2">{t('sections.creditSummary.recommendationTitle')}</h3>
                       <div className="p-4 border rounded">
-                        {latestScore >= 750 ? (
+                        {avgScore >= 750 ? (
                           <p className="text-green-600">
                             {t('eligibilityRecommendations.excellent')}
                           </p>
-                        ) : latestScore >= 650 ? (
+                        ) : avgScore >= 650 ? (
                           <p className="text-yellow-600">
                             {t('eligibilityRecommendations.good')}
                           </p>
@@ -379,24 +381,28 @@ const BankDashboard = () => {
                       <thead>
                         <tr className="border-b">
                           <th className="text-left py-2">{t('sections.creditHistory.date')}</th>
+                          <th className="text-left py-2">Bureau</th>
                           <th className="text-right py-2">{t('sections.creditHistory.score')}</th>
                           <th className="text-right py-2">{t('sections.creditHistory.change')}</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {userData.creditScores.map((score, index) => {
-                          const prevScore = index < userData.creditScores.length - 1 ? userData.creditScores[index + 1].score : score.score;
-                          const change = score.score - prevScore;
-                          return (
-                            <tr key={score.id} className="border-b">
-                              <td className="py-2">{score.recordedAt}</td>
-                              <td className="text-right">{score.score}</td>
-                              <td className={`text-right ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {change !== 0 ? (change > 0 ? '+' : '') + change : '-'}
-                              </td>
-                            </tr>
-                          );
-                        })}
+                        {creditReport.bureauScores.flatMap(bureau => 
+                          bureau.history?.map((item, index, array) => {
+                            const prevScore = index < array.length - 1 ? array[index + 1].score : item.score;
+                            const change = item.score - prevScore;
+                            return (
+                              <tr key={`${bureau.bureau}-${item.date}`} className="border-b">
+                                <td className="py-2">{item.date}</td>
+                                <td className="py-2">{bureau.bureau}</td>
+                                <td className="text-right">{item.score}</td>
+                                <td className={`text-right ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                  {change !== 0 ? (change > 0 ? '+' : '') + change : '-'}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -411,15 +417,15 @@ const BankDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {userData.loanHistory.map((loan) => (
-                      <div key={loan.id} className="border rounded p-4">
+                    {creditReport.loans.active.map((loan, index) => (
+                      <div key={`active-${index}`} className="border rounded p-4">
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="font-medium">{loan.type}</h3>
-                            <p className="text-sm text-gray-500">{t('sections.loanDetails.started')}: {loan.startDate}</p>
+                            <p className="text-sm text-gray-500">Lender: {loan.lender}</p>
                           </div>
-                          <span className={`px-2 py-1 rounded text-xs ${loan.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                            {loan.status}
+                          <span className="px-2 py-1 rounded text-xs bg-green-100 text-green-800">
+                            Active
                           </span>
                         </div>
                         
@@ -430,17 +436,74 @@ const BankDashboard = () => {
                           </div>
                           <div>
                             <p className="text-xs text-gray-500">{t('sections.loanDetails.monthlyEMI')}</p>
-                            <p className="font-medium">₹{loan.emi.toLocaleString()}</p>
+                            <p className="font-medium">₹{loan.emi?.toLocaleString() || 'N/A'}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">{t('sections.loanDetails.missedInstallments')}</p>
-                            <p className={`font-medium ${loan.installmentsMissed > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                              {loan.installmentsMissed}
-                            </p>
+                            <p className="text-xs text-gray-500">Remaining Tenure</p>
+                            <p className="font-medium">{loan.remainingTenure} months</p>
                           </div>
                         </div>
                       </div>
                     ))}
+
+                    {creditReport.loans.closed.map((loan, index) => (
+                      <div key={`closed-${index}`} className="border rounded p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h3 className="font-medium">{loan.type}</h3>
+                            <p className="text-sm text-gray-500">Lender: {loan.lender}</p>
+                          </div>
+                          <span className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-800">
+                            Closed
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                          <div>
+                            <p className="text-xs text-gray-500">{t('sections.loanDetails.loanAmount')}</p>
+                            <p className="font-medium">₹{loan.amount.toLocaleString()}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">Closure Date</p>
+                            <p className="font-medium">{loan.closureDate}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {creditReport.loans.rejected.length > 0 && (
+                      <>
+                        <h3 className="font-medium mt-8 mb-2">Rejected Loan Applications</h3>
+                        {creditReport.loans.rejected.map((loan, index) => (
+                          <div key={`rejected-${index}`} className="border rounded p-4 border-red-100">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <h3 className="font-medium">{loan.type}</h3>
+                                <p className="text-sm text-gray-500">Lender: {loan.lender}</p>
+                              </div>
+                              <span className="px-2 py-1 rounded text-xs bg-red-100 text-red-800">
+                                Rejected
+                              </span>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                              <div>
+                                <p className="text-xs text-gray-500">{t('sections.loanDetails.loanAmount')}</p>
+                                <p className="font-medium">₹{loan.amount.toLocaleString()}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500">Application Date</p>
+                                <p className="font-medium">{loan.date}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500">Rejection Reason</p>
+                                <p className="font-medium text-red-600">{loan.reason}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -460,7 +523,7 @@ const BankDashboard = () => {
                       <div>
                         <h3 className="font-medium text-lg">{riskInfo.level}</h3>
                         <p className="text-gray-500">
-                          {t('sections.riskAnalysis.basedOn', { score: latestScore })}
+                          {t('sections.riskAnalysis.basedOn', { score: avgScore })}
                         </p>
                       </div>
                     </div>
@@ -472,10 +535,13 @@ const BankDashboard = () => {
                           <h4 className="font-medium mb-2">{t('sections.riskAnalysis.creditUtilization')}</h4>
                           <div className="flex items-center justify-between">
                             <p className="text-gray-500">{t('sections.riskAnalysis.current')}</p>
-                            <p className={latestScore > 700 ? "text-green-600" : "text-yellow-600"}>65%</p>
+                            <p className={creditReport.creditUtilization <= 30 ? "text-green-600" : 
+                                creditReport.creditUtilization <= 50 ? "text-yellow-600" : "text-red-600"}>
+                              {creditReport.creditUtilization}%
+                            </p>
                           </div>
                           <div className="mt-2 bg-gray-200 h-2 rounded-full">
-                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: "65%" }}></div>
+                            <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${creditReport.creditUtilization}%` }}></div>
                           </div>
                           <p className="mt-2 text-xs text-gray-500">
                             {t('sections.riskAnalysis.utilizationRecommendation')}
@@ -486,17 +552,17 @@ const BankDashboard = () => {
                           <h4 className="font-medium mb-2">{t('sections.riskAnalysis.paymentHistory')}</h4>
                           <div className="flex items-center justify-between">
                             <p className="text-gray-500">{t('sections.riskAnalysis.missedPayments')}</p>
-                            <p className={userData.loanHistory.reduce((total, loan) => total + loan.installmentsMissed, 0) > 0 
+                            <p className={creditReport.paymentHistory.late > 0 
                               ? "text-red-600" : "text-green-600"}>
-                              {userData.loanHistory.reduce((total, loan) => total + loan.installmentsMissed, 0)}
+                              {creditReport.paymentHistory.late}
                             </p>
                           </div>
                           <div className="mt-2 bg-gray-200 h-2 rounded-full">
                             <div 
-                              className={userData.loanHistory.reduce((total, loan) => total + loan.installmentsMissed, 0) > 0 
+                              className={creditReport.paymentHistory.late > 0 
                                 ? "bg-red-500 h-2 rounded-full" 
                                 : "bg-green-500 h-2 rounded-full"} 
-                              style={{ width: userData.loanHistory.reduce((total, loan) => total + loan.installmentsMissed, 0) > 0 ? "30%" : "100%" }}>
+                              style={{ width: creditReport.paymentHistory.late > 0 ? "30%" : "100%" }}>
                             </div>
                           </div>
                           <p className="mt-2 text-xs text-gray-500">
@@ -511,14 +577,14 @@ const BankDashboard = () => {
                       <div className="border p-4 rounded">
                         <h4 className="font-medium mb-1">{t('sections.riskAnalysis.recommendedActions')}:</h4>
                         <ul className="list-disc pl-5 space-y-1">
-                          {latestScore >= 750 ? (
+                          {avgScore >= 750 ? (
                             <>
                               <li>{t('loanRecommendations.excellent.eligible')}</li>
                               <li>{t('loanRecommendations.excellent.preferentialRates')}</li>
                               <li>{t('loanRecommendations.excellent.homeLoan')}</li>
                               <li>{t('loanRecommendations.excellent.personalLoan')}</li>
                             </>
-                          ) : latestScore >= 650 ? (
+                          ) : avgScore >= 650 ? (
                             <>
                               <li>{t('loanRecommendations.good.eligible')}</li>
                               <li>{t('loanRecommendations.good.regularRates')}</li>
