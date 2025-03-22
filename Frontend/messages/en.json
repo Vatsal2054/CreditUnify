@@ -453,8 +453,8 @@
     }
   },
   "bank": {
-    "title": "Bank Customer Dashboard",
-    "description": "Manage and analyze customer financial data efficiently.",
+    "title": "Bank Representative Dashboard",
+    "description": "Analyze customer financial data efficiently.",
     "customerLookup": {
       "title": "Customer Lookup",
       "description": "Search for customer details using Aadhaar or PAN."

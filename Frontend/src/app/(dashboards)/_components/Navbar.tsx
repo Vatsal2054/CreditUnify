@@ -34,7 +34,7 @@ export default function Navbar({children}:{children:React.ReactNode}) {
           </span>
         </motion.div>
         <div className="flex space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               <LanguageSwitcher />
               <div className="hidden md:block lg:block">
                 <ModeToggle />
