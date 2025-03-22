@@ -164,13 +164,13 @@ export default function CreditDashboard() {
 
   // Get all bureau history combined for the chart
   const getAllBureauHistory = () => {
-    if (!creditReport) return [];
+    if (!userData) return [];
   
     const allData = [];
   
     // Get unique dates across all bureaus
     const allDates = new Set();
-    creditReport.bureauScores.forEach((bureau) => {
+    userData.bureauScores.forEach((bureau) => {
       bureau.history.forEach((item) => {
         allDates.add(item.date);
       });
@@ -195,7 +195,7 @@ export default function CreditDashboard() {
     sortedDates.forEach((date) => {
       const dataPoint = { date };
   
-      creditReport.bureauScores.forEach((bureau) => {
+      userData.bureauScores.forEach((bureau) => {
         const historyItem = bureau.history.find((item) => parseDate(item.date) === date);
         dataPoint[bureau.bureau] = historyItem ? historyItem.score : null;
       });
