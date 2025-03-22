@@ -126,7 +126,7 @@ const sendPasswordResetEmail = async(email: string, token: string, name: string)
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="https://drive.google.com/uc?export=view&id=1seDHzxeYDw0K8orLVrH0WVSHZP1mNH5v" alt="CreditUnify logo" class="logo">
+                <img src="https://i.imgur.com/KPeMAR9.jpeg" alt="CreditUnify logo" class="logo">
                 <span class="logo-text">CreditUnify</span>
             </div>
         </div>
