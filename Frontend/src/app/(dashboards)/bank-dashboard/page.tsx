@@ -1,19 +1,54 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, CheckCircle, TrendingUp, BarChart3, FileText, CreditCard, Clock, DollarSign } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-// This would typically come from your API
-const dummyUserData = {
-  id: "cuid123456",
-  name: "Rajesh Kumar",
-  email: "rajesh.kumar@example.com",
-  aadhaarNumber: "1234-5678-9012",
-  PAN: "ABCDE1234F",
-  bankName: "SBI",
+// Type definitions
+interface PersonalInfo {
+  id: string;
+  name: string;
+  email: string;
+  aadhaarNumber: string;
+  PAN: string;
+  bankName: string;
+}
+
+interface CreditScore {
+  id: string;
+  score: number;
+  recordedAt: string;
+}
+
+interface Loan {
+  id: string;
+  type: string;
+  amount: number;
+  emi: number;
+  startDate: string;
+  status: string;
+  installmentsMissed: number;
+}
+
+interface UserData {
+  personalInfo: PersonalInfo;
+  creditScores: CreditScore[];
+  loanHistory: Loan[];
+}
+
+// DUMMY DATA SECTION: Replace this with API calls in production
+const dummyUserData: UserData = {
+  personalInfo: {
+    id: "cuid123456",
+    name: "Rajesh Kumar",
+    email: "rajesh.kumar@example.com",
+    aadhaarNumber: "1234-5678-9012",
+    PAN: "ABCDE1234F",
+    bankName: "SBI",
+  },
   creditScores: [
     { id: "cs1", score: 750, recordedAt: "2024-02-15" },
     { id: "cs2", score: 720, recordedAt: "2023-11-10" },
@@ -27,43 +62,112 @@ const dummyUserData = {
   ]
 };
 
-const BankDashboard = () => {
-  const [searchMode, setSearchMode] = useState('aadhaar');
-  const [searchValue, setSearchValue] = useState('');
-  const [userData, setUserData] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
+// API service functions to replace direct dummy data usage
+const apiService = {
+  searchCustomer: async (searchMode: 'aadhaar' | 'pan', searchValue: string): Promise<UserData> => {
+    console.log(`Making API call to search for customer with ${searchMode}: ${searchValue}`);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(dummyUserData);
+      }, 1000);
+    });
+  },
+  
+  getCreditScoreHistory: async (customerId: string): Promise<CreditScore[]> => {
+    console.log(`Making API call to get credit history for customer: ${customerId}`);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(dummyUserData.creditScores);
+      }, 500);
+    });
+  },
+  
+  getLoanHistory: async (customerId: string): Promise<Loan[]> => {
+    console.log(`Making API call to get loan history for customer: ${customerId}`);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(dummyUserData.loanHistory);
+      }, 500);
+    });
+  }
+};
 
-  // Simulate a search
-  const handleSearch = () => {
-    setIsSearching(true);
-    // In a real app, this would be an API call
-    setTimeout(() => {
-      setUserData(dummyUserData);
-      setIsSearching(false);
-    }, 1000);
-  };
+const BankDashboard = () => {
+  const [searchMode, setSearchMode] = useState<'aadhaar' | 'pan'>('aadhaar');
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const t = useTranslations('bank');
 
   // Calculate risk level based on credit score
-  const getRiskLevel = (score) => {
-    if (score >= 750) return { level: "Low Risk", color: "bg-green-500", icon: <CheckCircle className="h-5 w-5" /> };
-    if (score >= 650) return { level: "Medium Risk", color: "bg-yellow-500", icon: <AlertCircle className="h-5 w-5" /> };
-    return { level: "High Risk", color: "bg-red-500", icon: <AlertCircle className="h-5 w-5" /> };
+  const getRiskLevel = (score: number) => {
+    if (score >= 750) return { level: t('riskLevels.low'), color: "bg-green-500", icon: <CheckCircle className="h-5 w-5" /> };
+    if (score >= 650) return { level: t('riskLevels.medium'), color: "bg-yellow-500", icon: <AlertCircle className="h-5 w-5" /> };
+    return { level: t('riskLevels.high'), color: "bg-red-500", icon: <AlertCircle className="h-5 w-5" /> };
   };
 
-  const latestScore = userData?.creditScores[0]?.score || 0;
+  // Simulate a search using the API service
+  const handleSearch = async () => {
+    if (!searchValue) return;
+    
+    setIsSearching(true);
+    setError(null);
+    
+    try {
+      const data = await apiService.searchCustomer(searchMode, searchValue);
+      setUserData(data);
+    } catch (err) {
+      console.error("Error searching for customer:", err);
+      setError(t('errors.customerSearch'));
+      setUserData(null);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Fetch additional customer data after finding a customer
+  useEffect(() => {
+    if (userData?.personalInfo?.id) {
+      setIsLoading(true);
+      
+      Promise.all([
+        apiService.getCreditScoreHistory(userData.personalInfo.id),
+        apiService.getLoanHistory(userData.personalInfo.id)
+      ])
+        .then(([creditScores, loanHistory]) => {
+          setUserData(prev => ({
+            ...prev!,
+            creditScores,
+            loanHistory
+          }));
+        })
+        .catch(err => {
+          console.error("Error fetching additional data:", err);
+          setError(t('errors.additionalData'));
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [userData?.personalInfo?.id, t]);
+
+  const latestScore = userData?.creditScores?.[0]?.score || 0;
   const riskInfo = getRiskLevel(latestScore);
 
   return (
     <div className="container mx-auto p-4">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold">Bank Customer Credit Dashboard</h1>
-        <p className="text-gray-500">Assess customer credit risk and loan eligibility</p>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-gray-500">{t('description')}</p>
       </div>
 
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Customer Lookup</CardTitle>
-          <CardDescription>Search for a customer by Aadhaar or PAN</CardDescription>
+          <CardTitle>{t('customerLookup.title')}</CardTitle>
+          <CardDescription>{t('customerLookup.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
@@ -72,34 +176,46 @@ const BankDashboard = () => {
                 variant={searchMode === 'aadhaar' ? "default" : "outline"} 
                 onClick={() => setSearchMode('aadhaar')}
               >
-                Aadhaar
+                {t('searchModes.aadhaar')}
               </Button>
               <Button 
                 variant={searchMode === 'pan' ? "default" : "outline"} 
                 onClick={() => setSearchMode('pan')}
               >
-                PAN
+                {t('searchModes.pan')}
               </Button>
             </div>
             <Input 
-              placeholder={searchMode === 'aadhaar' ? "Enter Aadhaar Number" : "Enter PAN Number"} 
+              placeholder={searchMode === 'aadhaar' ? t('placeholders.aadhaar') : t('placeholders.pan')} 
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               className="md:flex-grow"
             />
             <Button onClick={handleSearch} disabled={isSearching || !searchValue}>
-              {isSearching ? "Searching..." : "Search"}
+              {isSearching ? t('buttons.searching') : t('buttons.search')}
             </Button>
           </div>
+          
+          {error && (
+            <div className="mt-4 p-2 bg-red-100 text-red-700 rounded">
+              {error}
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {userData && (
+      {isLoading && (
+        <div className="flex justify-center my-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      )}
+
+      {userData && !isLoading && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Credit Score</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('creditScoreCard.title')}</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -111,14 +227,14 @@ const BankDashboard = () => {
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Last updated on {userData.creditScores[0].recordedAt}
+                  {t('creditScoreCard.updateText')} {userData.creditScores[0].recordedAt}
                 </p>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Loans</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('activeLoansCard.title')}</CardTitle>
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -126,7 +242,7 @@ const BankDashboard = () => {
                   {userData.loanHistory.filter(loan => loan.status === "Active").length}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Total outstanding: ₹{userData.loanHistory
+                  {t('activeLoansCard.totalOutstanding')} ₹{userData.loanHistory
                     .filter(loan => loan.status === "Active")
                     .reduce((sum, loan) => sum + loan.amount, 0).toLocaleString()}
                 </p>
@@ -135,7 +251,7 @@ const BankDashboard = () => {
             
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Payment History</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('paymentHistoryCard.title')}</CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -143,7 +259,7 @@ const BankDashboard = () => {
                   {userData.loanHistory.reduce((total, loan) => total + loan.installmentsMissed, 0)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Missed installments across all loans
+                  {t('paymentHistoryCard.missedInstallments')}
                 </p>
               </CardContent>
             </Card>
@@ -151,38 +267,38 @@ const BankDashboard = () => {
 
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="creditHistory">Credit History</TabsTrigger>
-              <TabsTrigger value="loans">Loan Details</TabsTrigger>
-              <TabsTrigger value="riskAnalysis">Risk Analysis</TabsTrigger>
+              <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
+              <TabsTrigger value="creditHistory">{t('tabs.creditHistory')}</TabsTrigger>
+              <TabsTrigger value="loans">{t('tabs.loans')}</TabsTrigger>
+              <TabsTrigger value="riskAnalysis">{t('tabs.riskAnalysis')}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Customer Information</CardTitle>
+                  <CardTitle>{t('sections.customerInfo.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Name</h3>
-                      <p>{userData.name}</p>
+                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.name')}</h3>
+                      <p>{userData.personalInfo.name}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                      <p>{userData.email}</p>
+                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.email')}</h3>
+                      <p>{userData.personalInfo.email}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Aadhaar Number</h3>
-                      <p>{userData.aadhaarNumber}</p>
+                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.aadhaarNumber')}</h3>
+                      <p>{userData.personalInfo.aadhaarNumber}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">PAN</h3>
-                      <p>{userData.PAN}</p>
+                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.pan')}</h3>
+                      <p>{userData.personalInfo.PAN}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">Primary Bank</h3>
-                      <p>{userData.bankName}</p>
+                      <h3 className="text-sm font-medium text-gray-500">{t('sections.customerInfo.primaryBank')}</h3>
+                      <p>{userData.personalInfo.bankName}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -190,13 +306,13 @@ const BankDashboard = () => {
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Credit Summary</CardTitle>
+                  <CardTitle>{t('sections.creditSummary.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-500">Current Credit Score</h3>
+                        <h3 className="text-sm font-medium text-gray-500">{t('sections.creditSummary.currentScore')}</h3>
                         <div className="flex items-center mt-1">
                           <span className="text-2xl font-bold">{latestScore}</span>
                           <span className={`ml-2 ${riskInfo.color} text-white px-2 py-1 rounded text-xs`}>
@@ -205,13 +321,13 @@ const BankDashboard = () => {
                         </div>
                       </div>
                       <div>
-                        <h3 className="text-sm font-medium text-gray-500">Active Loans</h3>
+                        <h3 className="text-sm font-medium text-gray-500">{t('sections.creditSummary.activeLoans')}</h3>
                         <p className="text-2xl font-bold">
                           {userData.loanHistory.filter(loan => loan.status === "Active").length}
                         </p>
                       </div>
                       <div>
-                        <h3 className="text-sm font-medium text-gray-500">Total EMI/Month</h3>
+                        <h3 className="text-sm font-medium text-gray-500">{t('sections.creditSummary.totalEMI')}</h3>
                         <p className="text-2xl font-bold">
                           ₹{userData.loanHistory
                             .filter(loan => loan.status === "Active")
@@ -221,22 +337,19 @@ const BankDashboard = () => {
                     </div>
                     
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-2">Loan Eligibility Recommendation</h3>
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">{t('sections.creditSummary.recommendationTitle')}</h3>
                       <div className="p-4 border rounded">
                         {latestScore >= 750 ? (
                           <p className="text-green-600">
-                            Customer has excellent credit score and consistent payment history. 
-                            Eligible for premium loan products with preferential interest rates.
+                            {t('eligibilityRecommendations.excellent')}
                           </p>
                         ) : latestScore >= 650 ? (
                           <p className="text-yellow-600">
-                            Customer has a good credit score with minor payment issues. 
-                            Standard loan products can be offered with regular interest rates.
+                            {t('eligibilityRecommendations.good')}
                           </p>
                         ) : (
                           <p className="text-red-600">
-                            Customer has below average credit score with payment concerns.
-                            Consider secured loans only or loans with higher interest rates.
+                            {t('eligibilityRecommendations.belowAverage')}
                           </p>
                         )}
                       </div>
@@ -249,25 +362,25 @@ const BankDashboard = () => {
             <TabsContent value="creditHistory" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Credit Score History</CardTitle>
+                  <CardTitle>{t('sections.creditHistory.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {/* TODO: Replace with a real chart component in production */}
                   <div className="relative h-72">
-                    {/* This would be a chart in a real application */}
                     <div className="absolute inset-0 flex items-center justify-center">
                       <BarChart3 className="h-16 w-16 text-gray-300" />
-                      <p className="absolute text-gray-500">Credit Score Chart</p>
+                      <p className="absolute text-gray-500">{t('sections.creditHistory.chart')}</p>
                     </div>
                   </div>
                   
                   <div className="mt-4">
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">Score History</h3>
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">{t('sections.creditHistory.scoreHistory')}</h3>
                     <table className="w-full">
                       <thead>
                         <tr className="border-b">
-                          <th className="text-left py-2">Date</th>
-                          <th className="text-right py-2">Score</th>
-                          <th className="text-right py-2">Change</th>
+                          <th className="text-left py-2">{t('sections.creditHistory.date')}</th>
+                          <th className="text-right py-2">{t('sections.creditHistory.score')}</th>
+                          <th className="text-right py-2">{t('sections.creditHistory.change')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -294,16 +407,16 @@ const BankDashboard = () => {
             <TabsContent value="loans" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Loan Details</CardTitle>
+                  <CardTitle>{t('sections.loanDetails.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {userData.loanHistory.map(loan => (
+                    {userData.loanHistory.map((loan) => (
                       <div key={loan.id} className="border rounded p-4">
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="font-medium">{loan.type}</h3>
-                            <p className="text-sm text-gray-500">Started: {loan.startDate}</p>
+                            <p className="text-sm text-gray-500">{t('sections.loanDetails.started')}: {loan.startDate}</p>
                           </div>
                           <span className={`px-2 py-1 rounded text-xs ${loan.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                             {loan.status}
@@ -312,15 +425,15 @@ const BankDashboard = () => {
                         
                         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                           <div>
-                            <p className="text-xs text-gray-500">Loan Amount</p>
+                            <p className="text-xs text-gray-500">{t('sections.loanDetails.loanAmount')}</p>
                             <p className="font-medium">₹{loan.amount.toLocaleString()}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">Monthly EMI</p>
+                            <p className="text-xs text-gray-500">{t('sections.loanDetails.monthlyEMI')}</p>
                             <p className="font-medium">₹{loan.emi.toLocaleString()}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">Missed Installments</p>
+                            <p className="text-xs text-gray-500">{t('sections.loanDetails.missedInstallments')}</p>
                             <p className={`font-medium ${loan.installmentsMissed > 0 ? 'text-red-600' : 'text-green-600'}`}>
                               {loan.installmentsMissed}
                             </p>
@@ -336,7 +449,7 @@ const BankDashboard = () => {
             <TabsContent value="riskAnalysis" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Risk Analysis</CardTitle>
+                  <CardTitle>{t('sections.riskAnalysis.title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
@@ -347,32 +460,32 @@ const BankDashboard = () => {
                       <div>
                         <h3 className="font-medium text-lg">{riskInfo.level}</h3>
                         <p className="text-gray-500">
-                          Based on credit score of {latestScore} and payment history
+                          {t('sections.riskAnalysis.basedOn', { score: latestScore })}
                         </p>
                       </div>
                     </div>
                     
                     <div className="space-y-4">
-                      <h3 className="font-medium">Risk Factors</h3>
+                      <h3 className="font-medium">{t('sections.riskAnalysis.riskFactors')}</h3>
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="border p-4 rounded">
-                          <h4 className="font-medium mb-2">Credit Utilization</h4>
+                          <h4 className="font-medium mb-2">{t('sections.riskAnalysis.creditUtilization')}</h4>
                           <div className="flex items-center justify-between">
-                            <p className="text-gray-500">Current</p>
+                            <p className="text-gray-500">{t('sections.riskAnalysis.current')}</p>
                             <p className={latestScore > 700 ? "text-green-600" : "text-yellow-600"}>65%</p>
                           </div>
                           <div className="mt-2 bg-gray-200 h-2 rounded-full">
                             <div className="bg-blue-500 h-2 rounded-full" style={{ width: "65%" }}></div>
                           </div>
                           <p className="mt-2 text-xs text-gray-500">
-                            Recommendation: Keep utilization below 30% for better score
+                            {t('sections.riskAnalysis.utilizationRecommendation')}
                           </p>
                         </div>
                         
                         <div className="border p-4 rounded">
-                          <h4 className="font-medium mb-2">Payment History</h4>
+                          <h4 className="font-medium mb-2">{t('sections.riskAnalysis.paymentHistory')}</h4>
                           <div className="flex items-center justify-between">
-                            <p className="text-gray-500">Missed Payments</p>
+                            <p className="text-gray-500">{t('sections.riskAnalysis.missedPayments')}</p>
                             <p className={userData.loanHistory.reduce((total, loan) => total + loan.installmentsMissed, 0) > 0 
                               ? "text-red-600" : "text-green-600"}>
                               {userData.loanHistory.reduce((total, loan) => total + loan.installmentsMissed, 0)}
@@ -387,39 +500,39 @@ const BankDashboard = () => {
                             </div>
                           </div>
                           <p className="mt-2 text-xs text-gray-500">
-                            Recommendation: Maintain consistent on-time payments
+                            {t('sections.riskAnalysis.paymentRecommendation')}
                           </p>
                         </div>
                       </div>
                     </div>
                     
                     <div>
-                      <h3 className="font-medium mb-2">Loan Eligibility Assessment</h3>
+                      <h3 className="font-medium mb-2">{t('sections.riskAnalysis.loanEligibility')}</h3>
                       <div className="border p-4 rounded">
-                        <h4 className="font-medium mb-1">Recommended Actions:</h4>
+                        <h4 className="font-medium mb-1">{t('sections.riskAnalysis.recommendedActions')}:</h4>
                         <ul className="list-disc pl-5 space-y-1">
                           {latestScore >= 750 ? (
                             <>
-                              <li>Eligible for premium loan products</li>
-                              <li>Recommend preferential interest rates</li>
-                              <li>Pre-approved for up to ₹30,00,000 home loan</li>
-                              <li>Pre-approved for up to ₹5,00,000 personal loan</li>
+                              <li>{t('loanRecommendations.excellent.eligible')}</li>
+                              <li>{t('loanRecommendations.excellent.preferentialRates')}</li>
+                              <li>{t('loanRecommendations.excellent.homeLoan')}</li>
+                              <li>{t('loanRecommendations.excellent.personalLoan')}</li>
                             </>
                           ) : latestScore >= 650 ? (
                             <>
-                              <li>Eligible for standard loan products</li>
-                              <li>Regular interest rates apply</li>
-                              <li>Consider up to ₹20,00,000 for home loans</li>
-                              <li>Consider up to ₹3,00,000 for personal loans</li>
-                              <li>Recommend improving payment consistency</li>
+                              <li>{t('loanRecommendations.good.eligible')}</li>
+                              <li>{t('loanRecommendations.good.regularRates')}</li>
+                              <li>{t('loanRecommendations.good.homeLoan')}</li>
+                              <li>{t('loanRecommendations.good.personalLoan')}</li>
+                              <li>{t('loanRecommendations.good.improvePayment')}</li>
                             </>
                           ) : (
                             <>
-                              <li>Limited eligibility - higher risk profile</li>
-                              <li>Consider secured loan options only</li>
-                              <li>Higher interest rates would apply</li>
-                              <li>Require additional guarantor or collateral</li>
-                              <li>Recommend credit counseling services</li>
+                              <li>{t('loanRecommendations.poor.limitedEligibility')}</li>
+                              <li>{t('loanRecommendations.poor.securedOptions')}</li>
+                              <li>{t('loanRecommendations.poor.higherRates')}</li>
+                              <li>{t('loanRecommendations.poor.guarantor')}</li>
+                              <li>{t('loanRecommendations.poor.counseling')}</li>
                             </>
                           )}
                         </ul>

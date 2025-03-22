@@ -3,6 +3,7 @@
 import { currentUserServer } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { BankName } from "@prisma/client";
+import { log } from "console";
 import { notFound } from "next/navigation";
 
 
@@ -12,6 +13,8 @@ export async function updateUserDocuments(data: {
   bankName?: string;
 }) {
   const user = await currentUserServer();
+
+  log("User", user,"Data:",{data}),"d";
   if (!user) return notFound();
   
   try {
