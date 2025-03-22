@@ -384,7 +384,7 @@ export default function CreditDashboard() {
                             <Card className="bg-gray-50 w-full h-full border border-gray-100 p-4 rounded-xl flex flex-col items-center justify-center">
                               <CardHeader className="text-center p-4">
                                 <CardTitle className="text-xl text-gray-500">
-                                  CRIF HighMark
+                                  Bureau might be down
                                 </CardTitle>
                               </CardHeader>
                               <CardContent className="text-center py-2">
