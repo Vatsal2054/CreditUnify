@@ -448,5 +448,124 @@
       "recentActivityDescription": "Recent credit score checks performed by this bank",
       "close": "Close"
     }
-  }
+  },
+  "bank":  {
+      "title": "Bank Customer Dashboard",
+      "description": "Manage and analyze customer financial data efficiently.",
+      "customerLookup": {
+        "title": "Customer Lookup",
+        "description": "Search for customer details using Aadhaar or PAN."
+      },
+      "searchModes": {
+        "aadhaar": "Aadhaar",
+        "pan": "PAN"
+      },
+      "placeholders": {
+        "aadhaar": "Enter Aadhaar Number",
+        "pan": "Enter PAN Number"
+      },
+      "buttons": {
+        "search": "Search",
+        "searching": "Searching..."
+      },
+      "errors": {
+        "customerSearch": "Failed to find customer. Please try again.",
+        "additionalData": "Some customer data could not be loaded."
+      },
+      "tabs": {
+        "overview": "Overview",
+        "creditHistory": "Credit History",
+        "loans": "Loans",
+        "riskAnalysis": "Risk Analysis"
+      },
+      "riskLevels": {
+        "low": "Low Risk",
+        "medium": "Medium Risk",
+        "high": "High Risk"
+      },
+      "creditScoreCard": {
+        "title": "Credit Score",
+        "updateText": "Last updated on"
+      },
+      "activeLoansCard": {
+        "title": "Active Loans",
+        "totalOutstanding": "Total outstanding"
+      },
+      "paymentHistoryCard": {
+        "title": "Payment History",
+        "missedInstallments": "Missed installments across all loans"
+      },
+      "sections": {
+        "customerInfo": {
+          "title": "Customer Information",
+          "name": "Name",
+          "email": "Email",
+          "aadhaarNumber": "Aadhaar Number",
+          "pan": "PAN",
+          "primaryBank": "Primary Bank"
+        },
+        "creditSummary": {
+          "title": "Credit Summary",
+          "currentScore": "Current Credit Score",
+          "activeLoans": "Active Loans",
+          "totalEMI": "Total EMI/Month",
+          "recommendationTitle": "Loan Eligibility Recommendation"
+        },
+        "creditHistory": {
+          "title": "Credit Score History",
+          "chart": "Credit Score Chart",
+          "scoreHistory": "Score History",
+          "date": "Date",
+          "score": "Score",
+          "change": "Change"
+        },
+        "loanDetails": {
+          "title": "Loan Details",
+          "started": "Started",
+          "loanAmount": "Loan Amount",
+          "monthlyEMI": "Monthly EMI",
+          "missedInstallments": "Missed Installments"
+        },
+        "riskAnalysis": {
+          "title": "Risk Analysis",
+          "basedOn": "Based on credit score of {score} and payment history",
+          "riskFactors": "Risk Factors",
+          "creditUtilization": "Credit Utilization",
+          "current": "Current",
+          "utilizationRecommendation": "Recommendation: Keep utilization below 30% for better score",
+          "paymentHistory": "Payment History",
+          "missedPayments": "Missed Payments",
+          "paymentRecommendation": "Recommendation: Maintain consistent on-time payments",
+          "loanEligibility": "Loan Eligibility Assessment",
+          "recommendedActions": "Recommended Actions"
+        }
+      },
+      "eligibilityRecommendations": {
+        "excellent": "Customer has excellent credit score and consistent payment history. Eligible for premium loan products with preferential interest rates.",
+        "good": "Customer has a good credit score with minor payment issues. Standard loan products can be offered with regular interest rates.",
+        "belowAverage": "Customer has below average credit score with payment concerns. Consider secured loans only or loans with higher interest rates."
+      },
+      "loanRecommendations": {
+        "excellent": {
+          "eligible": "Eligible for premium loan products",
+          "preferentialRates": "Recommend preferential interest rates",
+          "homeLoan": "Pre-approved for up to ₹30,00,000 home loan",
+          "personalLoan": "Pre-approved for up to ₹5,00,000 personal loan"
+        },
+        "good": {
+          "eligible": "Eligible for standard loan products",
+          "regularRates": "Regular interest rates apply",
+          "homeLoan": "Consider up to ₹20,00,000 for home loans",
+          "personalLoan": "Consider up to ₹3,00,000 for personal loans",
+          "improvePayment": "Recommend improving payment consistency"
+        },
+        "poor": {
+          "limitedEligibility": "Limited eligibility - higher risk profile",
+          "securedOptions": "Consider secured loan options only",
+          "higherRates": "Higher interest rates would apply",
+          "guarantor": "Require additional guarantor or collateral",
+          "counseling": "Recommend credit counseling services"
+        }
+      }
+    }
 }
