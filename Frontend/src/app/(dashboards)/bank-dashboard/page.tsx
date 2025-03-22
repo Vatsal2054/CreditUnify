@@ -253,8 +253,19 @@ const BankDashboard = () => {
     setIsLoadingUnifiedScore(true);
 
     try {
-      const data = await apiService.getUnifiedScore(loanType);
-      setUnifiedScore(data);
+      const response = await axios.post('http://localhost:5000/unified-score', {
+        loanType,
+        scores: {
+          CIBIL: 700,
+          CRIF: 750,
+          Experian: 650,
+          Equifax: 600,
+        },
+      });
+
+      // Ensure the response data is correctly structured
+      const unifiedScoreData = response.data;
+      setUnifiedScore(unifiedScoreData);
     } catch (err) {
       console.error('Error fetching unified score:', err);
       toast.error('Failed to fetch unified score');
@@ -389,14 +400,16 @@ const BankDashboard = () => {
               <CardContent>
                 <div className="space-y-6">
                   {/* Credit Score Notification */}
-                  <div className="bg-blue-50 p-3 rounded-md flex items-start space-x-2">
-                    <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-blue-700">
-                      The displayed score is normalized using Min-max scaling.
-                      To get a specialized unified score for your needs, please
-                      select a loan type below.
-                    </p>
-                  </div>
+                  {!(unifiedScore && !isLoadingUnifiedScore) && (
+                    <div className="bg-blue-50 p-3 rounded-md flex items-start space-x-2">
+                      <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-blue-700">
+                        The displayed score is normalized using Min-max scaling.
+                        To get a specialized unified score for your needs,
+                        please select a loan type below.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Loan Type Selection */}
                   <div>
@@ -421,31 +434,35 @@ const BankDashboard = () => {
                   </div>
 
                   {/* Normalized Credit Score Speedometer */}
-                  <div>
-                    <h3 className="text-sm font-medium mb-2">
-                      Normalized Credit Score
-                    </h3>
-                    {getNormalizedBureauScore() && (
-                      <EnhancedSpeedometer data={getNormalizedBureauScore()} />
-                    )}
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="flex items-center space-x-2">
-                        <div
-                          className={`${riskInfo.color} text-white p-1 rounded-full flex items-center justify-center`}
-                        >
-                          {riskInfo.icon}
+                  {!(unifiedScore && !isLoadingUnifiedScore) && (
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">
+                        Normalized Credit Score
+                      </h3>
+                      {getNormalizedBureauScore() && (
+                        <EnhancedSpeedometer
+                          data={getNormalizedBureauScore()}
+                        />
+                      )}
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center space-x-2">
+                          <div
+                            className={`${riskInfo.color} text-white p-1 rounded-full flex items-center justify-center`}
+                          >
+                            {riskInfo.icon}
+                          </div>
+                          <span className="text-sm font-medium">
+                            {riskInfo.level}
+                          </span>
                         </div>
-                        <span className="text-sm font-medium">
-                          {riskInfo.level} Risk
-                        </span>
+                        <p className="text-xs text-muted-foreground">
+                          {t('creditScoreCard.updateText')}{' '}
+                          {creditReport.bureauScores[0]?.history?.[0]?.date ||
+                            'Feb 2025'}
+                        </p>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        {t('creditScoreCard.updateText')}{' '}
-                        {creditReport.bureauScores[0]?.history?.[0]?.date ||
-                          'Feb 2025'}
-                      </p>
                     </div>
-                  </div>
+                  )}
 
                   {/* Unified Score Section - appears when a loan type is selected */}
                   {isLoadingUnifiedScore && (
