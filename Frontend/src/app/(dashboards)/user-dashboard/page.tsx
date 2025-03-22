@@ -34,6 +34,7 @@ import { useCurrentUserClient } from '@/hooks/use-current-user';
 import AIInsight from './components/ai-insight';
 import LoanInterestRates from './components/loan-interest-rates';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 // Mock API function to simulate data fetching
 const fetchUserCreditData = async () => {
@@ -48,7 +49,7 @@ export default function CreditDashboard() {
   const [userData, setUserData] = useState<CreditReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-
+  const router = useRouter();
   interface CreditReport {
     personalInfo: {
       name: string;
@@ -221,6 +222,15 @@ export default function CreditDashboard() {
     return allData;
   };
   const user = useCurrentUserClient();
+
+  useEffect(()=>{
+    if(!user?.PAN || !user?.aadhaarNumber){
+      router.push('/settings?missing="both');
+    }
+
+    setPan(user?.PAN ?? "");
+    setAadhaar(user?.aadhaarNumber ?? "");
+  },[]);
 
   return (
     <>
