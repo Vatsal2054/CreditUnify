@@ -39,7 +39,7 @@ const LanguageSwitcher = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className="z-[5000]">
         <Button
           variant="ghost"
           size="icon"
@@ -50,7 +50,7 @@ const LanguageSwitcher = () => {
           <span className="sr-only">{t("switchLanguage")}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="z-[5000]">
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}

@@ -35,7 +35,7 @@ export const UserButton = () => {
  
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className="z-[5000]">
         <Button
           variant="ghost"
           className="group relative h-10 w-10 rounded-full p-0 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary"
@@ -49,7 +49,7 @@ export const UserButton = () => {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="z-3 w-48" align="end" sideOffset={5}>
+      <DropdownMenuContent className="z-3 w-48 z-[5000]" align="end" sideOffset={5}>
         <DropdownMenuLabel className="px-2 pt-2">
           <div className="flex flex-col gap-1">
             <p className="truncate text-sm font-medium">{user?.name}</p>
