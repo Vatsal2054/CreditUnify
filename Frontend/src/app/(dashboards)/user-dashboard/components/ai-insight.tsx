@@ -159,25 +159,26 @@ export default function AIInsight() {
                     } overflow-x-auto`}
                   >
                     {message.role === 'assistant' ? (
+                      <div className='prose'>
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
                           h1: ({ node, ...props }) => (
                             <h1
                               {...props}
-                              className="mb-4 border-b-2 border-green-500 pb-2 text-2xl font-bold text-green-600 dark:border-green-700 dark:text-green-400"
+                              className="mb-4 border-b-2 border-blue-500 pb-2 text-2xl font-bold text-blue-600 dark:border-blue-700 dark:text-blue-400"
                             />
                           ),
                           h2: ({ node, ...props }) => (
                             <h2
                               {...props}
-                              className="mb-3 mt-5 border-l-4 border-green-500 pl-2 text-xl font-semibold text-green-600 dark:border-green-700 dark:text-green-400"
+                              className="mb-3 mt-5 border-l-4 border-blue-500 pl-2 text-xl font-semibold text-blue-600 dark:border-blue-700 dark:text-blue-400"
                             />
                           ),
                           h3: ({ node, ...props }) => (
                             <h3
                               {...props}
-                              className="mb-2 text-lg font-semibold text-green-600 dark:text-green-400"
+                              className="mb-2 text-lg font-semibold text-blue-600 dark:text-blue-400"
                             />
                           ),
                           p: ({ node, ...props }) => (
@@ -213,19 +214,19 @@ export default function AIInsight() {
                           em: ({ node, ...props }) => (
                             <em
                               {...props}
-                              className="font-semibold italic text-green-600 dark:text-green-400"
+                              className="font-semibold italic text-blue-600 dark:text-blue-400"
                             />
                           ),
                           blockquote: ({ node, ...props }) => (
                             <blockquote
                               {...props}
-                              className="border-l-4 border-green-500 pl-4 italic text-gray-600 dark:border-green-700 dark:text-gray-400"
+                              className="border-l-4 border-blue-500 pl-4 italic text-gray-600 dark:blue-green-700 dark:text-gray-400"
                             />
                           ),
                           code: ({ node, ...props }) => (
                             <code
                               {...props}
-                              className="block overflow-x-auto rounded-lg bg-gray-100 p-3 font-mono text-sm text-green-600 dark:bg-gray-800 dark:text-green-400"
+                              className="block overflow-x-auto rounded-lg bg-gray-100 p-3 font-mono text-sm text-blue-600 dark:bg-gray-800 dark:text-blue-400"
                             />
                           ),
                           table: ({ node, ...props }) => (
@@ -273,6 +274,7 @@ export default function AIInsight() {
                       >
                         {message.content}
                       </ReactMarkdown>
+                      </div>
                     ) : (
                       <p className="text-sm sm:text-base">{message.content}</p>
                     )}
