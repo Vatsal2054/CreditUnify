@@ -449,6 +449,137 @@ app.get("/get-scores", (req, res) => {
   res.status(200).json(creditReport);
 });
 
+app.post("/unified-score", (req, res) => {
+  // Loan type preference order - each loan type has preferred bureau order
+  const loanPreferences = {
+    "Home Loan": ["CIBIL", "CRIF", "Experian", "Equifax"],
+    "Personal Loan": ["Experian", "Equifax", "CIBIL", "CRIF"],
+    "Auto Loan": ["CRIF", "CIBIL", "Experian", "Equifax"],
+    "Credit Card": ["Experian", "Equifax", "CRIF", "CIBIL"],
+    "Education Loan": ["CIBIL", "CRIF", "Experian", "Equifax"],
+    "Business Loan": ["Equifax", "CRIF", "CIBIL", "Experian"],
+  };
+
+  // Bureau priority reasons - explains why each bureau is prioritized for different loan types
+  const bureauPriorityReasons = {
+    "Home Loan": {
+      "CIBIL": "Provides comprehensive history of secured loans and mortgage repayment patterns",
+      "CRIF": "Strong coverage of rural and semi-urban lending data important for home loans",
+      "Experian": "Good coverage of banking relationships and deposit account history",
+      "Equifax": "Additional insights on long-term credit behavior"
+    },
+    "Personal Loan": {
+      "Experian": "Best coverage of unsecured loan history and repayment patterns",
+      "Equifax": "Provides detailed consumer spending behavior relevant to personal loans",
+      "CIBIL": "Offers standard credit history with wide banking coverage",
+      "CRIF": "Supplementary data on alternative lending patterns"
+    },
+    "Auto Loan": {
+      "CRIF": "Specialized in vehicle financing history and auto loan performance",
+      "CIBIL": "Good coverage of secured loan repayment history",
+      "Experian": "Provides additional insights on consumer debt management",
+      "Equifax": "Supplementary data on credit utilization patterns"
+    },
+    "Credit Card": {
+      "Experian": "Best coverage of revolving credit behavior and card utilization",
+      "Equifax": "Detailed transaction patterns and spending behavior analysis",
+      "CRIF": "Good coverage of card approval and rejection history",
+      "CIBIL": "Standard credit information with banking relationship data"
+    },
+    "Education Loan": {
+      "CIBIL": "Strong coverage of student loan history and educational institution data",
+      "CRIF": "Better coverage of regional educational loan programs",
+      "Experian": "Good insights on income potential and repayment capacity",
+      "Equifax": "Additional data on related financial behaviors"
+    },
+    "Business Loan": {
+      "Equifax": "Best commercial credit data and business financial metrics",
+      "CRIF": "Strong coverage of SME and business loan performance",
+      "CIBIL": "Provides proprietor personal credit history relevant to business",
+      "Experian": "Additional commercial credit risk insights"
+    }
+  };
+
+  // Min-Max Scaling between 300 and 900
+  const min = 300;
+  const max = 900;
+
+  // Helper function to calculate the unified score
+  function calculateUnifiedScore(scores, weights) {
+    const availableScores = scores.filter((score) => score !== null && score !== undefined);
+    const availableWeights = weights.slice(0, availableScores.length);
+    const weightSum = availableWeights.reduce((acc, w) => acc + w, 0);
+
+    // Normalize weights to sum up to 1
+    const normalizedWeights = availableWeights.map((w) => w / weightSum);
+
+    // Calculate weighted average
+    const unifiedScore = availableScores.reduce((acc, score, index) => acc + score * normalizedWeights[index], 0);
+
+    // Apply Min-Max scaling
+    const scaledScore = min + ((unifiedScore - min) / (max - min)) * (max - min);
+    return Math.round(scaledScore);
+  }
+
+  // Extract loan type and scores from request body
+  const { loanType, scores } = req.body;
+
+  if (!loanType || !scores) {
+    return res.status(400).json({ error: "Loan type and scores are required" });
+  }
+
+  // Check if loan type is valid
+  if (!loanPreferences[loanType]) {
+    return res.status(400).json({ error: "Invalid loan type" });
+  }
+
+  // Get bureau preferences for the loan type
+  const loanBureaus = loanPreferences[loanType];
+
+  // Get scores based on the bureau preference order
+  const orderedScores = loanBureaus.map((bureau) => scores[bureau] || null);
+
+  // Create detailed breakdown of scores with weights
+  const scoreBreakdown = [];
+  
+  // Assign weights dynamically based on preference order with higher weight for first bureau
+  const weights = orderedScores[0] === scores["CIBIL"] ? [0.6, 0.2, 0.15, 0.05] : [0.4, 0.3, 0.2, 0.1];
+  
+  // Calculate unified score
+  const unifiedScore = calculateUnifiedScore(orderedScores, weights);
+  
+  // Create detailed breakdown with individual bureau contributions
+  let totalWeightUsed = 0;
+  
+  for (let i = 0; i < loanBureaus.length; i++) {
+    const bureau = loanBureaus[i];
+    const score = scores[bureau];
+    
+    if (score !== null && score !== undefined) {
+      const normalizedWeight = weights[i] / weights.slice(0, orderedScores.filter(s => s !== null && s !== undefined).length).reduce((a, b) => a + b, 0);
+      totalWeightUsed += normalizedWeight;
+      
+      scoreBreakdown.push({
+        bureau: bureau,
+        score: score,
+        weight: normalizedWeight.toFixed(2),
+        weightedContribution: Math.round(score * normalizedWeight),
+        priorityReason: bureauPriorityReasons[loanType][bureau]
+      });
+    }
+  }
+
+  res.status(200).json({
+    loanType: loanType,
+    unifiedScore: unifiedScore,
+    scoreBreakdown: scoreBreakdown,
+    bureauPriorityOrder: loanBureaus,
+    missingBureaus: loanBureaus.filter(bureau => scores[bureau] === null || scores[bureau] === undefined)
+  });
+});
+
+
+
 // Get loan interest rates from moneycontrol
 app.get("/loan-interest-rates", async (req, res) => {
   try {
