@@ -10,6 +10,7 @@ import puppeteer from "puppeteer";
 import { faker } from "@faker-js/faker";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import seedrandom from "seedrandom";
 
 // Initialize environment variables
 dotenv.config();
@@ -270,7 +271,6 @@ app.get("/api/loans", async (req, res) => {
     });
   }
 });
-
 app.get("/get-scores", (req, res) => {
   // Define bureau ranges
   const bureaus = [
@@ -280,12 +280,45 @@ app.get("/get-scores", (req, res) => {
     { name: "CRIF", rangeStart: 1, rangeEnd: 999 },
   ];
 
+  // Optional: Allow client to specify a seed for consistent results
+  // This enables getting the same report for the same user/session
+  const seed = req.query.seed || "default-seed";
+  const random = seedrandom(seed);
+
+  // Helper function to get consistent random numbers
+  const getRandomInt = (min, max) => {
+    return Math.floor(random() * (max - min + 1)) + min;
+  };
+
+  // Helper function to get random element from array
+  const getRandomElement = (array) => {
+    return array[Math.floor(random() * array.length)];
+  };
+
+  // Generate base credit score (affects everything else)
+  // Base score determines if user has good or problematic credit
+  const baseScoreQuality = random();
+  let baseScore;
+  
+  if (baseScoreQuality > 0.8) {
+    // Excellent credit (20% chance)
+    baseScore = getRandomInt(750, 850);
+  } else if (baseScoreQuality > 0.5) {
+    // Good credit (30% chance)
+    baseScore = getRandomInt(670, 749);
+  } else if (baseScoreQuality > 0.2) {
+    // Fair credit (30% chance)
+    baseScore = getRandomInt(580, 669);
+  } else {
+    // Poor credit (20% chance)
+    baseScore = getRandomInt(300, 579);
+  }
+
   // Generate credit report data
   const creditReport = {
     personalInfo: {
-      // Use a static name instead of generating one
-      name: "Alex Johnson",
-      age: faker.number.int({ min: 21, max: 65 }),
+      name: "Alex Johnson", // Static name
+      age: getRandomInt(21, 65),
       address: `${faker.location.streetAddress()}, ${faker.location.city()}, ${faker.location.state()}`,
     },
     bureauScores: [],
@@ -295,156 +328,223 @@ app.get("/get-scores", (req, res) => {
       rejected: [],
     },
     paymentHistory: {
-      onTime: faker.number.int({ min: 20, max: 60 }),
-      late: faker.number.int({ min: 0, max: 5 }),
+      onTime: 0, // Will calculate based on credit quality
+      late: 0, // Will calculate based on credit quality
       totalAccounts: 0, // Will calculate below
     },
-    creditUtilization: faker.number.int({ min: 10, max: 90 }), // percentage
-    inquiries: faker.number.int({ min: 0, max: 5 }), // last 12 months
+    creditUtilization: 0, // Will calculate based on credit quality
+    inquiries: 0, // Will calculate based on credit quality
     oldestAccount: {
-      type: faker.helpers.arrayElement([
-        "Credit Card",
-        "Personal Loan",
-        "Mortgage",
-        "Auto Loan",
-      ]),
-      age: faker.number.int({ min: 1, max: 15 }), // years
+      type: "",
+      age: 0,
     },
   };
 
-  // Generate bureau scores with 6-month history
-  bureaus.forEach((bureau) => {
-    // 20% chance the score is not available
-    if (Math.random() < 0.2 && creditReport.bureauScores.length < 3) {
-      return; // Skip this bureau
+  // Calculate consistent credit stats based on base score
+  if (baseScore >= 750) {
+    // Excellent credit profile
+    creditReport.paymentHistory.onTime = getRandomInt(40, 60);
+    creditReport.paymentHistory.late = getRandomInt(0, 1);
+    creditReport.creditUtilization = getRandomInt(10, 30);
+    creditReport.inquiries = getRandomInt(0, 1);
+    creditReport.oldestAccount.age = getRandomInt(7, 15);
+  } else if (baseScore >= 670) {
+    // Good credit profile
+    creditReport.paymentHistory.onTime = getRandomInt(30, 45);
+    creditReport.paymentHistory.late = getRandomInt(1, 3);
+    creditReport.creditUtilization = getRandomInt(30, 50);
+    creditReport.inquiries = getRandomInt(1, 2);
+    creditReport.oldestAccount.age = getRandomInt(5, 12);
+  } else if (baseScore >= 580) {
+    // Fair credit profile
+    creditReport.paymentHistory.onTime = getRandomInt(20, 35);
+    creditReport.paymentHistory.late = getRandomInt(3, 5);
+    creditReport.creditUtilization = getRandomInt(50, 70);
+    creditReport.inquiries = getRandomInt(2, 4);
+    creditReport.oldestAccount.age = getRandomInt(3, 8);
+  } else {
+    // Poor credit profile
+    creditReport.paymentHistory.onTime = getRandomInt(10, 25);
+    creditReport.paymentHistory.late = getRandomInt(5, 10);
+    creditReport.creditUtilization = getRandomInt(70, 90);
+    creditReport.inquiries = getRandomInt(4, 5);
+    creditReport.oldestAccount.age = getRandomInt(1, 4);
+  }
+
+  // Set oldest account type
+  const accountTypes = ["Credit Card", "Personal Loan", "Mortgage", "Auto Loan"];
+  creditReport.oldestAccount.type = getRandomElement(accountTypes);
+
+  // Generate bureau scores with consistency
+  // Not all bureaus may report scores (up to one might be missing)
+  let missingBureauIndex = -1;
+  if (random() < 0.25) {
+    // 25% chance one bureau is missing
+    missingBureauIndex = Math.floor(random() * bureaus.length);
+  }
+
+  bureaus.forEach((bureau, index) => {
+    // Skip this bureau if it's the missing one
+    if (index === missingBureauIndex) {
+      return;
     }
 
-    const currentScore = faker.number.int({
-      min: bureau.rangeStart,
-      max: bureau.rangeEnd,
-    });
+    // Add variance to base score for this bureau (±30 points)
+    const scoreVariance = getRandomInt(-30, 30);
+    const adjustedScore = Math.max(
+      bureau.rangeStart, 
+      Math.min(bureau.rangeEnd, baseScore + scoreVariance)
+    );
 
-    // Generate score history (last 6 months)
+    // Generate score history (last 6 months) with a consistent trend
     const history = [];
-    const months = [
-      "Feb 2025",
-      "Jan 2025",
-      "Dec 2024",
-      "Nov 2024",
-      "Oct 2024",
-      "Sep 2024",
-    ];
-
-    let scoreVariation = currentScore;
+    const months = ["Feb 2025", "Jan 2025", "Dec 2024", "Nov 2024", "Oct 2024", "Sep 2024"];
+    
+    // Determine if score is improving or declining
+    const improvingScore = random() > 0.3; // 70% chance score is improving over time
+    let scoreVariation = adjustedScore;
+    
     for (let i = 0; i < months.length; i++) {
       if (i === 0) {
         history.push({ date: months[i], score: scoreVariation });
       } else {
-        // Random score decrease as we go back in time (between 5-20 points)
-        const decrease = faker.number.int({ min: 5, max: 20 });
-        scoreVariation = Math.max(bureau.rangeStart, scoreVariation - decrease);
+        // Score change between months (between 5-15 points)
+        const change = getRandomInt(5, 15);
+        if (improvingScore) {
+          // For improving scores, we decrease as we go back in time
+          scoreVariation = Math.max(bureau.rangeStart, scoreVariation - change);
+        } else {
+          // For declining scores, we increase as we go back in time (up to max range)
+          scoreVariation = Math.min(bureau.rangeEnd, scoreVariation + change);
+        }
         history.push({ date: months[i], score: scoreVariation });
       }
     }
 
     creditReport.bureauScores.push({
       bureau: bureau.name,
-      score: currentScore,
+      score: adjustedScore,
       rangeStart: bureau.rangeStart,
       rangeEnd: bureau.rangeEnd,
       history: history,
     });
   });
 
-  // Generate active loans (1-3)
-  const activeLoansCount = faker.number.int({ min: 1, max: 3 });
+  // Generate active loans (1-3) based on credit profile
+  const activeLoansCount = baseScore >= 670 ? getRandomInt(1, 3) : getRandomInt(0, 2);
+  const loanTypes = ["Mortgage", "Personal Loan", "Auto Loan", "Education Loan", "Credit Card"];
+  const lenders = ["CitiBank", "Wells Fargo", "Bank of America", "Chase", "HDFC", "ICICI", "SBI"];
+  
   for (let i = 0; i < activeLoansCount; i++) {
+    const loanType = getRandomElement(loanTypes);
+    let loanAmount, emi, remainingTenure;
+    
+    // Set realistic loan amounts based on type
+    switch(loanType) {
+      case "Mortgage":
+        loanAmount = getRandomInt(100000, 500000);
+        remainingTenure = getRandomInt(60, 240);
+        break;
+      case "Auto Loan":
+        loanAmount = getRandomInt(20000, 80000);
+        remainingTenure = getRandomInt(12, 60);
+        break;
+      case "Personal Loan":
+        loanAmount = getRandomInt(10000, 50000);
+        remainingTenure = getRandomInt(12, 48);
+        break;
+      case "Education Loan":
+        loanAmount = getRandomInt(15000, 100000);
+        remainingTenure = getRandomInt(24, 120);
+        break;
+      case "Credit Card":
+        loanAmount = getRandomInt(1000, 15000);
+        remainingTenure = getRandomInt(6, 24);
+        break;
+    }
+    
+    // Calculate realistic EMI based on loan amount and tenure
+    // Simple calculation: amount / tenure * (1 + interest factor)
+    const interestFactor = baseScore >= 670 ? 0.3 : 0.5; // Higher interest for lower scores
+    emi = Math.round((loanAmount / remainingTenure) * (1 + interestFactor));
+    
     creditReport.loans.active.push({
-      type: faker.helpers.arrayElement([
-        "Mortgage",
-        "Personal Loan",
-        "Auto Loan",
-        "Education Loan",
-        "Credit Card",
-      ]),
-      lender: faker.company.name(),
-      amount: faker.number.int({ min: 10000, max: 500000 }),
-      emi: faker.number.int({ min: 500, max: 5000 }),
-      remainingTenure: faker.number.int({ min: 12, max: 240 }),
+      type: loanType,
+      lender: getRandomElement(lenders),
+      amount: loanAmount,
+      emi: emi,
+      remainingTenure: remainingTenure,
     });
   }
 
   // Generate closed loans (0-3)
-  const closedLoansCount = faker.number.int({ min: 0, max: 3 });
+  const closedLoansCount = getRandomInt(0, 3);
+  const pastMonths = [
+    "Jan 2025", "Dec 2024", "Nov 2024", "Oct 2024", "Sep 2024",
+    "Aug 2024", "Jul 2024", "Jun 2024", "May 2024", "Apr 2024"
+  ];
+  
   for (let i = 0; i < closedLoansCount; i++) {
-    const pastMonths = [
-      "Jan 2025",
-      "Dec 2024",
-      "Nov 2024",
-      "Oct 2024",
-      "Sep 2024",
-      "Aug 2024",
-      "Jul 2024",
-      "Jun 2024",
-      "May 2024",
-      "Apr 2024",
-    ];
-
+    const loanType = getRandomElement(loanTypes);
+    let loanAmount;
+    
+    // Set realistic loan amounts based on type
+    switch(loanType) {
+      case "Mortgage":
+        loanAmount = getRandomInt(100000, 300000);
+        break;
+      case "Auto Loan":
+        loanAmount = getRandomInt(15000, 60000);
+        break;
+      case "Personal Loan":
+        loanAmount = getRandomInt(8000, 40000);
+        break;
+      case "Education Loan":
+        loanAmount = getRandomInt(10000, 80000);
+        break;
+      case "Credit Card":
+        loanAmount = getRandomInt(1000, 10000);
+        break;
+    }
+    
     creditReport.loans.closed.push({
-      type: faker.helpers.arrayElement([
-        "Mortgage",
-        "Personal Loan",
-        "Auto Loan",
-        "Education Loan",
-        "Credit Card",
-      ]),
-      lender: faker.company.name(),
-      amount: faker.number.int({ min: 10000, max: 300000 }),
-      closureDate: faker.helpers.arrayElement(pastMonths),
+      type: loanType,
+      lender: getRandomElement(lenders),
+      amount: loanAmount,
+      closureDate: getRandomElement(pastMonths),
     });
   }
 
-  // Generate rejected loans (0-2)
-  const rejectedLoansCount = faker.number.int({ min: 0, max: 2 });
+  // Generate rejected loans (0-2) - more likely with lower credit scores
+  const rejectionProbability = baseScore >= 750 ? 0.1 : 
+                              baseScore >= 670 ? 0.3 : 
+                              baseScore >= 580 ? 0.6 : 0.8;
+                              
+  let rejectedLoansCount = 0;
+  if (random() < rejectionProbability) {
+    rejectedLoansCount = baseScore >= 670 ? getRandomInt(0, 1) : getRandomInt(1, 2);
+  }
+  
+  const rejectionReasons = [
+    "Existing high debt",
+    "Low credit score",
+    "Recent defaults",
+    "Income insufficient",
+    "Employment history issues"
+  ];
+  
   for (let i = 0; i < rejectedLoansCount; i++) {
-    const pastMonths = [
-      "Jan 2025",
-      "Dec 2024",
-      "Nov 2024",
-      "Oct 2024",
-      "Sep 2024",
-      "Aug 2024",
-      "Jul 2024",
-      "Jun 2024",
-      "May 2024",
-      "Apr 2024",
-    ];
-
-    const rejectionReasons = [
-      "Existing high debt",
-      "Low credit score",
-      "Recent defaults",
-      "Income insufficient",
-      "Employment history issues",
-    ];
-
     creditReport.loans.rejected.push({
-      type: faker.helpers.arrayElement([
-        "Business Loan",
-        "Personal Loan",
-        "Mortgage",
-        "Credit Card",
-      ]),
-      lender: faker.company.name(),
-      amount: faker.number.int({ min: 50000, max: 500000 }),
-      date: faker.helpers.arrayElement(pastMonths),
-      reason: faker.helpers.arrayElement(rejectionReasons),
+      type: getRandomElement(["Business Loan", "Personal Loan", "Mortgage", "Credit Card"]),
+      lender: getRandomElement(lenders),
+      amount: getRandomInt(50000, 500000),
+      date: getRandomElement(pastMonths),
+      reason: getRandomElement(rejectionReasons),
     });
   }
 
   // Calculate total accounts
-  creditReport.paymentHistory.totalAccounts =
-    activeLoansCount + closedLoansCount;
+  creditReport.paymentHistory.totalAccounts = activeLoansCount + closedLoansCount;
 
   res.status(200).json(creditReport);
 });
