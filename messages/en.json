@@ -1,4 +1,5 @@
 {
+  "LandingPage": {
     "header": {
       "logo": "CreditUnify",
       "nav": {
@@ -226,31 +227,226 @@
       "description": "Unified credit insights for individuals and financial institutions.",
       "product": {
         "title": "Product",
-        "links": [
-          "Features",
-          "Pricing",
-          "API",
-          "Integrations"
-        ]
+        "links": ["Features", "Pricing", "API", "Integrations"]
       },
       "resources": {
         "title": "Resources",
-        "links": [
-          "Documentation",
-          "Blog",
-          "Support",
-          "FAQ"
-        ]
+        "links": ["Documentation", "Blog", "Support", "FAQ"]
       },
       "company": {
         "title": "Company",
-        "links": [
-          "About",
-          "Careers",
-          "Privacy Policy",
-          "Terms of Service"
-        ]
+        "links": ["About", "Careers", "Privacy Policy", "Terms of Service"]
       },
       "copyright": "© {year} CreditUnify. All rights reserved."
     }
+  },
+  "auth": {
+    "create-account": "Create an account",
+    "already-have-account": "Already have an account?",
+    "name": "Name",
+    "enter-name": "Enter Your Name",
+    "email": "Email",
+    "enter-email": "Enter your Email",
+    "password": "Password",
+    "enter-password": "Enter your Password",
+    "register": "Register",
+    "registering": "Registering user...",
+    "weak-password": "Please set a stronger password",
+    "Creditunify-register": "Creditunify - Register",
+    "Creditunify-login": "Creditunify - Login",
+    "validation": {
+      "email-empty": "Email field is empty!",
+      "name-empty": "Name field is empty!",
+      "password-min": "Password should be minimum 8 characters",
+      "password-regex": "Password should include digits(0-9),special symbols(@,#,&...),Uppercase (A-Z),lowercase(a-z) letters",
+      "passwords-match": "Passwords don't match",
+      "email-required": "Email is Required"
+    },
+    "loading": {
+      "preparing": "Preparing your financial insights",
+      "crunching": "Crunching the numbers",
+      "balancing": "Balancing the books",
+      "counting": "Counting your rupees",
+      "maximizing": "Maximizing your savings",
+      "optimizing": "Optimizing your budget",
+      "empowering": "Empowering Every Rupee",
+      "money-maximized": "Your Money, Maximized",
+      "track-smart": "Track Smart, Spend Wisely",
+      "savings": "Savings in Every Swipe",
+      "financial-clarity": "Financial Clarity, One Click Away",
+      "spend-confidence": "Spend with Confidence, Save with Ease",
+      "master-money": "Master Your Money Flow",
+      "budgeting": "Budgeting Made Brilliant",
+      "finances-optimized": "Your Finances, Fully Optimized",
+      "effortless": "Effortless Tracking, Smarter Spending",
+      "track-with": "track with Creditunify",
+      "Creditunify": "Creditunify"
+    },
+    "Login": {
+      "header": "Sign in to your Account",
+      "backButton": {
+        "label": "Don't have an account?"
+      },
+      "twoFactor": {
+        "label": "Two Factor Code",
+        "confirm": "Confirm"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "xyz@gmail.com"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your Password",
+        "forgot": "Forget password?"
+      },
+      "submit": "Login with Mail",
+      "error": {
+        "oauth": "Email already in use with a different provider!",
+        "generic": "Something went wrong"
+      }
+    },
+    "error": {
+      "title": "Oops! Something went wrong!",
+      "errors": {
+        "configuration": "Try logging in without Google"
+      },
+      "backButton": "Back to login"
+    },
+    "resetPassword": {
+      "header": "Forgot your password?",
+      "backButton": {
+        "text": "Don't have an account?",
+        "href": "/auth/signup"
+      },
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter Your Email",
+      "submitButton": "Send reset password email",
+      "loadingMessage": "Sending reset password email...",
+      "successMessage": "Password reset email sent successfully!",
+      "errorMessage": "An error occurred while sending the email."
+    },
+    "verification": {
+      "header": "Confirming your verification",
+      "back": "Back to login",
+      "missingToken": "Missing Token",
+      "errorGeneral": "Something went wrong"
+    },
+    "newPassword": {
+      "header": "Enter a new password",
+      "backButton": {
+        "text": "Back to login",
+        "href": "/auth/signin"
+      },
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "submitButton": "Reset Password",
+      "loadingMessage": "Changing password...",
+      "successMessage": "Your password has been successfully updated!",
+      "errorMessage": "An error occurred while updating the password."
+    }
+  },
+  "Common": {
+    "getStarted": "Get Started",
+    "switchLanguage": "Switch language",
+    "brand": "Credit",
+    "brandHighlight": "unify"
+  },
+  "admin": {
+    "AdminDashboardPage": {
+      "title": "Admin Dashboard",
+      "description": "Manage banks and view system analytics",
+      "tabs": {
+        "banks": "Bank Management",
+        "activity": "System Activity",
+        "add": "Add New Bank"
+      },
+      "bankManagement": {
+        "title": "Bank Management",
+        "description": "View and manage all registered bank accounts in the system."
+      },
+      "systemActivity": {
+        "title": "Recent System Activity",
+        "description": "Recent credit score checks across all banks in the system."
+      },
+      "addBank": {
+        "title": "Add New Bank",
+        "description": "Create a new bank account in the system."
+      }
+    },
+
+    "DashboardStats": {
+      "totalBanks": "Total Banks",
+      "totalBanksDescription": "Registered financial institutions",
+      "registeredUsers": "Registered Users",
+      "registeredUsersGrowth": "{growth}% from last month",
+      "creditChecksToday": "Credit Checks Today",
+      "creditChecksDescription": "Total inquiries in the last 24 hours",
+      "averageCreditScore": "Average Credit Score",
+      "averageCreditScoreDescription": "Across all users in the system"
+    },
+    "BankActivityTable": {
+      "title": "Recent Activity",
+      "titleWithBank": "Recent Activity for {bankName}",
+      "description": "Last 5 credit score checks performed by this bank",
+      "aadhar": "Aadhar Number",
+      "pan": "PAN",
+      "creditScore": "Credit Score",
+      "dateTime": "Date & Time"
+    },
+    "RecentActivity": {
+      "justNow": "Just now",
+      "hoursAgo": "{hours} hour(s) ago",
+      "loadMore": "Load More",
+      "userCreated": "New user account created",
+      "creditCheck": "Credit score checked for {targetUser}",
+      "alert": "Multiple credit score checks detected for user ID {id}",
+      "creditUpdate": "Credit score updated from {oldScore} to {newScore}",
+      "failedLogin": "Failed login attempts detected for admin account",
+      "userLogin": "Admin user logged in"
+    },
+    "UserAddForm": {
+      "name": "Name",
+      "namePlaceholder": "John Doe",
+      "nameDescription": "The user's full name.",
+      "email": "Email",
+      "emailPlaceholder": "user@example.com",
+      "emailDescription": "The user's email address.",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "passwordDescription": "Must be at least 8 characters with uppercase, lowercase, and number.",
+      "role": "Role",
+      "rolePlaceholder": "Select a role",
+      "roleDescription": "The user's permission level.",
+      "bankName": "Bank Name",
+      "bankNamePlaceholder": "Select a bank",
+      "bankNameDescription": "Required for bank users.",
+      "createUser": "Create User",
+      "creatingUser": "Creating User...",
+      "userCreatedSuccess": "User created successfully",
+      "userCreatedDescription": "{email} has been added with {role} role."
+    },
+    "UserTable": {
+      "bankName": "Bank Name",
+      "email": "Email",
+      "bankCode": "Bank Code",
+      "created": "Created",
+      "lastActive": "Last Active",
+      "actions": "Actions",
+      "viewBankDetails": "View Bank Details",
+      "editBankInfo": "Edit Bank Information",
+      "viewRecentActivity": "View Recent Activity",
+      "viewBankBranches": "View Bank Branches",
+      "deleteBank": "Delete Bank",
+      "confirmDeletion": "Confirm Deletion",
+      "deleteConfirmationMessage": "Are you sure you want to delete {name}? This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "recentActivity": "{name} - Recent Activity",
+      "recentActivityDescription": "Recent credit score checks performed by this bank",
+      "close": "Close"
+    }
   }
+}

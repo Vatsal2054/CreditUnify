@@ -13,6 +13,54 @@ enum UserRole {
   BANK
 }
 
+enum BankName {
+  SBI
+  HDFC
+  ICICI
+  AXIS
+  KOTAK
+  PNB
+  BOB
+  CANARA
+  IDBI
+  UCO
+  BOI
+  IOB
+  CBI
+  SIB
+  FEDERAL
+  KVB
+  LVB
+  DBS
+  CITI
+  HSBC
+  SC
+  RBL
+  YES
+  INDUSIND
+  BANDHAN
+  AU
+  IDFC
+  EQUITAS
+  ESAF
+  UJJIVAN
+  SMALLFIN
+  PAYTM
+  FINCARE
+  JANA
+  NORTHEAST
+  GRAMEEN
+  UTKARSH
+  SURYODAY
+  JALGAON
+  AKOLA
+  KASHI
+  SAMARTH
+  KAIJS
+  KALUPUR
+  OTHER
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -23,8 +71,10 @@ model User {
   role           UserRole @default(USER)
   aadhaarNumber String?
   PAN           String?
+  bankName      BankName?
   creditScores  CreditScore[]
   accounts      Account[]
+  creditScoresBank  CreditScoreBank[]
   isTwoFactorEnable Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
   @@map("users")
@@ -89,13 +139,27 @@ model TwoFactorConfirmation{
 model CreditScore {
   id        String   @id @default(cuid())
   userId    String   @map("user_id")
-  score     Int
+  score     Float
   recordedAt DateTime @default(now()) @map("recorded_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("credit_score_history")
+}
+
+model CreditScoreBank {
+    id        String   @id @default(cuid())
+    userId    String   @map("user_id")
+    aadharNumber String
+    PAN String
+    score Float
+    recordedAt DateTime @default(now()) @map("recorded_at")
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@map("bank_checked_score_history")
 }
 
 model Tokens {

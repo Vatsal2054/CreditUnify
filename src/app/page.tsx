@@ -53,7 +53,7 @@ const AnimatedCounter = ({ targetValue, duration = 2, className = '' }) => {
   const [count, setCount] = useState(0);
   const counterRef = useRef(null);
   const isInView = useInView(counterRef, { once: true });
-
+  
   useEffect(() => {
     if (isInView) {
       let startTime;
@@ -68,7 +68,7 @@ const AnimatedCounter = ({ targetValue, duration = 2, className = '' }) => {
           animationFrame = requestAnimationFrame(countUp);
         }
       };
-
+      
       animationFrame = requestAnimationFrame(countUp);
       return () => cancelAnimationFrame(animationFrame);
     }
@@ -78,7 +78,7 @@ const AnimatedCounter = ({ targetValue, duration = 2, className = '' }) => {
 };
 
 export default function Home() {
-  const  t  = useTranslations();
+  const  t  = useTranslations("LandingPage");
   const [activeTab, setActiveTab] = useState('user');
 
 
@@ -133,12 +133,14 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={()=> {window.location.href="/auth/signin";}}>
                 {t('header.buttons.login')}
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="sm" className="bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600">
+              <Button size="sm" className="bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-600"
+                onClick={()=> {window.location.href="/auth/signup";}}
+              >
                 {t('header.buttons.signup')}
               </Button>
             </motion.div>
