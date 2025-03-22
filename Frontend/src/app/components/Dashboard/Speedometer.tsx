@@ -90,11 +90,11 @@ const EnhancedSpeedometer = ({ data }) => {
   // Generate tick marks around the full speedometer
   const generateTicks = () => {
     const ticks = [];
-    // Generate 21 ticks for a full 180 degree arc (every 9 degrees)
-    for (let i = 0; i <= 20; i++) {
-      const tickAngle = -180 + i * 9;
-      const isMajor = i % 5 === 0;
-      const tickLength = isMajor ? 12 : 8;
+    // Generate 11 ticks (fewer for compactness) for a full 180 degree arc
+    for (let i = 0; i <= 10; i++) {
+      const tickAngle = -180 + i * 18;
+      const isMajor = i % 2 === 0;
+      const tickLength = isMajor ? 8 : 5;
 
       const x1 = 100 + 78 * Math.cos((tickAngle * Math.PI) / 180);
       const y1 = 100 + 78 * Math.sin((tickAngle * Math.PI) / 180);
@@ -118,46 +118,43 @@ const EnhancedSpeedometer = ({ data }) => {
     return ticks;
   };
 
-  // Convert number to array of digits for animation
-  const digits = displayScore.toString().split('');
-
   return (
-    <div className="bg-white rounded-xl p-6 shadow-lg w-full max-w-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white rounded-lg p-3 shadow-sm w-full border border-gray-100 h-full">
       <div className="flex flex-col items-center">
         {/* Bureau name with badge */}
-        <div className="flex items-center mb-6">
-          <h3 className="text-2xl font-bold text-gray-800">{bureau}</h3>
-          <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+        <div className="flex items-center mb-2">
+          <h3 className="text-lg font-bold text-gray-800">{bureau}</h3>
+          <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
             Score
           </span>
         </div>
 
-        {/* Fixed digit animation display */}
-        <div className="flex justify-center mb-2">
+        {/* Score display */}
+        <div className="flex justify-center mb-1">
           <CountUp
             from={0}
             to={score}
             separator=","
             direction="up"
-            duration={.5}
-            className={`count-up-text ${getScoreColor()} text-5xl font-[700]`}
+            duration={0.5}
+            className={`${getScoreColor()} text-3xl font-bold`}
           />
         </div>
 
         {/* Range display */}
-        <div className="text-sm text-gray-500 mb-6">
+        <div className="text-xs text-gray-500 mb-2">
           Range: {rangeStart} - {rangeEnd}
         </div>
 
         {/* Gauge */}
-        <div className="relative w-full h-40 mb-4">
+        <div className="relative w-full h-24 mb-2">
           <svg width="100%" height="100%" viewBox="0 0 200 120">
             {/* Background circle for the full 180-degree arc */}
             <path
               d="M 10 100 A 90 90 0 0 1 190 100"
               fill="none"
               stroke="#f1f1f1"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
 
@@ -166,7 +163,7 @@ const EnhancedSpeedometer = ({ data }) => {
               d="M 10 100 A 90 90 0 0 1 42 31"
               fill="none"
               stroke="#FF7A50"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
 
@@ -175,7 +172,7 @@ const EnhancedSpeedometer = ({ data }) => {
               d="M 42 31 A 90 90 0 0 1 158 31"
               fill="none"
               stroke="#FFC93C"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
 
@@ -184,7 +181,7 @@ const EnhancedSpeedometer = ({ data }) => {
               d="M 158 31 A 90 90 0 0 1 190 100"
               fill="none"
               stroke="#34C77B"
-              strokeWidth="14"
+              strokeWidth="12"
               strokeLinecap="round"
             />
 
@@ -193,25 +190,23 @@ const EnhancedSpeedometer = ({ data }) => {
 
             {/* Needle */}
             <g transform={`rotate(${needleAngle}, 100, 100)`}>
-              {/* Needle */}
               <line
                 x1="100"
                 y1="100"
                 x2="100"
                 y2="30"
                 stroke="#333"
-                strokeWidth="3"
+                strokeWidth="2"
                 strokeLinecap="round"
               />
-              {/* Needle base */}
-              <circle cx="100" cy="100" r="6" fill="#333" />
+              <circle cx="100" cy="100" r="5" fill="#333" />
             </g>
 
             {/* Center point */}
             <circle
               cx="100"
               cy="100"
-              r="10"
+              r="8"
               fill="white"
               stroke="#ccc"
               strokeWidth="1"
@@ -221,21 +216,21 @@ const EnhancedSpeedometer = ({ data }) => {
 
         {/* Labels and value display */}
         <div className="w-full grid grid-cols-3 text-center">
-          <span className="text-sm font-semibold text-orange-500">Poor</span>
-          <span className="text-sm font-semibold text-amber-400">Average</span>
-          <span className="text-sm font-semibold text-emerald-500">
+          <span className="text-xs font-semibold text-orange-500">Poor</span>
+          <span className="text-xs font-semibold text-amber-400">Average</span>
+          <span className="text-xs font-semibold text-emerald-500">
             Excellent
           </span>
         </div>
 
-        <div className="w-full flex justify-between px-2 mt-2">
-          <span className="text-sm font-medium text-gray-700">
+        <div className="w-full flex justify-between px-2 mt-1">
+          <span className="text-xs font-medium text-gray-700">
             {rangeStart}
           </span>
-          <span className={`text-sm font-bold ${getScoreColor()}`}>
+          <span className={`text-xs font-bold ${getScoreColor()}`}>
             {displayPercentage}%
           </span>
-          <span className="text-sm font-medium text-gray-700">{rangeEnd}</span>
+          <span className="text-xs font-medium text-gray-700">{rangeEnd}</span>
         </div>
       </div>
     </div>
