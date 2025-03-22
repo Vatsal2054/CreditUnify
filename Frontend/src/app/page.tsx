@@ -30,6 +30,7 @@ import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import BlurText from '@/components/animations/BlurText';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 // Animated component that fades in when in view
 const FadeInWhenVisible = ({ children, delay = 0, className = '' }) => {
@@ -196,6 +197,7 @@ export default function Home() {
             </motion.div>
           </nav>
           <div className="flex items-center gap-4">
+            <LanguageSwitcher/>
             <ThemeToggle />
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
