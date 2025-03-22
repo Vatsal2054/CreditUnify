@@ -342,7 +342,7 @@ export default function CreditDashboard() {
           {/* Credit Health Overview */}
           {getCreditHealthStatus() && (
             <Card
-              className={`border-l-4 border-${getCreditHealthStatus().color}`}
+              className={border-l-4 border-${getCreditHealthStatus().color}}
             >
               <CardHeader className="pb-2">
                 <CardTitle>Credit Health Overview</CardTitle>
@@ -413,7 +413,7 @@ export default function CreditDashboard() {
                         length: Math.max(0, 4 - userData.bureauScores.length),
                       }).map((_, index) => (
                         <div
-                          key={`empty-${index}`}
+                          key={empty-${index}}
                           className="flex justify-center"
                         >
                           <Card className="bg-gray-50 w-full h-full border border-gray-100 p-4 rounded-xl flex flex-col items-center justify-center">
@@ -682,7 +682,7 @@ export default function CreditDashboard() {
                               ? 'bg-amber-500'
                               : 'bg-red-600'
                           }`}
-                          style={{ width: `${userData.creditUtilization}%` }}
+                          style={{ width: ${userData.creditUtilization}% }}
                         ></div>
                       </div>
                       <div className="flex justify-between mt-1 text-xs text-muted-foreground">

@@ -1,39 +1,24 @@
 "use client";
 
+import { useCurrentUserClient } from "@/hooks/use-current-user";
+import { DEFAULT_LOGIN_REDIRECT_ADMIN, DEFAULT_LOGIN_REDIRECT_BANK, DEFAULT_LOGIN_REDIRECT_USER } from "@/routes";
+import { Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "../ui/button";
-import { signIn } from "next-auth/react";
-import { DEFAULT_LOGIN_REDIRECT_ADMIN, DEFAULT_LOGIN_REDIRECT_BANK, DEFAULT_LOGIN_REDIRECT_USER } from "@/routes";
-import { use, useState } from "react";
-import { Loader2 } from "lucide-react";
-import { useTheme } from "next-themes";
-import { useSearchParams } from "next/navigation";
-import { useCurrentUserClient } from "@/hooks/use-current-user";
 
 export const Social = ({disabled,setDisabled}:{disabled:boolean,setDisabled:any}) => {
   const [googlePassword, setgooglePassword] = useState<boolean>(false);
   const {theme} = useTheme();
   const [Theme,setTheme] = useState<string>(theme as string);
-  const searchparams = useSearchParams();
-  const callbackUrl = searchparams.get("callbackUrl")
   const user = useCurrentUserClient();
   const onClick = () => {
     // setDisabled(true);
     setgooglePassword(true);
     try{
-      if(!user)
-        return null;
-      let redirecturl="";
-      if(user.role==="USER"){
-        redirecturl=DEFAULT_LOGIN_REDIRECT_USER;
-      }else if(user.role==="ADMIN"){
-        redirecturl=DEFAULT_LOGIN_REDIRECT_ADMIN;
-      }else if(user.role==="BANK"){
-        redirecturl=DEFAULT_LOGIN_REDIRECT_BANK;
-      }
-      signIn("google",{
-        callbackUrl:redirecturl
-      });
+      signIn("google");
   }catch(e){
     console.error("Error: ",e);
   }
