@@ -32,6 +32,7 @@ import EnhancedSpeedometer from '@/app/components/Dashboard/Speedometer';
 import CreditScoreChart from '../_components/User/CreditScoreChart';
 import { useCurrentUserClient } from '@/hooks/use-current-user';
 import AIInsight from './components/ai-insight';
+import LoanInterestRates from './components/loan-interest-rates';
 
 // Mock API function to simulate data fetching
 const fetchUserCreditData = async () => {
@@ -855,6 +856,7 @@ export default function CreditDashboard() {
             </div>
           </div>
         )}
+        {userData && <LoanInterestRates />}
       </div>
       <AIInsight />
     </>
