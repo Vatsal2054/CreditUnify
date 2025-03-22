@@ -280,40 +280,114 @@ app.get("/get-scores", (req, res) => {
     { name: "CRIF", rangeStart: 1, rangeEnd: 999 },
   ];
 
-  // Optional: Allow client to specify a seed for consistent results
-  // This enables getting the same report for the same user/session
-  const seed = req.query.seed || "default-seed";
-  const random = seedrandom(seed);
-
-  // Helper function to get consistent random numbers
+  // Helper function to get random numbers
   const getRandomInt = (min, max) => {
-    return Math.floor(random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
   // Helper function to get random element from array
   const getRandomElement = (array) => {
-    return array[Math.floor(random() * array.length)];
+    return array[Math.floor(Math.random() * array.length)];
   };
 
-  // Generate base credit score (affects everything else)
-  // Base score determines if user has good or problematic credit
-  const baseScoreQuality = random();
-  let baseScore;
-  
-  if (baseScoreQuality > 0.8) {
-    // Excellent credit (20% chance)
-    baseScore = getRandomInt(750, 850);
-  } else if (baseScoreQuality > 0.5) {
-    // Good credit (30% chance)
-    baseScore = getRandomInt(670, 749);
-  } else if (baseScoreQuality > 0.2) {
-    // Fair credit (30% chance)
-    baseScore = getRandomInt(580, 669);
+  // Define credit profile categories and their score ranges
+  const creditProfiles = [
+    { name: "poor", minScore: 300, maxScore: 579 },
+    { name: "fair", minScore: 580, maxScore: 669 },
+    { name: "good", minScore: 670, maxScore: 749 },
+    { name: "excellent", minScore: 750, maxScore: 850 }
+  ];
+
+  // Determine base credit profile
+  const baseProfileRoll = Math.random();
+  let baseProfile;
+  if (baseProfileRoll > 0.8) {
+    baseProfile = creditProfiles[3]; // excellent (20% chance)
+  } else if (baseProfileRoll > 0.5) {
+    baseProfile = creditProfiles[2]; // good (30% chance)
+  } else if (baseProfileRoll > 0.2) {
+    baseProfile = creditProfiles[1]; // fair (30% chance)
   } else {
-    // Poor credit (20% chance)
-    baseScore = getRandomInt(300, 579);
+    baseProfile = creditProfiles[0]; // poor (20% chance)
   }
 
+  // Generate base score within the profile range
+  const baseScore = getRandomInt(baseProfile.minScore, baseProfile.maxScore);
+
+  // Calculate key credit factors based on profile
+  let creditFactors = {};
+  
+  // 1. Payment history (most influential factor ~35%)
+  if (baseProfile.name === "excellent") {
+    creditFactors.paymentHistory = {
+      onTimePayments: getRandomInt(95, 100), // percentage
+      latePayments: getRandomInt(0, 1),
+      totalPayments: getRandomInt(40, 60)
+    };
+  } else if (baseProfile.name === "good") {
+    creditFactors.paymentHistory = {
+      onTimePayments: getRandomInt(85, 94),
+      latePayments: getRandomInt(1, 3),
+      totalPayments: getRandomInt(30, 45)
+    };
+  } else if (baseProfile.name === "fair") {
+    creditFactors.paymentHistory = {
+      onTimePayments: getRandomInt(75, 84),
+      latePayments: getRandomInt(3, 5),
+      totalPayments: getRandomInt(20, 35)
+    };
+  } else { // poor
+    creditFactors.paymentHistory = {
+      onTimePayments: getRandomInt(50, 74),
+      latePayments: getRandomInt(5, 10),
+      totalPayments: getRandomInt(10, 25)
+    };
+  }
+  
+  // 2. Credit utilization (~30%)
+  if (baseProfile.name === "excellent") {
+    creditFactors.utilization = getRandomInt(1, 20);
+  } else if (baseProfile.name === "good") {
+    creditFactors.utilization = getRandomInt(21, 40);
+  } else if (baseProfile.name === "fair") {
+    creditFactors.utilization = getRandomInt(41, 70);
+  } else { // poor
+    creditFactors.utilization = getRandomInt(71, 100);
+  }
+  
+  // 3. Credit history length (~15%)
+  if (baseProfile.name === "excellent") {
+    creditFactors.historyLength = getRandomInt(7, 15); // years
+  } else if (baseProfile.name === "good") {
+    creditFactors.historyLength = getRandomInt(4, 8);
+  } else if (baseProfile.name === "fair") {
+    creditFactors.historyLength = getRandomInt(2, 5);
+  } else { // poor
+    creditFactors.historyLength = getRandomInt(0, 3);
+  }
+  
+  // 4. Credit mix (~10%)
+  if (baseProfile.name === "excellent") {
+    creditFactors.loanMix = getRandomInt(4, 5); // number of different loan types
+  } else if (baseProfile.name === "good") {
+    creditFactors.loanMix = getRandomInt(3, 4);
+  } else if (baseProfile.name === "fair") {
+    creditFactors.loanMix = getRandomInt(2, 3);
+  } else { // poor
+    creditFactors.loanMix = getRandomInt(1, 2);
+  }
+  
+  // 5. Recent inquiries (~10%)
+  if (baseProfile.name === "excellent") {
+    creditFactors.inquiries = getRandomInt(0, 1);
+  } else if (baseProfile.name === "good") {
+    creditFactors.inquiries = getRandomInt(1, 2);
+  } else if (baseProfile.name === "fair") {
+    creditFactors.inquiries = getRandomInt(2, 4);
+  } else { // poor
+    creditFactors.inquiries = getRandomInt(4, 6);
+  }
+  
   // Generate credit report data
   const creditReport = {
     personalInfo: {
@@ -328,59 +402,166 @@ app.get("/get-scores", (req, res) => {
       rejected: [],
     },
     paymentHistory: {
-      onTime: 0, // Will calculate based on credit quality
-      late: 0, // Will calculate based on credit quality
+      onTime: Math.floor(creditFactors.paymentHistory.totalPayments * (creditFactors.paymentHistory.onTimePayments / 100)),
+      late: creditFactors.paymentHistory.latePayments,
       totalAccounts: 0, // Will calculate below
     },
-    creditUtilization: 0, // Will calculate based on credit quality
-    inquiries: 0, // Will calculate based on credit quality
+    creditUtilization: creditFactors.utilization,
+    inquiries: creditFactors.inquiries,
     oldestAccount: {
       type: "",
-      age: 0,
+      age: creditFactors.historyLength,
     },
   };
 
-  // Calculate consistent credit stats based on base score
-  if (baseScore >= 750) {
-    // Excellent credit profile
-    creditReport.paymentHistory.onTime = getRandomInt(40, 60);
-    creditReport.paymentHistory.late = getRandomInt(0, 1);
-    creditReport.creditUtilization = getRandomInt(10, 30);
-    creditReport.inquiries = getRandomInt(0, 1);
-    creditReport.oldestAccount.age = getRandomInt(7, 15);
-  } else if (baseScore >= 670) {
-    // Good credit profile
-    creditReport.paymentHistory.onTime = getRandomInt(30, 45);
-    creditReport.paymentHistory.late = getRandomInt(1, 3);
-    creditReport.creditUtilization = getRandomInt(30, 50);
-    creditReport.inquiries = getRandomInt(1, 2);
-    creditReport.oldestAccount.age = getRandomInt(5, 12);
-  } else if (baseScore >= 580) {
-    // Fair credit profile
-    creditReport.paymentHistory.onTime = getRandomInt(20, 35);
-    creditReport.paymentHistory.late = getRandomInt(3, 5);
-    creditReport.creditUtilization = getRandomInt(50, 70);
-    creditReport.inquiries = getRandomInt(2, 4);
-    creditReport.oldestAccount.age = getRandomInt(3, 8);
-  } else {
-    // Poor credit profile
-    creditReport.paymentHistory.onTime = getRandomInt(10, 25);
-    creditReport.paymentHistory.late = getRandomInt(5, 10);
-    creditReport.creditUtilization = getRandomInt(70, 90);
-    creditReport.inquiries = getRandomInt(4, 5);
-    creditReport.oldestAccount.age = getRandomInt(1, 4);
-  }
+  // Set oldest account type - higher tier profiles more likely to have mortgage as oldest
+  const accountTypesByProfile = {
+    "excellent": ["Mortgage", "Auto Loan", "Credit Card", "Personal Loan"],
+    "good": ["Credit Card", "Auto Loan", "Mortgage", "Personal Loan"],
+    "fair": ["Credit Card", "Personal Loan", "Auto Loan"],
+    "poor": ["Credit Card", "Personal Loan"]
+  };
+  
+  creditReport.oldestAccount.type = getRandomElement(accountTypesByProfile[baseProfile.name]);
 
-  // Set oldest account type
-  const accountTypes = ["Credit Card", "Personal Loan", "Mortgage", "Auto Loan"];
-  creditReport.oldestAccount.type = getRandomElement(accountTypes);
+  // Create score history trend based on credit profile
+  // Each bureau gets a consistent history that aligns with the profile
+  const generateScoreHistory = (currentScore, bureau, profile) => {
+    const months = ["Feb 2025", "Jan 2025", "Dec 2024", "Nov 2024", "Oct 2024", "Sep 2024"];
+    const history = [];
+    
+    // Determine trend pattern based on profile
+    let pattern;
+    if (profile.name === "excellent") {
+      // Excellent profiles have stable or slightly improving scores
+      pattern = getRandomElement([
+        "stable", // Minimal changes
+        "gradual-improvement", // Slow, steady improvement
+      ]);
+    } else if (profile.name === "good") {
+      pattern = getRandomElement([
+        "gradual-improvement", // Steady improvement
+        "fluctuating-improvement", // Improvement with small setbacks
+      ]);
+    } else if (profile.name === "fair") {
+      pattern = getRandomElement([
+        "fluctuating-improvement", // Improvement with setbacks
+        "recovery", // Recovering from previous issues
+        "recent-dip" // Generally good but recent problems
+      ]);
+    } else { // poor
+      pattern = getRandomElement([
+        "declining", // Getting worse
+        "early-recovery", // Just starting to recover
+        "volatile" // Unstable with big swings
+      ]);
+    }
+    
+    // Set starting score (current score)
+    let currentPoint = currentScore;
+    history.push({ date: months[0], score: currentPoint });
+    
+    // Apply the pattern to generate history
+    for (let i = 1; i < months.length; i++) {
+      switch (pattern) {
+        case "stable":
+          // Very minor fluctuations (-5 to +5)
+          currentPoint = Math.max(
+            bureau.rangeStart,
+            Math.min(bureau.rangeEnd, currentPoint + getRandomInt(-5, 5))
+          );
+          break;
+          
+        case "gradual-improvement":
+          // Consistent small decreases as we go back in time (-5 to -15)
+          currentPoint = Math.max(
+            bureau.rangeStart,
+            currentPoint - getRandomInt(5, 15)
+          );
+          break;
+          
+        case "fluctuating-improvement":
+          // Generally decreasing with occasional small increases
+          if (Math.random() < 0.25) { // 25% chance of a small increase
+            currentPoint = Math.min(
+              bureau.rangeEnd,
+              currentPoint + getRandomInt(3, 8)
+            );
+          } else {
+            currentPoint = Math.max(
+              bureau.rangeStart,
+              currentPoint - getRandomInt(10, 20)
+            );
+          }
+          break;
+          
+        case "recovery":
+          // Larger decreases as we go back in time (steeper recovery)
+          currentPoint = Math.max(
+            bureau.rangeStart,
+            currentPoint - getRandomInt(15, 25)
+          );
+          break;
+          
+        case "recent-dip":
+          // First big drop, then gradually better in the past
+          if (i === 1) {
+            currentPoint = Math.max(
+              bureau.rangeStart,
+              currentPoint - getRandomInt(20, 40)
+            );
+          } else {
+            currentPoint = Math.min(
+              bureau.rangeEnd,
+              currentPoint + getRandomInt(5, 15)
+            );
+          }
+          break;
+          
+        case "declining":
+          // Generally increasing as we go back in time (was better before)
+          currentPoint = Math.min(
+            bureau.rangeEnd,
+            currentPoint + getRandomInt(10, 20)
+          );
+          break;
+          
+        case "early-recovery":
+          // Small decreases for recent months, then larger drops
+          if (i <= 2) {
+            currentPoint = Math.max(
+              bureau.rangeStart,
+              currentPoint - getRandomInt(5, 10)
+            );
+          } else {
+            currentPoint = Math.max(
+              bureau.rangeStart,
+              currentPoint - getRandomInt(15, 30)
+            );
+          }
+          break;
+          
+        case "volatile":
+          // Significant random changes
+          const volatileChange = getRandomInt(-30, 30);
+          currentPoint = Math.max(
+            bureau.rangeStart,
+            Math.min(bureau.rangeEnd, currentPoint + volatileChange)
+          );
+          break;
+      }
+      
+      history.push({ date: months[i], score: currentPoint });
+    }
+    
+    return history;
+  };
 
   // Generate bureau scores with consistency
-  // Not all bureaus may report scores (up to one might be missing)
   let missingBureauIndex = -1;
-  if (random() < 0.25) {
+  if (Math.random() < 0.25) {
     // 25% chance one bureau is missing
-    missingBureauIndex = Math.floor(random() * bureaus.length);
+    missingBureauIndex = Math.floor(Math.random() * bureaus.length);
   }
 
   bureaus.forEach((bureau, index) => {
@@ -389,37 +570,15 @@ app.get("/get-scores", (req, res) => {
       return;
     }
 
-    // Add variance to base score for this bureau (±30 points)
-    const scoreVariance = getRandomInt(-30, 30);
+    // Add variance to base score for this bureau (±20 points)
+    const scoreVariance = getRandomInt(-20, 20);
     const adjustedScore = Math.max(
       bureau.rangeStart, 
       Math.min(bureau.rangeEnd, baseScore + scoreVariance)
     );
 
-    // Generate score history (last 6 months) with a consistent trend
-    const history = [];
-    const months = ["Feb 2025", "Jan 2025", "Dec 2024", "Nov 2024", "Oct 2024", "Sep 2024"];
-    
-    // Determine if score is improving or declining
-    const improvingScore = random() > 0.3; // 70% chance score is improving over time
-    let scoreVariation = adjustedScore;
-    
-    for (let i = 0; i < months.length; i++) {
-      if (i === 0) {
-        history.push({ date: months[i], score: scoreVariation });
-      } else {
-        // Score change between months (between 5-15 points)
-        const change = getRandomInt(5, 15);
-        if (improvingScore) {
-          // For improving scores, we decrease as we go back in time
-          scoreVariation = Math.max(bureau.rangeStart, scoreVariation - change);
-        } else {
-          // For declining scores, we increase as we go back in time (up to max range)
-          scoreVariation = Math.min(bureau.rangeEnd, scoreVariation + change);
-        }
-        history.push({ date: months[i], score: scoreVariation });
-      }
-    }
+    // Generate score history with the pattern appropriate for the credit profile
+    const history = generateScoreHistory(adjustedScore, bureau, baseProfile);
 
     creditReport.bureauScores.push({
       bureau: bureau.name,
@@ -430,43 +589,125 @@ app.get("/get-scores", (req, res) => {
     });
   });
 
-  // Generate active loans (1-3) based on credit profile
-  const activeLoansCount = baseScore >= 670 ? getRandomInt(1, 3) : getRandomInt(0, 2);
+  // Generate loans that match the credit profile
   const loanTypes = ["Mortgage", "Personal Loan", "Auto Loan", "Education Loan", "Credit Card"];
   const lenders = ["CitiBank", "Wells Fargo", "Bank of America", "Chase", "HDFC", "ICICI", "SBI"];
   
+  // Select loan types based on profile's loan mix
+  const availableLoanTypes = [];
+  for (let i = 0; i < creditFactors.loanMix; i++) {
+    if (availableLoanTypes.length < loanTypes.length) {
+      let newType;
+      do {
+        newType = getRandomElement(loanTypes);
+      } while (availableLoanTypes.includes(newType));
+      availableLoanTypes.push(newType);
+    }
+  }
+  
+  // Generate active loans
+  // Number depends on credit profile but is constrained by loan mix
+  const activeLoansCount = Math.min(
+    getRandomInt(
+      baseProfile.name === "poor" ? 0 : 1,
+      baseProfile.name === "excellent" ? 3 : 2
+    ),
+    availableLoanTypes.length
+  );
+  
   for (let i = 0; i < activeLoansCount; i++) {
-    const loanType = getRandomElement(loanTypes);
+    const loanType = availableLoanTypes[i];
     let loanAmount, emi, remainingTenure;
     
-    // Set realistic loan amounts based on type
+    // Set realistic loan amounts and terms based on type and credit profile
     switch(loanType) {
       case "Mortgage":
-        loanAmount = getRandomInt(100000, 500000);
-        remainingTenure = getRandomInt(60, 240);
+        // Better credit profiles get larger loans with longer terms
+        if (baseProfile.name === "excellent") {
+          loanAmount = getRandomInt(250000, 500000);
+          remainingTenure = getRandomInt(180, 240);
+        } else if (baseProfile.name === "good") {
+          loanAmount = getRandomInt(180000, 300000);
+          remainingTenure = getRandomInt(120, 180);
+        } else {
+          loanAmount = getRandomInt(100000, 200000);
+          remainingTenure = getRandomInt(60, 120);
+        }
         break;
+        
       case "Auto Loan":
-        loanAmount = getRandomInt(20000, 80000);
-        remainingTenure = getRandomInt(12, 60);
+        if (baseProfile.name === "excellent") {
+          loanAmount = getRandomInt(40000, 80000);
+          remainingTenure = getRandomInt(36, 60);
+        } else if (baseProfile.name === "good") {
+          loanAmount = getRandomInt(25000, 50000);
+          remainingTenure = getRandomInt(24, 48);
+        } else {
+          loanAmount = getRandomInt(15000, 30000);
+          remainingTenure = getRandomInt(12, 36);
+        }
         break;
+        
       case "Personal Loan":
-        loanAmount = getRandomInt(10000, 50000);
-        remainingTenure = getRandomInt(12, 48);
+        if (baseProfile.name === "excellent") {
+          loanAmount = getRandomInt(25000, 50000);
+          remainingTenure = getRandomInt(24, 48);
+        } else if (baseProfile.name === "good") {
+          loanAmount = getRandomInt(15000, 30000);
+          remainingTenure = getRandomInt(18, 36);
+        } else {
+          loanAmount = getRandomInt(5000, 15000);
+          remainingTenure = getRandomInt(12, 24);
+        }
         break;
+        
       case "Education Loan":
-        loanAmount = getRandomInt(15000, 100000);
-        remainingTenure = getRandomInt(24, 120);
+        if (baseProfile.name === "excellent") {
+          loanAmount = getRandomInt(50000, 100000);
+          remainingTenure = getRandomInt(60, 120);
+        } else if (baseProfile.name === "good") {
+          loanAmount = getRandomInt(30000, 60000);
+          remainingTenure = getRandomInt(48, 84);
+        } else {
+          loanAmount = getRandomInt(15000, 35000);
+          remainingTenure = getRandomInt(36, 60);
+        }
         break;
+        
       case "Credit Card":
-        loanAmount = getRandomInt(1000, 15000);
-        remainingTenure = getRandomInt(6, 24);
+        if (baseProfile.name === "excellent") {
+          loanAmount = getRandomInt(5000, 15000);
+          remainingTenure = getRandomInt(12, 24);
+        } else if (baseProfile.name === "good") {
+          loanAmount = getRandomInt(3000, 8000);
+          remainingTenure = getRandomInt(6, 18);
+        } else {
+          loanAmount = getRandomInt(1000, 4000);
+          remainingTenure = getRandomInt(3, 12);
+        }
         break;
     }
     
-    // Calculate realistic EMI based on loan amount and tenure
-    // Simple calculation: amount / tenure * (1 + interest factor)
-    const interestFactor = baseScore >= 670 ? 0.3 : 0.5; // Higher interest for lower scores
-    emi = Math.round((loanAmount / remainingTenure) * (1 + interestFactor));
+    // Calculate realistic EMI based on loan amount, tenure and credit profile
+    // Interest rates are higher for lower credit scores
+    const interestRates = {
+      "excellent": { min: 0.05, max: 0.08 }, // 5-8%
+      "good": { min: 0.08, max: 0.12 }, // 8-12%
+      "fair": { min: 0.12, max: 0.18 }, // 12-18%
+      "poor": { min: 0.18, max: 0.24 }  // 18-24%
+    };
+    
+    const interestRate = getRandomInt(
+      interestRates[baseProfile.name].min * 100, 
+      interestRates[baseProfile.name].max * 100
+    ) / 100;
+    
+    // Simple EMI calculation: P × r × (1 + r)^n / ((1 + r)^n - 1)
+    // where P is principal, r is monthly interest rate, n is tenure in months
+    const monthlyRate = interestRate / 12;
+    const emiCalculation = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, remainingTenure)) / 
+                           (Math.pow(1 + monthlyRate, remainingTenure) - 1);
+    emi = Math.round(emiCalculation);
     
     creditReport.loans.active.push({
       type: loanType,
@@ -474,36 +715,65 @@ app.get("/get-scores", (req, res) => {
       amount: loanAmount,
       emi: emi,
       remainingTenure: remainingTenure,
+      interestRate: (interestRate * 100).toFixed(2) + "%"
     });
   }
 
-  // Generate closed loans (0-3)
-  const closedLoansCount = getRandomInt(0, 3);
+  // Generate closed loans - number correlates with credit history length
+  const closedLoansCount = Math.min(
+    getRandomInt(0, Math.floor(creditFactors.historyLength / 2)),
+    3
+  );
+  
   const pastMonths = [
     "Jan 2025", "Dec 2024", "Nov 2024", "Oct 2024", "Sep 2024",
     "Aug 2024", "Jul 2024", "Jun 2024", "May 2024", "Apr 2024"
   ];
   
   for (let i = 0; i < closedLoansCount; i++) {
-    const loanType = getRandomElement(loanTypes);
+    // Pick a loan type that's not already active if possible
+    let loanType;
+    const unusedTypes = loanTypes.filter(type => !availableLoanTypes.includes(type));
+    if (unusedTypes.length > 0) {
+      loanType = getRandomElement(unusedTypes);
+      availableLoanTypes.push(loanType); // Add to available types for tracking
+    } else {
+      loanType = getRandomElement(loanTypes);
+    }
+    
     let loanAmount;
     
-    // Set realistic loan amounts based on type
+    // Set realistic loan amounts based on type and credit profile
     switch(loanType) {
       case "Mortgage":
-        loanAmount = getRandomInt(100000, 300000);
+        loanAmount = getRandomInt(
+          baseProfile.name === "excellent" ? 200000 : 100000,
+          baseProfile.name === "excellent" ? 400000 : 250000
+        );
         break;
       case "Auto Loan":
-        loanAmount = getRandomInt(15000, 60000);
+        loanAmount = getRandomInt(
+          baseProfile.name === "excellent" ? 30000 : 15000,
+          baseProfile.name === "excellent" ? 60000 : 40000
+        );
         break;
       case "Personal Loan":
-        loanAmount = getRandomInt(8000, 40000);
+        loanAmount = getRandomInt(
+          baseProfile.name === "excellent" ? 20000 : 8000,
+          baseProfile.name === "excellent" ? 40000 : 25000
+        );
         break;
       case "Education Loan":
-        loanAmount = getRandomInt(10000, 80000);
+        loanAmount = getRandomInt(
+          baseProfile.name === "excellent" ? 40000 : 10000,
+          baseProfile.name === "excellent" ? 80000 : 50000
+        );
         break;
       case "Credit Card":
-        loanAmount = getRandomInt(1000, 10000);
+        loanAmount = getRandomInt(
+          baseProfile.name === "excellent" ? 3000 : 1000,
+          baseProfile.name === "excellent" ? 10000 : 5000
+        );
         break;
     }
     
@@ -515,31 +785,63 @@ app.get("/get-scores", (req, res) => {
     });
   }
 
-  // Generate rejected loans (0-2) - more likely with lower credit scores
-  const rejectionProbability = baseScore >= 750 ? 0.1 : 
-                              baseScore >= 670 ? 0.3 : 
-                              baseScore >= 580 ? 0.6 : 0.8;
-                              
+  // Generate rejected loans - more likely with lower credit scores
+  // Probability directly correlates with credit profile
+  const rejectionProbabilities = {
+    "excellent": 0.05, // 5% chance
+    "good": 0.20,      // 20% chance
+    "fair": 0.60,      // 60% chance
+    "poor": 0.90       // 90% chance
+  };
+  
+  // Check if any rejections should be shown
   let rejectedLoansCount = 0;
-  if (random() < rejectionProbability) {
-    rejectedLoansCount = baseScore >= 670 ? getRandomInt(0, 1) : getRandomInt(1, 2);
+  if (Math.random() < rejectionProbabilities[baseProfile.name]) {
+    rejectedLoansCount = baseProfile.name === "excellent" ? 1 : 
+                        baseProfile.name === "good" ? getRandomInt(1, 1) : 
+                        baseProfile.name === "fair" ? getRandomInt(1, 2) : 
+                        getRandomInt(1, 3);
   }
   
-  const rejectionReasons = [
-    "Existing high debt",
-    "Low credit score",
-    "Recent defaults",
-    "Income insufficient",
-    "Employment history issues"
-  ];
+  // Map rejection reasons to credit profiles
+  const rejectionReasonsByProfile = {
+    "excellent": ["Income verification needed", "Documentation missing"],
+    "good": ["Income insufficient", "Higher debt-to-income ratio than required"],
+    "fair": ["Higher debt-to-income ratio than required", "Credit score below threshold", "Recent credit inquiries"],
+    "poor": ["Low credit score", "Recent defaults", "Existing high debt", "Employment history issues"]
+  };
   
   for (let i = 0; i < rejectedLoansCount; i++) {
+    // Rejected loan types - higher value loans more likely to be rejected for lower scores
+    let rejectedLoanTypes;
+    if (baseProfile.name === "excellent" || baseProfile.name === "good") {
+      rejectedLoanTypes = ["Business Loan", "Mortgage", "Personal Loan"];
+    } else {
+      rejectedLoanTypes = ["Business Loan", "Mortgage", "Personal Loan", "Credit Card", "Auto Loan"];
+    }
+    
+    const loanType = getRandomElement(rejectedLoanTypes);
+    let loanAmount;
+    
+    // Higher amounts for better profiles (they try for bigger loans)
+    if (loanType === "Business Loan") {
+      loanAmount = getRandomInt(100000, 500000);
+    } else if (loanType === "Mortgage") {
+      loanAmount = getRandomInt(200000, 400000);
+    } else if (loanType === "Personal Loan") {
+      loanAmount = getRandomInt(25000, 100000);
+    } else if (loanType === "Credit Card") {
+      loanAmount = getRandomInt(5000, 20000); // Credit limit
+    } else { // Auto Loan
+      loanAmount = getRandomInt(30000, 80000);
+    }
+    
     creditReport.loans.rejected.push({
-      type: getRandomElement(["Business Loan", "Personal Loan", "Mortgage", "Credit Card"]),
+      type: loanType,
       lender: getRandomElement(lenders),
-      amount: getRandomInt(50000, 500000),
+      amount: loanAmount,
       date: getRandomElement(pastMonths),
-      reason: getRandomElement(rejectionReasons),
+      reason: getRandomElement(rejectionReasonsByProfile[baseProfile.name]),
     });
   }
 
