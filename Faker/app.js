@@ -231,11 +231,54 @@ app.get("/api/loans", async (req, res) => {
     });
   }
 
-  const data = await scrapeLoanData(loanType);
+  let data = await scrapeLoanData(loanType);
 
   if (data.error) {
     return res.status(400).json(data);
   }
+
+  // Standardize the data structure
+  data = data.map(item => {
+    // Create a new standardized object
+    const standardized = {};
+    
+    // For two_wheeler_loan type
+    if (loanType === "two_wheeler_loan") {
+      standardized.bank_name = item["TWL Banks"];
+      standardized.interest_rate = item["Interest Rate"];
+      // Copy any other fields you want to keep
+      standardized.loan_amount = item["Loan Amount"];
+      standardized.processing_fees = item["Processing Fees"];
+    }
+    // For education_loan type
+    else if (loanType === "education_loan") {
+      standardized.bank_name = item["Name of Bank"];
+      standardized.interest_rate = item["Interest Rate (p.a.)"];
+      // Copy any other fields you want to keep
+      standardized.processing_fees = item["Processing Fees"];
+    }
+    // For other loan types - add more conditionals as needed
+    else {
+      // Find the bank name field (assuming it contains "bank" or is the first property)
+      const keys = Object.keys(item);
+      const bankKey = keys.find(k => k.toLowerCase().includes('bank')) || keys[0];
+      const interestKey = keys.find(k => k.toLowerCase().includes('interest')) || keys[1];
+      
+      standardized.bank_name = item[bankKey];
+      standardized.interest_rate = item[interestKey];
+      
+      // Copy remaining fields
+      keys.forEach(key => {
+        if (key !== bankKey && key !== interestKey) {
+          // Convert field names to snake_case
+          const snakeCaseKey = key.toLowerCase().replace(/\s+/g, '_');
+          standardized[snakeCaseKey] = item[key];
+        }
+      });
+    }
+    
+    return standardized;
+  });
 
   if (outputFormat.toLowerCase() === "csv") {
     if (!data || data.length === 0) {
