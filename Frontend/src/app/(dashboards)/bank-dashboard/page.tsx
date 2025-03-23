@@ -130,7 +130,7 @@ const apiService = {
       `Making API call to search for customer with Aadhaar: ${aadhaar} and PAN: ${pan}`,
     );
     try {
-      const response = await axios.get('http://localhost:5000/get-scores', {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_FAKER_URL}/get-scores`, {
         params: { aadhaar, pan },
       });
       return response.data;
@@ -146,7 +146,7 @@ const apiService = {
   ): Promise<UnifiedScoreResponse> => {
     console.log(`Making API call to get unified score for ${loanType}`);
     try {
-      const response = await axios.post('http://localhost:5000/unified-score', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_FAKER_URL}/unified-score`, {
         loanType,
         scores,
       });

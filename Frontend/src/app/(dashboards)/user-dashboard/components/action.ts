@@ -29,7 +29,7 @@ export async function processPrompt(prompt: string) {
       (async () => {
         try {
           // Fetch the user's credit score from the API
-          const response = await fetch('http://localhost:5000/get-scores', {
+          const response = await fetch('process.env.NEXT_PUBLIC_FAKER_URLget-scores', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

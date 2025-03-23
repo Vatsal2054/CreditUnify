@@ -38,7 +38,7 @@ import { useRouter } from 'next/navigation';
 
 // Mock API function to simulate data fetching
 const fetchUserCreditData = async () => {
-  const data = await fetch(`http://localhost:5000/get-scores`);
+  const data = await fetch(`${process.env.NEXT_PUBLIC_FAKER_URL}/get-scores`);
   return await data.json();
 };
 

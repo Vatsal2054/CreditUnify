@@ -51,7 +51,7 @@ export default function LoanInterestRates() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/loans?type=${selectedLoanType}`,
+        `${process.env.NEXT_PUBLIC_FAKER_URL}/api/loans?type=${selectedLoanType}`,
       );
 
       if (!response.ok) {
