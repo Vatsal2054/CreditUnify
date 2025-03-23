@@ -316,6 +316,106 @@ app.get("/api/loans", async (req, res) => {
     });
   }
 });
+
+// New route to get all loans with their types
+app.get("/api/all-loans", async (req, res) => {
+  const outputFormat = req.query.format || "json";
+  const loanTypes = Object.keys(URLS); // Assuming URLS contains all loan type keys
+  let allLoansData = [];
+
+  try {
+    // Fetch data for each loan type
+    for (const loanType of loanTypes) {
+      const data = await scrapeLoanData(loanType);
+      
+      if (!data.error && data.length > 0) {
+        // Standardize and add loan type to each entry
+        const standardizedData = data.map((item) => {
+          let standardized = {};
+          
+          // For two_wheeler_loan type
+          if (loanType === "two_wheeler_loan") {
+            standardized.bank_name = item["TWL Banks"];
+            standardized.interest_rate = item["Interest Rate"];
+            standardized.loan_amount = item["Loan Amount"];
+            standardized.processing_fees = item["Processing Fees"];
+          }
+          // For education_loan type
+          else if (loanType === "education_loan") {
+            standardized.bank_name = item["Name of Bank"];
+            standardized.interest_rate = item["Interest Rate (p.a.)"];
+            standardized.processing_fees = item["Processing Fees"];
+          }
+          // For other loan types
+          else {
+            const keys = Object.keys(item);
+            const bankKey =
+              keys.find((k) => k.toLowerCase().includes("bank")) || keys[0];
+            const interestKey =
+              keys.find((k) => k.toLowerCase().includes("interest")) || keys[1];
+
+            standardized.bank_name = item[bankKey];
+            standardized.interest_rate = item[interestKey];
+
+            // Copy remaining fields
+            keys.forEach((key) => {
+              if (key !== bankKey && key !== interestKey) {
+                const snakeCaseKey = key.toLowerCase().replace(/\s+/g, "_");
+                standardized[snakeCaseKey] = item[key];
+              }
+            });
+          }
+          
+          // Add loan type to each entry
+          standardized.loan_type = loanType;
+          
+          return standardized;
+        });
+        
+        // Add to combined results
+        allLoansData = [...allLoansData, ...standardizedData];
+      }
+    }
+
+    // Handle CSV output format
+    if (outputFormat.toLowerCase() === "csv") {
+      if (allLoansData.length === 0) {
+        return res.status(404).send("No data found");
+      }
+
+      try {
+        const csvPath = await saveDataToCsv(allLoansData, "all_loans_data.csv");
+
+        // Send file and delete after sending
+        res.download(csvPath, "all_loans_data.csv", (err) => {
+          if (err) {
+            console.error("Error sending file:", err);
+          }
+
+          // Delete the temporary file
+          fs.unlink(csvPath, (unlinkErr) => {
+            if (unlinkErr) {
+              console.error("Error deleting temporary file:", unlinkErr);
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Error creating CSV file:", error);
+        res.status(500).json({ error: "Failed to generate CSV file" });
+      }
+    } else {
+      // Default JSON response
+      return res.json({
+        count: allLoansData.length,
+        data: allLoansData,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching all loans data:", error);
+    return res.status(500).json({ error: "Failed to fetch all loans data" });
+  }
+});
+
 app.get("/get-scores", (req, res) => {
   // Define bureau ranges
   const bureaus = [
